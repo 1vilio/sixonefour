@@ -1,0 +1,182 @@
+/* @video-background: "AbattoirBackground.mp4"; */
+
+/*
+ *   ТЕМА: Abattoir v1.3 - Final Cut
+ *   Финальная версия со всеми утвержденными правками и
+ *   полностью черной звуковой волной.
+*/
+
+/* ==========================================================================
+   1. :root, ШРИФТЫ
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Six+Caps&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
+
+:root {
+  --blood: #8B0000;
+  --blood-glow: #FF0000;
+  --bone: #E0DCD1;
+  --black: #000000;
+  --surface: rgba(10, 5, 5, 0.85);
+  --text-dim: #999999;
+  
+  --font-display: 'Six Caps', sans-serif;
+  --font-main: 'Courier Prime', monospace;
+}
+
+/* ========================================================================== 
+   2. Глобальные стили
+   ========================================================================== */
+body, #app {
+  background: transparent !important;
+  font-family: var(--font-main) !important;
+  color: var(--text-dim) !important;
+}
+#app .l-container.l-content {
+  background-color: var(--surface) !important;
+  backdrop-filter: blur(10px) brightness(0.9);
+}
+::-webkit-scrollbar { width: 4px !important; background-color: var(--black); }
+::-webkit-scrollbar-thumb { background-color: var(--blood) !important; }
+
+/* ========================================================================== 
+   3. Хедер, Футер
+   ========================================================================== */
+.header, .footer {
+  background: rgba(0,0,0,0.9) !important;
+  border-color: #300000 !important;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 0 25px rgba(139,0,0,0.4);
+}
+.header__logo a.header__logoLink:first-of-type {
+  display: block !important; width: 150px !important; height: 46px !important;
+  text-indent: -9999px; margin-left: 20px; position: relative;
+  background-image: url('theme://AbattoirLogo.png') !important;
+  background-repeat: no-repeat !important; background-position: center !important;
+  background-size: contain !important;
+  transition: filter 0.3s ease;
+}
+.header__logo a.header__logoLink:first-of-type:hover { filter: drop-shadow(0 0 10px var(--blood-glow)); }
+.header__logo a.header__logoLink > *, .header__logo a.header__logoLink:not(:first-of-type) { display: none !important; }
+
+/* ========================================================================== 
+   4. Текст и заголовки
+   ========================================================================== */
+.soundTitle__title, .playableTile__title, h1, h2, h3 {
+  font-family: var(--font-display) !important;
+  color: var(--bone) !important; letter-spacing: 3px; font-size: 2.5em;
+  text-shadow: 0 0 8px rgba(255,0,0,0.5);
+}
+.soundTitle__username, a.sc-link-dark, .playableTile__username { color: var(--text-dim) !important; }
+.soundTitle__username:hover, a.sc-link-dark:hover { color: var(--blood-glow) !important; }
+
+/* ========================================================================== 
+   5. ОБЛОЖКИ - Гибридный эффект
+   ========================================================================== */
+.playableTile__artwork::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%;
+  height: 0;
+  background: var(--blood);
+  clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 90% 90%, 80% 70%, 70% 95%, 60% 75%, 50% 90%, 40% 65%, 30% 85%, 20% 70%, 10% 90%, 0% 70%);
+  z-index: 3;
+  transition: height 0.5s ease-out;
+  pointer-events: none;
+}
+.playableTile:hover .playableTile__artwork::before { height: 100%; }
+
+@keyframes glitch-symbol {
+  0%, 100% { content: '⛥'; transform: translate(0,0); }
+  25% { content: '⛧'; transform: translate(-2px, 2px); }
+  50% { content: '⛦'; transform: translate(2px, -2px); }
+  75% { content: '⛨'; transform: translate(1px, 1px); }
+}
+
+.playableTile__artwork::after {
+  content: '⛥';
+  font-family: sans-serif; font-size: 32px;
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  color: var(--blood-glow); text-shadow: 0 0 10px var(--blood-glow);
+  animation: glitch-symbol 0.5s infinite steps(1);
+}
+
+.playableTile__artwork {
+  position: relative; overflow: hidden;
+  border: 1px solid #222 !important; border-radius: 0 !important;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.9);
+}
+.playableTile .image { display: block !important; filter: grayscale(0.7) contrast(1.2) sepia(0.2); transition: filter 0.3s ease; }
+.playableTile:hover .image { filter: grayscale(0) contrast(1); }
+
+/* ========================================================================== 
+   6. ИНТЕРФЕЙС - Бирки из морга, сшитая плоть
+   ========================================================================== */
+.soundList__item, .trackItem, .sidebar, .collection, .userInfo {
+  background-color: transparent !important; border-radius: 0 !important;
+  border-bottom: 1px solid #333 !important;
+}
+.g-tabs-link {
+  color: var(--text-dim) !important; border-radius: 5px 5px 0 0 !important;
+  background: #111 !important; border: 1px solid #333 !important;
+  border-bottom: none !important;
+}
+.g-tabs-link.active { background: var(--blood) !important; color: var(--bone) !important; }
+.userBadgeListItem__artwork { border: 2px solid var(--blood); }
+
+/* ========================================================================== 
+   7. ПЛЕЕР И УПРАВЛЕНИЕ - "Кардиограмма"
+   ========================================================================== */
+.playControls {
+    background-color: var(--surface) !important;
+    backdrop-filter: blur(10px);
+    border-top: 1px solid #300000 !important;
+}
+
+.playableTile__playButton {
+  position: absolute !important; top: 50% !important; left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 50px !important; height: 50px !important;
+  background: transparent !important; border-radius: 50% !important;
+  border: 2px solid var(--blood) !important; transition: all .3s ease;
+  color: transparent !important;
+}
+.playableTile__playButton:hover {
+  background: var(--blood-glow) !important; border-color: var(--blood-glow) !important;
+  box-shadow: 0 0 20px var(--blood-glow);
+}
+.playableTile__playButton::after {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--blood); position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+
+.playbackTimeline__progressWrapper { background: var(--black) !important; }
+.playbackTimeline__progressBar {
+  background: var(--blood) !important;
+  clip-path: polygon(0 80%, 5% 20%, 10% 80%, 15% 30%, 20% 80%, 25% 40%, 30% 80%, 35% 50%, 40% 80%, 45% 40%, 50% 80%, 55% 30%, 60% 80%, 65% 20%, 70% 80%, 75% 50%, 80% 80%, 85% 60%, 90% 80%, 95% 40%, 100% 80%, 100% 100%, 0 100%);
+}
+.playbackTimeline__progressHandle { background: transparent !important; border: none !important; }
+.playbackTimeline__progressHandle::before {
+  content: ''; width: 4px; height: 16px;
+  background: var(--bone); box-shadow: 0 0 10px var(--bone);
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+
+/* FIX: Waveform теперь полностью черный */
+.waveform {
+    background-color: transparent !important;
+    filter: brightness(0) !important;
+}
+.waveformCommentsNode { 
+    filter: none; /* Убеждаемся, что комментарии на волне остаются видимыми */
+}
+
+.soundActions .sc-button {
+  border: 1px solid var(--blood) !important;
+  background-image: linear-gradient(var(--surface), var(--black)) !important;
+  --s: 1px; --c: #000;
+  --b: var(--s) solid #0000;
+  --g: #0000 90deg,var(--c) 0;
+  border-image: 
+    conic-gradient(from 90deg at var(--s) var(--s),var(--g)) 0 100%/calc(100% - 2*var(--s)) calc(100% - 2*var(--s))  repeat;
+}
+.commentForm__input { border-image: conic-gradient(#000,#000) 1; }

@@ -1,0 +1,255 @@
+/* @video-background: "VilioAcid.mp4"; */
+
+/*
+ *   ТЕМА: Vilio – Acid Protocol
+ *   Концепт: Кислотный укус, яд и свет. Mountain Dew edition.
+ *   Версия: 1.0
+*/
+
+/* ========================================================================== 
+   1. :root и палитра ада
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+:root {
+  --acid-green: #00FF66;
+  --acid-green-dark: #009944;
+  --acid-black: #020202;
+  --acid-surface: rgba(0, 10, 0, 0.8);
+  --acid-text-bright: #C8FFC8;
+  --acid-text-dim: #88AA88;
+
+  --font-display: 'Orbitron', sans-serif;
+  --font-ui: 'Inter', sans-serif;
+}
+
+/* ========================================================================== 
+   2. Глобальные стили, фон, контейнер
+   ========================================================================== */
+body, #app {
+  background: transparent !important;
+  font-family: var(--font-ui) !important;
+  color: var(--acid-text-dim) !important;
+}
+
+#app .l-container.l-content {
+  background: transparent !important;
+}
+
+::-webkit-scrollbar { width: 6px !important; background-color: var(--acid-black); }
+::-webkit-scrollbar-thumb { background-color: var(--acid-green-dark) !important; }
+
+/* ========================================================================== 
+   3. Header / Footer
+   ========================================================================== */
+.header, .footer {
+  background: var(--acid-surface) !important;
+  border-color: #004400 !important;
+  backdrop-filter: blur(14px) brightness(1.1);
+  box-shadow: 0 0 30px rgba(0,255,100,0.3);
+}
+
+/* ========================================================================== 
+   3a. Кастомный логотип + кислотное свечение
+   ========================================================================== */
+.header__logo a.header__logoLink:first-of-type {
+  display: block !important;
+  width: 150px !important;
+  height: 46px !important;
+  text-indent: -9999px;
+  margin-left: 20px;
+  position: relative;
+
+  background-image: url('theme://VilioAcidLogo.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: contain !important;
+
+  filter: drop-shadow(0 0 12px var(--acid-green)) drop-shadow(0 0 6px #00FF99);
+  transition: filter 0.3s ease, transform 0.3s ease;
+  z-index: 10;
+}
+
+.header__logo a.header__logoLink:first-of-type:hover {
+  filter: drop-shadow(0 0 24px var(--acid-green)) drop-shadow(0 0 12px #00FF99);
+  transform: scale(1.05);
+}
+
+.header__logo a.header__logoLink > *,
+.header__logo a.header__logoLink:not(:first-of-type) {
+  display: none !important;
+}
+
+/* ========================================================================== 
+   4. Текст, заголовки, hover эффекты
+   ========================================================================== */
+.soundTitle__title, .playableTile__title, .sidebarHeader__title, h1, h2, h3 {
+  font-family: var(--font-display) !important;
+  font-weight: 900 !important;
+  color: var(--acid-text-bright) !important;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px var(--acid-green), 0 0 20px var(--acid-green);
+}
+
+.soundTitle__username, a.sc-link-dark, .playableTile__username {
+  color: var(--acid-green-dark) !important;
+  font-weight: 700 !important;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+.soundTitle__username:hover, a.sc-link-dark:hover, .playableTile__username:hover {
+  color: var(--acid-green) !important;
+  text-shadow: 0 0 12px var(--acid-green), 0 0 24px var(--acid-green);
+}
+
+/* ========================================================================== 
+   5. Артворк и обложки
+   ========================================================================== */
+@keyframes acid-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.playableTile__artwork {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background: transparent;
+  box-shadow: 0 0 20px rgba(0,255,100,0.3);
+  transition: transform 0.3s ease;
+}
+.playableTile__artwork::before {
+  content: '';
+  position: absolute;
+  top: -20px; left: -20px; right: -20px; bottom: -20px;
+  background: conic-gradient(var(--acid-green-dark), var(--acid-green), var(--acid-green-dark));
+  z-index: -1;
+  animation: acid-spin 5s linear infinite;
+  opacity: 0.8;
+  filter: blur(8px);
+}
+.playableTile:hover .playableTile__artwork {
+  transform: scale(1.05);
+  box-shadow: 0 0 40px var(--acid-green);
+}
+.playableTile:hover .playableTile__artwork::before {
+  filter: blur(4px) brightness(1.4);
+}
+
+/* ========================================================================== 
+   6. Контейнеры и блоки интерфейса
+   ========================================================================== */
+.soundList__item, .trackItem, .sidebar, .collection, .userInfo {
+  background-color: var(--acid-surface) !important;
+  backdrop-filter: blur(14px) brightness(1.1);
+  border: 1px solid var(--acid-green-dark);
+  border-radius: 4px;
+  margin-bottom: 10px;
+  box-shadow: 0 0 25px rgba(0,255,100,0.15);
+}
+.g-tabs-link {
+  font-family: var(--font-display) !important;
+  font-weight: 700 !important;
+  color: var(--acid-text-dim) !important;
+  position: relative;
+}
+.g-tabs-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--acid-green);
+  transition: all 0.3s ease;
+}
+.g-tabs-link:hover::after, .g-tabs-link.active::after {
+  width: 100%;
+  left: 0;
+}
+.g-tabs-link.active {
+  color: var(--acid-text-bright) !important;
+}
+
+/* ========================================================================== 
+   7. Плеер и прогресс
+   ========================================================================== */
+.playbackTimeline__progressWrapper {
+  background: #030 !important;
+  height: 12px !important;
+  border: 1px solid var(--acid-green-dark);
+}
+.playbackTimeline__progressBar {
+  background: linear-gradient(90deg, var(--acid-green), #CCFF33) !important;
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 98% 100%, 0 100%);
+  box-shadow: 0 0 20px var(--acid-green);
+}
+.playbackTimeline__progressHandle::before {
+  content: '☣';
+  font-family: var(--font-display);
+  color: var(--acid-green);
+  text-shadow: 0 0 8px var(--acid-green);
+  font-size: 14px;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -60%);
+}
+
+/* ========================================================================== 
+   8. Кнопки, hover, комментарии
+   ========================================================================== */
+.sc-button, .sc-button-medium {
+  background: rgba(0,255,0,0.1) !important;
+  border: 1px solid var(--acid-green-dark) !important;
+  color: var(--acid-green-dark) !important;
+  transition: all 0.3s ease;
+  border-radius: 2px !important;
+}
+.sc-button:hover, .sc-button-medium:hover {
+  color: black !important;
+  background: var(--acid-green) !important;
+  box-shadow: 0 0 20px var(--acid-green);
+}
+
+.commentForm__input {
+  background: #050 !important;
+  border: 1px solid var(--acid-green-dark) !important;
+  color: var(--acid-text-bright) !important;
+}
+.commentForm__input:focus {
+  border-color: var(--acid-green) !important;
+  box-shadow: 0 0 20px var(--acid-green);
+}
+
+/* ========================================================================== 
+   9. Мини-плеер и иконки
+   ========================================================================== */
+.playControl, .skipControl, .shuffleControl, .repeatControl {
+  filter: drop-shadow(0 0 6px var(--acid-green-dark));
+  transition: filter 0.3s, color 0.3s;
+}
+.playControl:hover, .skipControl:hover {
+  filter: drop-shadow(0 0 12px var(--acid-green));
+}
+.shuffleControl.active, .repeatControl.active {
+  color: var(--acid-green) !important;
+  text-shadow: 0 0 10px var(--acid-green);
+}
+
+/* ========================================================================== 
+   10. Гиперактивная аура
+   ========================================================================== */
+@keyframes toxic-glow {
+  0%, 100% { filter: brightness(1) drop-shadow(0 0 5px var(--acid-green)); }
+  50% { filter: brightness(1.5) drop-shadow(0 0 20px var(--acid-green)); }
+}
+.playableTile__playButton {
+  background: transparent !important;
+  border: 2px solid var(--acid-green) !important;
+  border-radius: 50% !important;
+  color: var(--acid-green) !important;
+  animation: toxic-glow 2s infinite ease-in-out;
+  transition: all 0.3s;
+}
+.playableTile__playButton:hover {
+  background: var(--acid-green) !important;
+  color: #000 !important;
+  box-shadow: 0 0 30px var(--acid-green);
+}

@@ -1,0 +1,162 @@
+/* @video-background: "ChromablurBackground.mp4"; */
+
+/*
+ *   ТЕМА: Chromablur v1.0
+ *   Эстетика жидкого стекла и текучего света.
+ *   Полностью новый дизайн на вашем идеальном шаблоне.
+*/
+
+/* ==========================================================================
+   1. :root, ШРИФТ
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+
+:root {
+  /* Палитра Авроры */
+  --glow-pink: #FF6AD5;
+  --glow-blue: #00BFFF;
+  --glow-green: #39FF14;
+  --glow-orange: #FFA500;
+  
+  --surface: rgba(255, 255, 255, 0.1);
+  --surface-hover: rgba(255, 255, 255, 0.2);
+  --border-color: rgba(255, 255, 255, 0.2);
+  --text-bright: #FFFFFF;
+  --text-dim: #E0E0E0;
+  
+  --font-main: 'Nunito', sans-serif;
+}
+
+/* ========================================================================== 
+   2. Глобальные стили
+   ========================================================================== */
+body, #app {
+  background: transparent !important;
+  font-family: var(--font-main) !important;
+  color: var(--text-dim) !important;
+}
+#app .l-container.l-content {
+  background: transparent !important;
+}
+
+::-webkit-scrollbar { width: 8px !important; background-color: transparent; }
+::-webkit-scrollbar-thumb { background-color: var(--border-color) !important; border-radius: 4px; }
+
+/* ========================================================================== 
+   3. Хедер, Футер - стеклянные панели
+   ========================================================================== */
+.header, .footer, .playControls {
+  background: var(--surface) !important;
+  border-color: var(--border-color) !important;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+.header__logo a.header__logoLink:first-of-type {
+  display: block !important; width: 150px !important; height: 46px !important;
+  text-indent: -9999px; margin-left: 20px;
+  background-image: url('theme://ChromablurLogo.png') !important;
+  background-repeat: no-repeat !important; background-position: center !important;
+  background-size: contain !important;
+  transition: transform 0.3s ease;
+}
+.header__logo a.header__logoLink:first-of-type:hover { transform: scale(1.05); }
+.header__logo a.header__logoLink > *, .header__logo a.header__logoLink:not(:first-of-type) { display: none !important; }
+
+/* ========================================================================== 
+   4. ОБЛОЖКИ - "Аура Авроры"
+   ========================================================================== */
+@keyframes aurora-flow {
+    0%   { box-shadow: 0 0 20px var(--glow-blue); }
+    25%  { box-shadow: 0 0 30px var(--glow-green); }
+    50%  { box-shadow: 0 0 20px var(--glow-orange); }
+    75%  { box-shadow: 0 0 30px var(--glow-pink); }
+    100% { box-shadow: 0 0 20px var(--glow-blue); }
+}
+
+.playableTile__artwork {
+  position: relative; overflow: hidden; border-radius: 8px !important;
+  border: 1px solid var(--border-color) !important;
+  background: var(--surface);
+  backdrop-filter: blur(5px);
+  animation: aurora-flow 8s infinite ease-in-out;
+  transition: all 0.4s ease;
+}
+.playableTile .image {
+    display: block !important; opacity: 0.8; transition: all 0.4s ease;
+}
+.playableTile:hover .playableTile__artwork {
+    border-color: var(--text-bright) !important;
+    animation-duration: 4s;
+}
+.playableTile:hover .image {
+    opacity: 1; transform: scale(1.05);
+}
+
+/* ========================================================================== 
+   5. ИНТЕРФЕЙС - Стеклянные блоки
+   ========================================================================== */
+.soundList__item, .trackItem, .sidebar, .collection, .userInfo, .userBadgeListItem {
+    background: var(--surface) !important; backdrop-filter: blur(15px);
+    border: 1px solid var(--border-color) !important; border-radius: 8px;
+    transition: background 0.3s ease;
+}
+.soundList__item:hover, .trackItem:hover {
+    background: var(--surface-hover) !important;
+}
+.g-tabs-link { color: var(--text-dim) !important; }
+.g-tabs-link.active { color: var(--text-bright) !important; border-bottom: 2px solid var(--text-bright); }
+
+/* ========================================================================== 
+   6. ПЛЕЕР И УПРАВЛЕНИЕ
+   ========================================================================== */
+/* Кнопка Play (стабильная, светящаяся) */
+.playableTile__playButton {
+    background: rgba(255,255,255, 0.2) !important;
+    border: 1px solid rgba(255,255,255, 0.5) !important;
+    border-radius: 50% !important;
+    color: var(--text-bright) !important;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s !important;
+}
+.playableTile__playButton:hover {
+  background: var(--text-bright) !important;
+  color: black !important;
+  box-shadow: 0 0 20px var(--text-bright);
+}
+
+/* Прогресс-бар "Световой луч" */
+.playbackTimeline__progressWrapper { background: rgba(0,0,0,0.3) !important; border-radius: 5px; }
+.playbackTimeline__progressBar {
+  background: var(--text-bright) !important;
+  box-shadow: 0 0 15px var(--glow-glow);
+  border-radius: 5px;
+}
+/* Бегунок-сфера */
+@keyframes orb-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+.playbackTimeline__progressHandle {
+  background: var(--text-bright) !important; border: none !important;
+  border-radius: 50% !important; animation: orb-pulse 2s infinite ease-in-out;
+}
+
+.waveform { filter: grayscale(1) brightness(10) !important; /* Чистый белый свет */}
+
+/* ========================================================================== 
+   7. КНОПКИ ДЕЙСТВИЙ, ПОЛЯ ВВОДА
+   ========================================================================== */
+.soundActions .sc-button, .sc-button {
+  background: var(--surface) !important; border: 1px solid var(--border-color) !important;
+  color: var(--text-dim) !important; border-radius: 50px !important;
+}
+.soundActions .sc-button:hover, .sc-button:hover {
+  background: var(--text-bright) !important;
+  color: black !important;
+}
+.soundActions .sc-button-selected {
+  background: var(--text-bright) !important; color: black !important;
+  border-color: var(--text-bright) !important;
+}
+.commentForm__input {
+    background: var(--surface) !important; border: 1px solid var(--border-color) !important;
+    color: var(--text-bright) !important; border-radius: 8px;
+}
