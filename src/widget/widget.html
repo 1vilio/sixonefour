@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="widget.css" />
+</head>
+<body>
+    <video id="widget-video-bg" muted loop></video>
+    <div id="widget-container">
+        <img id="widget-artwork" src="" />
+        <div id="widget-info">
+            <div class="track-details">
+                <p id="widget-track-title">No track playing</p>
+                <p id="widget-track-author">...</p>
+            </div>
+            <div class="progress-wrapper">
+                <div id="widget-progress-container">
+                    <div id="widget-progress-fill"></div>
+                </div>
+                <div id="widget-time-container">
+                    <span id="widget-time-elapsed">0:00</span>
+                    <span id="widget-time-duration">0:00</span>
+                </div>
+            </div>
+        </div>
+        <div id="playback-controls">
+            <button id="widget-prev-btn">&#9664;&#9664;</button>
+            <button id="widget-play-btn">&#9654;</button>
+            <button id="widget-next-btn">&#9654;&#9654;</button>
+        </div>
+        <button id="widget-pin-btn">&#128204;</button> <!-- Pin Icon -->
+    </div>
+    <script src="widget.js"></script>
+</body>
+</html>

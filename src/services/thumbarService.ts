@@ -10,7 +10,7 @@ export class ThumbarService {
     }
 
     public updateThumbarButtons(win: BrowserWindow | null, isPlaying: boolean, mainWindow: BrowserView | null): void {
-        if (!win || !mainWindow) return;
+        if (!win || win.isDestroyed() || !mainWindow) return;
         const backwardIcon = nativeImage.createFromPath(path.join(RESOURCES_PATH, '/icons/backward.ico'));
         const playIcon = nativeImage.createFromPath(path.join(RESOURCES_PATH, '/icons/play.ico'));
         const pauseIcon = nativeImage.createFromPath(path.join(RESOURCES_PATH, '/icons/pause.ico'));

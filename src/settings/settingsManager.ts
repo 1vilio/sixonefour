@@ -793,6 +793,13 @@ export class SettingsManager {
                     </label>
                 </div>
                 <div class="setting-item">
+                    <span data-i18n="enableWidget">Enable Widget</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="widgetEnabled" ${this.store.get('widgetEnabled', false) ? 'checked' : ''}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
                     <span data-i18n="enableTrackParser">${this.translationService.translate('enableTrackParser')}</span>
                     <label class="toggle">
                         <input type="checkbox" id="trackParserEnabled" ${this.store.get('trackParserEnabled', true) ? 'checked' : ''}>
@@ -1268,6 +1275,10 @@ export class SettingsManager {
 
             document.getElementById('autoUpdaterEnabled').addEventListener('change', (e) => {
                 ipcRenderer.send('setting-changed', { key: 'autoUpdaterEnabled', value: e.target.checked });
+            });
+
+            document.getElementById('widgetEnabled').addEventListener('change', (e) => {
+                ipcRenderer.send('setting-changed', { key: 'widgetEnabled', value: e.target.checked });
             });
 
             document.getElementById('themeAlwaysActive').addEventListener('change', (e) => {

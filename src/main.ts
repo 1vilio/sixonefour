@@ -13,6 +13,7 @@ import { WebhookService } from './services/webhookService';
 import { ThemeService } from './services/themeService';
 import { ShortcutService } from './services/shortcutService';
 import { DownloadService } from './services/downloadService';
+import { WidgetManager } from './services/WidgetManager';
 import { ZapretService } from './services/zapretService';
 import { audioMonitorScript } from './services/audioMonitorService';
 import type { TrackInfo, TrackUpdateMessage } from './types';
@@ -55,6 +56,7 @@ const store = new Store({
         themeAlwaysActive: false, // Keep theme animations active in background
         bypassMode: 'none', // 'none', 'dns', 'zapret'
         dnsAddress: '',
+        widgetEnabled: false,
     },
     clearInvalidConfig: true,
     encryptionKey: 'soundcloud-rpc-config',
@@ -64,6 +66,7 @@ let isDarkTheme = store.get('theme') !== 'light';
 
 // Global variables
 let mainWindow: BrowserWindow;
+let widgetManager: WidgetManager;
 let notificationManager: NotificationManager;
 let settingsManager: SettingsManager;
 let proxyService: ProxyService;
@@ -491,6 +494,12 @@ async function init() {
     // Initialize services
     translationService = new TranslationService();
     themeService = new ThemeService(store);
+    widgetManager = new WidgetManager(); // Instantiate WidgetManager
+
+    // Show widget on startup if it was enabled
+    if (store.get('widgetEnabled')) {
+        widgetManager.show();
+    }
 
     // Register custom theme protocol
     const themesPath = themeService.getThemesPath();
@@ -522,6 +531,29 @@ async function init() {
     // Add settings toggle handler
     ipcMain.on('toggle-settings', () => {
         settingsManager.toggle();
+    });
+
+    // Handle Widget Actions
+    type WidgetAction = 'playPause' | 'nextTrack' | 'prevTrack';
+    const playerActions: { [key in WidgetAction]: string } = {
+        playPause: 'document.querySelector(".playControls__play").click()',
+        nextTrack: 'document.querySelector(".playControls__next").click()',
+        prevTrack: 'document.querySelector(".playControls__prev").click()'
+    };
+
+    ipcMain.on('widget-action', (_, action: WidgetAction) => {
+        if (!contentView) return;
+        const code = playerActions[action];
+
+        if (code) {
+            contentView.webContents.executeJavaScript(code).catch(console.error);
+        }
+    });
+
+    ipcMain.on('widget-toggle-pin', () => {
+        if (widgetManager) {
+            widgetManager.togglePin();
+        }
     });
 
     setupWindowControls();
@@ -769,6 +801,8 @@ async function init() {
             applyThemeToContent(isDarkTheme);
         } else if (key === 'backgroundBlur') {
             applyThemeToContent(isDarkTheme);
+        } else if (key === 'widgetEnabled') {
+            data.value ? widgetManager.show() : widgetManager.hide();
         }
     });
 
@@ -842,6 +876,13 @@ function applyThemeToContent(isDark: boolean) {
             logoUrl = `data:image/png;base64,${logoBuffer.toString('base64')}`;
         }
         contentView.webContents.send('theme-set-logo', logoUrl);
+    }
+
+    // Handle video background and logo for the widget
+    if (widgetManager) {
+        const videoUrl = theme?.videoBackground ? `theme://${path.basename(theme.videoBackground)}` : null;
+        const blur = store.get('backgroundBlur', 0);
+        widgetManager.updateTheme(null, videoUrl, blur);
     }
 
     // Update theme colors for all UI components
@@ -1165,6 +1206,7 @@ function setupTranslationHandlers() {
             enableTrackParser: translationService.translate('enableTrackParser'),
             trackParserDescription: translationService.translate('trackParserDescription'),
             enableAutoUpdater: translationService.translate('enableAutoUpdater'),
+            enableWidget: translationService.translate('enableWidget'),
             customThemes: translationService.translate('customThemes'),
             selectCustomTheme: translationService.translate('selectCustomTheme'),
             noTheme: translationService.translate('noTheme'),
@@ -1220,7 +1262,15 @@ function setupAudioHandler() {
 
         // Update the rich presence preview in settings
         if (settingsManager) {
-            settingsManager.getView().webContents.send('presence-preview-update', result);
+            const settingsView = settingsManager.getView();
+            if (settingsView && settingsView.webContents && !settingsView.webContents.isDestroyed()) {
+                settingsView.webContents.send('presence-preview-update', result);
+            }
+        }
+
+        // Update the widget
+        if (widgetManager) {
+            widgetManager.updateTrack(result);
         }
 
         if (thumbarService) {
