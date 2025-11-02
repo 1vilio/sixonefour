@@ -57,6 +57,8 @@ const store = new Store({
         bypassMode: 'none', // 'none', 'dns', 'zapret'
         dnsAddress: '',
         widgetEnabled: false,
+        openAtLogin: false,
+        startInTray: false,
     },
     clearInvalidConfig: true,
     encryptionKey: 'soundcloud-rpc-config',
@@ -195,6 +197,11 @@ function setupTray() {
             }
             mainWindow.show();
             mainWindow.focus();
+
+            // Force re-apply theme after a short delay to ensure view is ready
+            setTimeout(() => {
+                applyThemeToContent(isDarkTheme);
+            }, 100); // 100ms delay
         }
     });
 
@@ -232,6 +239,7 @@ function createBrowserWindow(windowState: any): BrowserWindow {
         frame: process.platform === 'darwin',
         titleBarStyle: process.platform === 'darwin' ? 'hidden' : undefined,
         trafficLightPosition: process.platform === 'darwin' ? { x: 10, y: 10 } : undefined,
+        show: !store.get('startInTray', false),
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
@@ -432,6 +440,11 @@ async function init() {
 
     windowState.manage(mainWindow);
 
+    // Explicitly hide the window if startInTray is enabled
+    if (store.get('startInTray', false)) {
+        mainWindow.hide();
+    }
+
     // Handle window close event for minimize to tray
     mainWindow.on('close', (event) => {
         const minimizeToTray = store.get('minimizeToTray', true);
@@ -518,7 +531,7 @@ async function init() {
     proxyService = new ProxyService(mainWindow, store, queueToastNotification);
     presenceService = new PresenceService(store, translationService);
     webhookService = new WebhookService(store);
-    shortcutService = new ShortcutService(mainWindow);
+    shortcutService = new ShortcutService();
     zapretService = new ZapretService();
 
     // Start Zapret service if it was enabled on last run
@@ -558,8 +571,11 @@ async function init() {
 
     setupWindowControls();
 
+    app.setLoginItemSettings({ openAtLogin: store.get('openAtLogin', false) });
+
     initializeShortcuts();
     shortcutService.setup();
+    registerGlobalShortcuts();
 
     setupThemeHandlers();
     setupTranslationHandlers();
@@ -760,76 +776,102 @@ async function init() {
             webhookService.setWebhookUrl(data.value);
         } else if (key === 'webhookTriggerPercentage') {
             webhookService.setTriggerPercentage(data.value);
-        } else if (key === 'navigationControlsEnabled') {
-            if (headerView && headerView.webContents) {
-                headerView.webContents.send('navigation-controls-toggle', data.value);
+                            } else if (key === 'navigationControlsEnabled') {
+                                if (headerView && headerView.webContents) {
+                                    headerView.webContents.send('navigation-controls-toggle', data.value);
+                                }
+                            } else if (key === 'autoUpdaterEnabled') {
+                                if (data.value) {
+                                    setupUpdater();
+                                } else {
+                                    console.log('Auto-updater disabled by user');
+                                }
+                            } else if (key === 'bypassMode') {
+                                const oldMode = store.get('bypassMode') as string;
+                                const newMode = data.value as string;
+                        
+                                if (oldMode === 'zapret' && newMode !== 'zapret') {
+                                    zapretService.stop();
+                                }
+                        
+                                if (newMode === 'zapret') {
+                                    zapretService.start();
+                                }
+                        
+                                store.set('bypassMode', newMode);
+                        
+                                if (newMode === 'dns' || oldMode === 'dns') {
+                                    queueToastNotification('DNS settings changed. Please restart the app.');
+                                }
+                            } else if (key === 'dnsAddress') {
+                                store.set('dnsAddress', data.value);
+                                if (store.get('bypassMode') === 'dns') {
+                                    queueToastNotification('DNS settings changed. Please restart the app.');
+                                }
+                            } else if (key === 'customTheme') {            if (data.value === 'none') {
+                        themeService.removeCustomTheme();
+                    } else {
+                        themeService.applyCustomTheme(data.value);
+                    }
+                    // Re-apply the theme to all content
+                    applyThemeToContent(isDarkTheme);
+                } else if (key === 'backgroundBlur') {
+                    applyThemeToContent(isDarkTheme);
+                        } else if (key === 'widgetEnabled') {
+                            data.value ? widgetManager.show() : widgetManager.hide();
+                        } else if (key === 'openAtLogin') {
+                            app.setLoginItemSettings({ openAtLogin: data.value });
+                        } else if (key.startsWith('hotkeys.')) {
+                            registerGlobalShortcuts();
+                        }            });
+        
+            // Handle applying all changes
+            ipcMain.on('apply-changes', async () => {
+                if (store.get('proxyEnabled')) {
+                    await proxyService.apply();
+                }
+        
+                if (store.get('adBlocker')) {
+                    mainWindow.webContents.reload();
+                }
+        
+                if (store.get('discordRichPresence')) {
+                    // Refresh presence using the current track info instead of reconnecting
+                    await presenceService.updatePresence(lastTrackInfo as any);
+                } else {
+                    presenceService.clearActivity();
+                }
+            });
+        }
+        
+        function registerGlobalShortcuts() {
+            shortcutService.unregister('playPause');
+            shortcutService.unregister('next');
+            shortcutService.unregister('previous');
+        
+            const hotkeys = store.get('hotkeys', {});
+            if (hotkeys.playPause) {
+                shortcutService.register('playPause', hotkeys.playPause, 'Play/Pause', () => {
+                    contentView.webContents.executeJavaScript('document.querySelector(".playControls__play").click()');
+                });
             }
-                    } else if (key === 'autoUpdaterEnabled') {
-                        if (data.value) {
-                            setupUpdater();
-                        } else {
-                            console.log('Auto-updater disabled by user');
-                        }
-                    } else if (key === 'bypassMode') {
-                        const oldMode = store.get('bypassMode') as string;
-                        const newMode = data.value as string;
-                
-                        if (oldMode === 'zapret' && newMode !== 'zapret') {
-                            zapretService.stop();
-                        }
-                
-                        if (newMode === 'zapret') {
-                            zapretService.start();
-                        }
-                
-                        store.set('bypassMode', newMode);
-                
-                        if (newMode === 'dns' || oldMode === 'dns') {
-                            queueToastNotification('DNS settings changed. Please restart the app.');
-                        }
-                    } else if (key === 'dnsAddress') {
-                        store.set('dnsAddress', data.value);
-                        if (store.get('bypassMode') === 'dns') {
-                            queueToastNotification('DNS settings changed. Please restart the app.');
-                        }
-                    } else if (key === 'customTheme') {            if (data.value === 'none') {
-                themeService.removeCustomTheme();
-            } else {
-                themeService.applyCustomTheme(data.value);
+            if (hotkeys.next) {
+                shortcutService.register('next', hotkeys.next, 'Next', () => {
+                    contentView.webContents.executeJavaScript('document.querySelector(".playControls__next").click()');
+                });
             }
-            // Re-apply the theme to all content
-            applyThemeToContent(isDarkTheme);
-        } else if (key === 'backgroundBlur') {
-            applyThemeToContent(isDarkTheme);
-        } else if (key === 'widgetEnabled') {
-            data.value ? widgetManager.show() : widgetManager.hide();
+            if (hotkeys.previous) {
+                shortcutService.register('previous', hotkeys.previous, 'Previous', () => {
+                    contentView.webContents.executeJavaScript('document.querySelector(".playControls__prev").click()');
+                });
+            }
+            shortcutService.setup();
         }
-    });
-
-    // Handle applying all changes
-    ipcMain.on('apply-changes', async () => {
-        if (store.get('proxyEnabled')) {
-            await proxyService.apply();
-        }
-
-        if (store.get('adBlocker')) {
-            mainWindow.webContents.reload();
-        }
-
-        if (store.get('discordRichPresence')) {
-            // Refresh presence using the current track info instead of reconnecting
-            await presenceService.updatePresence(lastTrackInfo as any);
-        } else {
-            presenceService.clearActivity();
-        }
-    });
-}
-
-function setupThemeHandlers() {
-    // Load initial theme from store
-    isDarkTheme = store.get('theme', 'dark') === 'dark';
-
-    // Send initial theme to all views
+        
+        function setupThemeHandlers() {
+            // Load initial theme from store
+            isDarkTheme = store.get('theme', 'dark') === 'dark';
+            // Send initial theme to all views
     if (headerView && headerView.webContents) {
         headerView.webContents.send('theme-changed', isDarkTheme);
     }
