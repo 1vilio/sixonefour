@@ -451,6 +451,29 @@ export class SettingsManager {
                 border-color: var(--accent-muted);
             }
 
+            .hotkey-input {
+                background-color: var(--bg-primary);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 8px 12px;
+                color: var(--text-primary);
+                font-family: inherit;
+                font-size: 14px;
+                cursor: pointer;
+                text-align: center;
+                min-width: 120px;
+                transition: all 0.2s;
+            }
+
+            .hotkey-input:hover, .hotkey-input.is-recording {
+                border-color: var(--accent-muted);
+            }
+
+            .hotkey-input.is-recording {
+                background-color: var(--bg-hover);
+                color: var(--accent);
+            }
+
             .slider-container {
                 display: flex;
                 align-items: center;
@@ -807,6 +830,23 @@ export class SettingsManager {
                     </label>
                 </div>
                 <div class="description" data-i18n="trackParserDescription">${this.translationService.translate('trackParserDescription')}</div>
+            </div>
+
+            <div class="setting-group">
+                <h2>Hotkeys</h2>
+                <div class="description">Click on a button and press a key combination to set a new hotkey. Press ESC to clear.</div>
+                <div class="setting-item">
+                    <span>Play/Pause</span>
+                    <button class="hotkey-input" id="hotkey-playPause">Not Set</button>
+                </div>
+                <div class="setting-item">
+                    <span>Next Track</span>
+                    <button class="hotkey-input" id="hotkey-next">Not Set</button>
+                </div>
+                <div class="setting-item">
+                    <span>Previous Track</span>
+                    <button class="hotkey-input" id="hotkey-previous">Not Set</button>
+                </div>
             </div>
 
             <div class="setting-group">
@@ -1192,6 +1232,12 @@ export class SettingsManager {
                     dnsPresetSelect.value = '';
                 }
                 setDnsUIState();
+
+                // Load hotkeys
+                const hotkeys = await ipcRenderer.invoke('get-store-value', 'hotkeys') || {};
+                document.getElementById('hotkey-playPause').textContent = hotkeys.playPause || 'Not Set';
+                document.getElementById('hotkey-next').textContent = hotkeys.next || 'Not Set';
+                document.getElementById('hotkey-previous').textContent = hotkeys.previous || 'Not Set';
             });
 
             // Event Listeners
@@ -1690,6 +1736,71 @@ export class SettingsManager {
             // Apply all changes
             document.getElementById('applyChanges').addEventListener('click', () => {
                 ipcRenderer.send('apply-changes');
+            });
+
+            // Hotkey binding logic
+            let activeHotkeyButton = null;
+
+            function keyEventToAccelerator(e) {
+                const parts = [];
+                if (e.ctrlKey) parts.push('Control');
+                if (e.altKey) parts.push('Alt');
+                if (e.shiftKey) parts.push('Shift');
+                if (e.metaKey) parts.push('Command');
+
+                const key = e.key.toUpperCase();
+                if (!['CONTROL', 'ALT', 'SHIFT', 'META'].includes(key)) {
+                    parts.push(key.replace('ARROW',''));
+                }
+
+                return parts.join('+');
+            }
+
+            function endRecording() {
+                if (activeHotkeyButton) {
+                    activeHotkeyButton.classList.remove('is-recording');
+                    if(activeHotkeyButton.textContent === 'Press a key...') {
+                        activeHotkeyButton.textContent = 'Not Set';
+                    }
+                    activeHotkeyButton = null;
+                    document.removeEventListener('keydown', handleGlobalKeyDown, true);
+                }
+            }
+
+            function handleGlobalKeyDown(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (!activeHotkeyButton) return;
+
+                let accelerator = '';
+                if (e.key === 'Escape') {
+                    accelerator = ''; // Unbind
+                    activeHotkeyButton.textContent = 'Not Set';
+                } else {
+                    accelerator = keyEventToAccelerator(e);
+                    activeHotkeyButton.textContent = accelerator;
+                }
+
+                const hotkeyId = activeHotkeyButton.id.split('-')[1];
+                ipcRenderer.send('setting-changed', { key: \`hotkeys.\${hotkeyId}\`, value: accelerator });
+
+                endRecording();
+            }
+
+            ['playPause', 'next', 'previous'].forEach(id => {
+                const button = document.getElementById(\`hotkey-\${id}\`);
+                if (button) {
+                    button.addEventListener('click', () => {
+                        if (activeHotkeyButton) {
+                            endRecording();
+                        }
+                        activeHotkeyButton = button;
+                        button.textContent = 'Press a key...';
+                        button.classList.add('is-recording');
+                        document.addEventListener('keydown', handleGlobalKeyDown, true);
+                    });
+                }
             });
 
             // Listen for theme changes from main process
