@@ -532,6 +532,7 @@ async function init() {
     presenceService = new PresenceService(store, translationService);
     webhookService = new WebhookService(store);
     shortcutService = new ShortcutService();
+    shortcutService.setWindow(mainWindow);
     zapretService = new ZapretService();
 
     // Start Zapret service if it was enabled on last run
@@ -853,17 +854,17 @@ async function init() {
             if (hotkeys.playPause) {
                 shortcutService.register('playPause', hotkeys.playPause, 'Play/Pause', () => {
                     contentView.webContents.executeJavaScript('document.querySelector(".playControls__play").click()');
-                });
+                }, true, true);
             }
             if (hotkeys.next) {
                 shortcutService.register('next', hotkeys.next, 'Next', () => {
                     contentView.webContents.executeJavaScript('document.querySelector(".playControls__next").click()');
-                });
+                }, true, true);
             }
             if (hotkeys.previous) {
                 shortcutService.register('previous', hotkeys.previous, 'Previous', () => {
                     contentView.webContents.executeJavaScript('document.querySelector(".playControls__prev").click()');
-                });
+                }, true, true);
             }
             shortcutService.setup();
         }

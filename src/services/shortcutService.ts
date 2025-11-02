@@ -5,6 +5,7 @@ interface Shortcut {
     action: () => void;
     description: string;
     enabled?: boolean;
+    global?: boolean;
 }
 
 export class ShortcutService {
@@ -22,8 +23,8 @@ export class ShortcutService {
         this.window = window;
     }
 
-    register(id: string, accelerator: string, description: string, action: () => void, enabled: boolean = true) {
-        this.shortcuts.set(id, { accelerator, action, description, enabled });
+    register(id: string, accelerator: string, description: string, action: () => void, enabled: boolean = true, global: boolean = false) {
+        this.shortcuts.set(id, { accelerator, action, description, enabled, global });
     }
 
     unregister(id: string) {
@@ -53,7 +54,7 @@ export class ShortcutService {
             if (shortcut.enabled === false) continue;
 
             const success = globalShortcut.register(shortcut.accelerator, () => {
-                if (!this.window || !this.window.isFocused()) return;
+                if (!shortcut.global && (!this.window || !this.window.isFocused())) return;
 
                 try {
                     shortcut.action();
