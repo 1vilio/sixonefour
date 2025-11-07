@@ -1748,9 +1748,17 @@ export class SettingsManager {
                 if (e.shiftKey) parts.push('Shift');
                 if (e.metaKey) parts.push('Command');
 
-                const key = e.key.toUpperCase();
-                if (!['CONTROL', 'ALT', 'SHIFT', 'META'].includes(key)) {
-                    parts.push(key.replace('ARROW',''));
+                let code = e.code;
+                if (code.startsWith('Key')) {
+                    code = code.substring(3);
+                } else if (code.startsWith('Digit')) {
+                    code = code.substring(5);
+                } else if (code.startsWith('Numpad')) {
+                    code = 'Numpad' + code.substring(6);
+                }
+
+                if (!['CONTROL', 'ALT', 'SHIFT', 'META'].includes(code.toUpperCase())) {
+                    parts.push(code.toUpperCase());
                 }
 
                 return parts.join('+');

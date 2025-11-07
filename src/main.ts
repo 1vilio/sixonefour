@@ -15,6 +15,7 @@ import { ShortcutService } from './services/shortcutService';
 import { DownloadService } from './services/downloadService';
 import { WidgetManager } from './services/WidgetManager';
 import { ZapretService } from './services/zapretService';
+import { UrlInterceptorService } from './services/urlInterceptorService';
 import { audioMonitorScript } from './services/audioMonitorService';
 import type { TrackInfo, TrackUpdateMessage } from './types';
 import path = require('path');
@@ -80,6 +81,7 @@ let themeService: ThemeService;
 let shortcutService: ShortcutService;
 let downloadService: DownloadService;
 let zapretService: ZapretService;
+let urlInterceptorService: UrlInterceptorService;
 let tray: Tray | null = null;
 let isQuitting = false;
 const devMode = process.argv.includes('--dev');
@@ -503,6 +505,11 @@ async function init() {
     contentView.webContents.setUserAgent(
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     );
+
+    // Initialize and set up the URL interceptor service
+    urlInterceptorService = new UrlInterceptorService();
+    urlInterceptorService.initialize(mainWindow, contentView);
+    urlInterceptorService.setup();
 
     // Initialize services
     translationService = new TranslationService();
