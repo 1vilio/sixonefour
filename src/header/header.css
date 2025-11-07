@@ -77,9 +77,8 @@ html.theme-light {
 .navigation-controls {
     display: none; /* Hidden by default, shown when enabled */
     align-items: center;
-    padding-left: 4px;
-    padding-top: 2px;
     -webkit-app-region: no-drag;
+    padding-left: 4px;
 }
 
 .navigation-controls.visible {
@@ -88,6 +87,34 @@ html.theme-light {
 
 .navigation-controls.hidden {
     display: none;
+}
+
+.url-bar-container {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    min-width: 100px;
+    height: 28px;
+    margin: 0 10px;
+    -webkit-app-region: no-drag;
+    background-color: var(--scrollbar-bg);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+#url-bar {
+    flex-grow: 1;
+    height: 100%;
+    padding: 0 12px;
+    border: none;
+    background-color: transparent;
+    color: var(--header-text);
+    font-family: inherit;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    outline: none;
 }
 
 /* Reserve space for native macOS traffic light controls */
@@ -174,16 +201,6 @@ body.platform-darwin .navigation-controls {
     }
 }
 
-.title-bar {
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    max-width: calc(100% - 220px);
-    cursor: default;
-    flex: 1;
-}
 
 .window-controls {
     display: flex;

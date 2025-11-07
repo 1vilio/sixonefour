@@ -267,4 +267,14 @@ document.addEventListener('DOMContentLoaded', () => {
             downloadBtn.classList.toggle('loading', data.status === 'downloading');
         }
     });
+
+    // URL Bar Logic
+    const urlBar = document.getElementById('url-bar');
+    if (urlBar) {
+        ipcRenderer.on('update-url', (_, url) => {
+            if (urlBar.value !== url) {
+                urlBar.value = url;
+            }
+        });
+    }
 });

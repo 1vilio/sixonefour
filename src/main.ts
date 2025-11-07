@@ -653,13 +653,23 @@ async function init() {
         }
     }
 
-    // Listen for navigation events to update button states
-    contentView.webContents.on('did-navigate', () => {
+    // Listen for navigation events to update button states and URL
+    function handleNavigation(url: string) {
         updateNavigationState();
+        if (headerView && headerView.webContents) {
+            headerView.webContents.send('update-url', url);
+        }
+    }
+
+    contentView.webContents.on('did-navigate', (_event, url) => {
+        handleNavigation(url);
     });
 
-    contentView.webContents.on('did-navigate-in-page', () => {
-        updateNavigationState();
+    contentView.webContents.on('did-navigate-in-page', (_event, url, isMainFrame) => {
+        // Only update for main frame navigations to get the clean URL
+        if (isMainFrame) {
+            handleNavigation(url);
+        }
     });
 
     // Listen for page load events to manage refresh state
