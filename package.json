@@ -78,9 +78,10 @@
         "discord-api-types": "^0.38.18",
         "discord-rpc": "^4.0.1",
         "electron-prompt": "^1.7.0",
-        "scdl-core": "^1.0.0",
         "electron-store": "^8.1.0",
         "electron-updater": "^6.3.4",
-        "electron-window-state": "^5.0.3"
+        "electron-window-state": "^5.0.3",
+        "sanitize-filename": "^1.6.3",
+        "scdl-core": "^1.0.0"
     }
 }

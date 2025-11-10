@@ -4,13 +4,17 @@ import path from 'path';
 import { SoundCloud } from 'scdl-core';
 import { NotificationManager } from '../notifications/notificationManager';
 import type { TrackInfo } from '../types';
+import type ElectronStore from 'electron-store';
+import sanitize from 'sanitize-filename';
 
 export class DownloadService {
     private notificationManager: NotificationManager;
     private isConnected = false;
+    private store: ElectronStore;
 
-    constructor(notificationManager: NotificationManager) {
+    constructor(notificationManager: NotificationManager, store: ElectronStore) {
         this.notificationManager = notificationManager;
+        this.store = store;
     }
 
     private async connect(): Promise<void> {
@@ -28,13 +32,9 @@ export class DownloadService {
             if (error instanceof Error) {
                 errorMessage = error.message;
             }
-            console.error(`[DownloadService] Connection failed: ${errorMessage}`);
+            console.error(`[DownloadService] Connection failed:`, error);
             this.notificationManager.show(errorMessage);
         }
-    }
-
-    private sanitizeFilename(filename: string): string {
-        return filename.replace(/[\\/:*?"<>|]/g, '-');
     }
 
     public async downloadTrack(trackInfo: TrackInfo, onStateChange: (status: 'downloading' | 'idle') => void): Promise<void> {
@@ -56,9 +56,9 @@ export class DownloadService {
 
         onStateChange('downloading');
 
-        const filename = this.sanitizeFilename(`${trackInfo.author} - ${trackInfo.title}.mp3`);
-        const downloadsPath = app.getPath('downloads');
-        const filePath = path.join(downloadsPath, filename);
+        const filename = sanitize(`${trackInfo.author} - ${trackInfo.title} (VilioSC).mp3`);
+        const downloadPath = this.store.get('downloadPath') as string || app.getPath('downloads');
+        const filePath = path.join(downloadPath, filename);
 
         console.log(`[DownloadService] Starting download for: ${filename}`);
         this.notificationManager.show(`Downloading: ${trackInfo.title}`);

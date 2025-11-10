@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, ipcMain, BrowserView, Tray, nativeImage, protocol } from 'electron';
+import { app, BrowserWindow, Menu, ipcMain, BrowserView, Tray, nativeImage, protocol, dialog } from 'electron';
 import { ElectronBlocker, fullLists } from '@ghostery/adblocker-electron';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import fetch from 'cross-fetch';
@@ -533,7 +533,7 @@ async function init() {
         applyThemeToContent(isDarkTheme);
     });
     notificationManager = new NotificationManager(mainWindow);
-    downloadService = new DownloadService(notificationManager);
+    downloadService = new DownloadService(notificationManager, store);
     settingsManager = new SettingsManager(mainWindow, store, translationService);
     proxyService = new ProxyService(mainWindow, store, queueToastNotification);
     presenceService = new PresenceService(store, translationService);
@@ -610,6 +610,29 @@ async function init() {
 
     ipcMain.handle('get-store-value', (_event, key) => {
         return store.get(key);
+    });
+
+    ipcMain.handle('get-default-download-path', () => {
+        return app.getPath('downloads');
+    });
+
+    ipcMain.handle('reset-download-path', () => {
+        store.delete('downloadPath');
+        return app.getPath('downloads');
+    });
+
+    ipcMain.handle('select-download-directory', async () => {
+        const result = await dialog.showOpenDialog(mainWindow, {
+            properties: ['openDirectory'],
+        });
+
+        if (result.canceled) {
+            return;
+        }
+
+        const path = result.filePaths[0];
+        store.set('downloadPath', path);
+        return path;
     });
 
     // Configure session

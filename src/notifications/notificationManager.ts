@@ -115,6 +115,7 @@ export class NotificationManager {
             setTimeout(() => this.displayNext(), 100);
         });
 
-        this.view.webContents.loadURL(`data:text/html,${encodeURIComponent(html)}`);
+        const encodedHtml = Buffer.from(html).toString('base64');
+        this.view.webContents.loadURL(`data:text/html;charset=UTF-8;base64,${encodedHtml}`);
     }
 }

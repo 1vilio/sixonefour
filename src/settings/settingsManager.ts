@@ -862,6 +862,22 @@ export class SettingsManager {
             </div>
 
             <div class="setting-group">
+                <h2>Downloads</h2>
+                <div class="setting-item">
+                    <span>Download Location</span>
+                    <div>
+                        <button class="theme-button" id="selectDownloadPath" style="width: 50px; height: 30px; padding: 0;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px;">
+                                <path d="M10 4H4c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
+                            </svg>
+                        </button>
+                        <button class="theme-button" id="resetDownloadPath">Default</button>
+                    </div>
+                </div>
+                <div class="description" id="downloadPathDescription"></div>
+            </div>
+
+            <div class="setting-group">
                 <h2 data-i18n="bypass">${this.translationService.translate('bypass')}</h2>
                 <div class="setting-item">
                     <span data-i18n="bypassMode">${this.translationService.translate('bypassMode')}</span>
@@ -1362,6 +1378,31 @@ export class SettingsManager {
             document.getElementById('adBlocker').addEventListener('change', (e) => {
                 ipcRenderer.send('setting-changed', { key: 'adBlocker', value: e.target.checked });
             });
+
+            document.getElementById('selectDownloadPath').addEventListener('click', async () => {
+                const path = await ipcRenderer.invoke('select-download-directory');
+                if (path) {
+                    document.getElementById('downloadPathDescription').textContent = path;
+                }
+            });
+
+            document.getElementById('resetDownloadPath').addEventListener('click', async () => {
+                const path = await ipcRenderer.invoke('reset-download-path');
+                if (path) {
+                    document.getElementById('downloadPathDescription').textContent = path;
+                }
+            });
+
+            // Load download path description
+            (async () => {
+                const downloadPath = await ipcRenderer.invoke('get-store-value', 'downloadPath');
+                if (downloadPath) {
+                    document.getElementById('downloadPathDescription').textContent = downloadPath;
+                } else {
+                    const defaultPath = await ipcRenderer.invoke('get-default-download-path');
+                    document.getElementById('downloadPathDescription').textContent = defaultPath;
+                }
+            })();
 
             // Discord settings
             document.getElementById('discordRichPresence').addEventListener('change', (e) => {

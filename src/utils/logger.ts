@@ -1,0 +1,37 @@
+import { appendFileSync, writeFileSync } from 'fs';
+import path from 'path';
+import util from 'util';
+
+// Resolve path to be in the project root, assuming this file is in src/utils/
+const logFilePath = path.join(__dirname, '..', '..', 'Log.txt');
+
+let initialized = false;
+
+/**
+ * A simple file logger that writes messages to Log.txt in the project root.
+ * @param args Arguments to log, similar to console.log.
+ */
+export function log(...args: any[]) {
+    if (!initialized) {
+        try {
+            // Clear the log file on first write
+            writeFileSync(logFilePath, `--- Log started at ${new Date().toISOString()} ---
+
+`);
+            initialized = true;
+        } catch (err) {
+            // Fallback to console if file system is not available
+            console.error('Failed to initialize file logger:', err);
+            console.log(...args);
+            return;
+        }
+    }
+
+    const message = util.format(...args);
+    try {
+        appendFileSync(logFilePath, message + '\n');
+    } catch (err) {
+        // Fallback for subsequent writes
+        console.error('Failed to write to log file:', err);
+    }
+}
