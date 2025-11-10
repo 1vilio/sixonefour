@@ -1,6 +1,7 @@
 import { app } from 'electron';
 import fs from 'fs';
 import path from 'path';
+import fetch from 'cross-fetch';
 import { SoundCloud } from 'scdl-core';
 import { NotificationManager } from '../notifications/notificationManager';
 import type { TrackInfo } from '../types';
@@ -90,6 +91,63 @@ export class DownloadService {
             console.error(`[DownloadService] Error downloading track: ${errorMessage}`);
             this.notificationManager.show(`Download failed: ${trackInfo.title}`);
             onStateChange('idle');
+        }
+    }
+
+    public async downloadArtwork(trackInfo: TrackInfo): Promise<void> {
+        if (!trackInfo || !trackInfo.artwork) {
+            console.error('[DownloadService] Invalid track info or no artwork provided for artwork download.');
+            this.notificationManager.show('Artwork download failed: Invalid track info');
+            return;
+        }
+
+        this.notificationManager.show(`Downloading artwork for: ${trackInfo.title}`);
+
+        try {
+            // Try to get the original PNG, which is usually the highest quality
+            const baseArtworkUrl = trackInfo.artwork.replace(/-\w+\.jpg$/, '');
+            const artworkUrlPng = `${baseArtworkUrl}-original.png`;
+            const artworkUrlJpg = `${baseArtworkUrl}-original.jpg`;
+
+            const downloadPath = this.store.get('downloadPath') as string || app.getPath('downloads');
+            const artworkFilename = sanitize(`${trackInfo.author} - ${trackInfo.title} (VilioSC).png`);
+            const artworkPath = path.join(downloadPath, artworkFilename);
+
+            console.log(`[DownloadService] Attempting to download artwork as PNG: ${artworkFilename}`);
+
+            let response = await fetch(artworkUrlPng);
+            
+            // If PNG fails, fallback to JPG
+            if (!response.ok) {
+                console.log(`[DownloadService] PNG artwork not found, falling back to JPG.`);
+                response = await fetch(artworkUrlJpg);
+            }
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch artwork (tried PNG and JPG): ${response.statusText}`);
+            }
+
+            // Get the image data as a buffer
+            const imageBuffer = await response.arrayBuffer();
+
+            // Write the buffer to a file
+            fs.writeFile(artworkPath, Buffer.from(imageBuffer), (err) => {
+                if (err) {
+                    console.error(`[DownloadService] Error writing artwork file: ${err.message}`);
+                    this.notificationManager.show(`Artwork download failed: ${trackInfo.title}`);
+                } else {
+                    console.log(`[DownloadService] Finished downloading artwork: ${artworkFilename}`);
+                    this.notificationManager.show(`Artwork download complete: ${trackInfo.title}`);
+                }
+            });
+
+        } catch (artworkError) {
+            let errorMessage = 'An unknown error occurred while downloading artwork';
+            if (artworkError instanceof Error) {
+                errorMessage = artworkError.message;
+            }
+            console.error(`[DownloadService] Error downloading artwork: ${errorMessage}`);
+            this.notificationManager.show(`Artwork download failed: ${trackInfo.title}`);
         }
     }
 }

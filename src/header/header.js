@@ -153,9 +153,13 @@ document.querySelector('.navigation-controls')?.addEventListener('click', (e) =>
                             updateNavigationState({ refreshing: true });
                         }
                         break;
-                    case 'download-btn':
-                        ipcRenderer.send('download-current-track');
-                        break;    }
+                                        case 'download-btn':
+                                            ipcRenderer.send('download-current-track');
+                                            break;
+                                        case 'download-artwork-btn':
+                                            ipcRenderer.invoke('download-artwork');
+                                            break;
+                        }
 });
 
 // Window control event listeners for Windows

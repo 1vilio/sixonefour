@@ -603,6 +603,16 @@ async function init() {
         }
     });
 
+    // Handle artwork download request
+    ipcMain.handle('download-artwork', () => {
+        if (lastTrackInfo && lastTrackInfo.url) {
+            downloadService.downloadArtwork(lastTrackInfo);
+        } else {
+            console.error('[Main] No track info available to download artwork.');
+            notificationManager.show('No track is currently playing.');
+        }
+    });
+
     // Provide current track info to settings preview on demand
     ipcMain.handle('get-current-track', () => {
         return lastTrackInfo;
