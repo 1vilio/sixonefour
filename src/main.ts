@@ -1231,6 +1231,9 @@ app.on('activate', function () {
 
 app.on('before-quit', () => {
     isQuitting = true;
+    if (headerView && headerView.webContents) {
+        headerView.webContents.send('cleanup');
+    }
     if (shortcutService) {
         shortcutService.destroy();
     }

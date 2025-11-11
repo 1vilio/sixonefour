@@ -42,7 +42,7 @@
     "openThemesFolder": "Open Themes Folder",
     "refreshThemes": "Refresh Themes",
     "customThemeDescription": "Place .css files in the themes folder to customize the SoundCloud UI",
-    "pressF1ToOpenSettings": "Press 'F1' to open settings",
+    "pressF1ToOpenSettings": "Press 'F1' or click the settings icon in the header to open settings",
     "closeSettings": "Close settings",
     "noActivityToShow": "No activity to show",
     "richPresencePreviewTitle": "Rich Presence Preview",

@@ -159,6 +159,9 @@ document.querySelector('.navigation-controls')?.addEventListener('click', (e) =>
                                         case 'download-artwork-btn':
                                             ipcRenderer.invoke('download-artwork');
                                             break;
+                                        case 'settings-btn':
+                                            ipcRenderer.send('toggle-settings');
+                                            break;
                         }
 });
 
@@ -254,8 +257,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    let windowStateInterval;
+
     // Check window state periodically
-    setInterval(() => {
+    windowStateInterval = setInterval(() => {
         ipcRenderer.invoke('is-maximized').then((maximized) => {
             if (isMaximized !== maximized) {
                 isMaximized = maximized;
@@ -263,6 +268,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }, 100);
+
+    // Listen for cleanup event
+    ipcRenderer.on('cleanup', () => {
+        if (windowStateInterval) {
+            clearInterval(windowStateInterval);
+        }
+    });
 
     // Listen for download state changes
     ipcRenderer.on('download-state-changed', (_, data) => {

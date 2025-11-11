@@ -40,7 +40,7 @@
     "openThemesFolder": "Abrir Carpeta de Temas",
     "refreshThemes": "Actualizar Temas",
     "customThemeDescription": "Coloque archivos .css en la carpeta de temas para personalizar la interfaz de SoundCloud",
-    "pressF1ToOpenSettings": "Presiona 'F1' para abrir configuración",
+    "pressF1ToOpenSettings": "Presiona 'F1' o haz clic en el icono de ajustes en el encabezado para abrir la configuración",
     "closeSettings": "Cerrar configuración",
     "noActivityToShow": "No hay actividad para mostrar",
     "richPresencePreviewTitle": "Vista Previa de Rich Presence"
