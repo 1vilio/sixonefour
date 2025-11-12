@@ -162,6 +162,9 @@ document.querySelector('.navigation-controls')?.addEventListener('click', (e) =>
                                         case 'settings-btn':
                                             ipcRenderer.send('toggle-settings');
                                             break;
+                                        case 'statistics-btn':
+                                            ipcRenderer.send('open-statistics-window');
+                                            break;
                         }
 });
 

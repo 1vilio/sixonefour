@@ -5,6 +5,7 @@ import fetch from 'cross-fetch';
 import { setupDarwinMenu } from './macos/menu';
 import { NotificationManager } from './notifications/notificationManager';
 import { SettingsManager } from './settings/settingsManager';
+import { StatisticsManager } from './services/statisticsManager';
 import { ProxyService } from './services/proxyService';
 import { PresenceService } from './services/presenceService';
 import { TranslationService } from './services/translationService';
@@ -18,6 +19,7 @@ import { ZapretService } from './services/zapretService';
 import { UrlInterceptorService } from './services/urlInterceptorService';
 import { audioMonitorScript } from './services/audioMonitorService';
 import type { TrackInfo, TrackUpdateMessage } from './types';
+import { listeningStatsService } from './services/listeningStatsService';
 import path = require('path');
 
 import { platform } from 'os';
@@ -72,6 +74,7 @@ let mainWindow: BrowserWindow;
 let widgetManager: WidgetManager;
 let notificationManager: NotificationManager;
 let settingsManager: SettingsManager;
+let statisticsManager: StatisticsManager;
 let proxyService: ProxyService;
 let presenceService: PresenceService;
 let webhookService: WebhookService;
@@ -298,6 +301,9 @@ let lastTrackInfo: TrackInfo = {
     isPlaying: false,
     url: '',
 };
+
+// Track current track for listening statistics
+let currentTrackForStats: { id: string; logged: boolean; duration: number; } | null = null;
 
 function setupWindowControls() {
     if (!mainWindow) return;
@@ -535,6 +541,7 @@ async function init() {
     notificationManager = new NotificationManager(mainWindow);
     downloadService = new DownloadService(notificationManager, store);
     settingsManager = new SettingsManager(mainWindow, store, translationService);
+    statisticsManager = new StatisticsManager(mainWindow);
     proxyService = new ProxyService(mainWindow, store, queueToastNotification);
     presenceService = new PresenceService(store, translationService);
     webhookService = new WebhookService(store);
@@ -552,6 +559,19 @@ async function init() {
     // Add settings toggle handler
     ipcMain.on('toggle-settings', () => {
         settingsManager.toggle();
+    });
+
+    // Add statistics toggle handler
+    ipcMain.on('open-statistics-window', () => {
+        statisticsManager.toggle();
+    });
+
+    ipcMain.on('toggle-statistics', () => {
+        statisticsManager.toggle();
+    });
+
+    ipcMain.handle('get-listening-stats', async (_event, period: 'weekly' | 'monthly') => {
+        return listeningStatsService.getStats(period);
     });
 
     // Handle Widget Actions
@@ -1332,12 +1352,54 @@ function setupTranslationHandlers() {
     });
 }
 
+function parseTimeToSeconds(timeString: string): number {
+    if (!timeString) return 0;
+    const parts = timeString.split(':').map(Number);
+    if (parts.length === 2) {
+        return parts[0] * 60 + parts[1];
+    } else if (parts.length === 3) {
+        return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    }
+    return 0;
+}
+
 // Setup audio event handler for track updates
 function setupAudioHandler() {
     ipcMain.on('soundcloud:track-update', async (_event, { data: result, reason }: TrackUpdateMessage) => {
         console.debug(`Track update received: ${reason}`);
 
         lastTrackInfo = result;
+
+        // Logic for Listening Statistics
+        if (result.isPlaying && result.title && result.author && result.duration && result.url) {
+            const trackId = result.url; // Using URL as a unique ID for the track
+            const parsedDuration = parseTimeToSeconds(result.duration);
+            const parsedElapsed = parseTimeToSeconds(result.elapsed);
+
+            if (parsedDuration > 0) { // Ensure duration is valid
+                // Check if it's a new track or the same track but not yet logged for stats
+                if (!currentTrackForStats || currentTrackForStats.id !== trackId) {
+                    currentTrackForStats = { id: trackId, logged: false, duration: parsedDuration };
+                    console.log(`New track detected for stats: ${result.title}`);
+                }
+
+                // Check if 50% of the track has been played and not yet logged
+                if (!currentTrackForStats.logged && parsedElapsed >= (currentTrackForStats.duration * 0.5)) {
+                    listeningStatsService.addListeningEntry({
+                        id: trackId,
+                        title: result.title,
+                        artist: result.author,
+                        duration: parsedDuration,
+                    });
+                    currentTrackForStats.logged = true;
+                    console.log(`Track "${result.title}" logged for listening stats (50% played).`);
+                }
+            }
+        } else if (!result.isPlaying) {
+            // If playback stops or pauses, reset currentTrackForStats
+            currentTrackForStats = null;
+            console.log('Playback stopped/paused, resetting track stats monitor.');
+        }
 
         // Update services only if track is playing
         if (result.isPlaying && result.title && result.author && result.duration) {

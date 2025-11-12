@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listening Statistics</title>
+    <link rel="stylesheet" href="statistics.css">
+</head>
+<body>
+    <button class="close-btn" id="close-statistics">
+        <svg viewBox="0 0 24 24">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+    </button>
+    <div class="container">
+        <h1>Listening Statistics</h1>
+        <div class="tabs">
+            <button class="tab-button active" data-period="weekly">Weekly</button>
+            <button class="tab-button" data-period="monthly">Monthly</button>
+        </div>
+        <div id="stats-content">
+            <!-- Stats will be loaded here -->
+            <div class="loader"></div>
+        </div>
+    </div>
+    <script src="statistics.js"></script>
+</body>
+</html>
