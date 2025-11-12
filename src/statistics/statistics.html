@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listening Statistics</title>
     <link rel="stylesheet" href="statistics.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <button class="close-btn" id="close-statistics">
@@ -17,10 +18,29 @@
         <div class="tabs">
             <button class="tab-button active" data-period="weekly">Weekly</button>
             <button class="tab-button" data-period="monthly">Monthly</button>
+            <button class="tab-button" data-period="thisYear">This Year</button>
+            <button class="tab-button" data-period="allTime">All Time</button>
         </div>
         <div id="stats-content">
             <!-- Stats will be loaded here -->
             <div class="loader"></div>
+        </div>
+
+        <div class="stats-section" id="top-tracks-section" style="display: none;">
+            <h2>Top 5 Tracks</h2>
+            <ul id="top-tracks-list"></ul>
+        </div>
+
+        <div class="stats-section" id="top-artists-section" style="display: none;">
+            <h2>Top 5 Artists</h2>
+            <ul id="top-artists-list"></ul>
+        </div>
+
+        <div class="stats-section" id="plays-per-hour-section" style="display: none;">
+            <h2>Listening Habits (Plays per Hour)</h2>
+            <div id="chart-container" style="position: relative; height: 40vh; width: 80vw; max-width: 400px; margin: auto;">
+                <canvas id="playsPerHourChart"></canvas>
+            </div>
         </div>
     </div>
     <script src="statistics.js"></script>

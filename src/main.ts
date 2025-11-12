@@ -1,4 +1,10 @@
-import { app, BrowserWindow, Menu, ipcMain, BrowserView, Tray, nativeImage, protocol, dialog } from 'electron';
+import { app, BrowserWindow, Menu, ipcMain, BrowserView, Tray, nativeImage, protocol, dialog, shell } from 'electron';
+// ... other imports
+
+// ... inside init() function, or after other ipcMain.on handlers
+    ipcMain.on('open-external-link', (_event, url: string) => {
+        shell.openExternal(url);
+    });
 import { ElectronBlocker, fullLists } from '@ghostery/adblocker-electron';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import fetch from 'cross-fetch';
@@ -570,8 +576,19 @@ async function init() {
         statisticsManager.toggle();
     });
 
-    ipcMain.handle('get-listening-stats', async (_event, period: 'weekly' | 'monthly') => {
+    ipcMain.handle('get-listening-stats', async (_event, period: 'weekly' | 'monthly' | 'thisYear' | 'allTime') => {
         return listeningStatsService.getStats(period);
+    });
+
+    // Handle in-app navigation from statistics links
+    ipcMain.on('navigate-in-app', (_event, url: string) => {
+        if (contentView) {
+            contentView.webContents.loadURL(url);
+            // Optionally hide the statistics panel after navigation
+            if (statisticsManager) {
+                statisticsManager.toggle();
+            }
+        }
     });
 
     // Handle Widget Actions
