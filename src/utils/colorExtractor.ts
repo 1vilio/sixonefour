@@ -77,14 +77,14 @@ export function extractThemeColors(cssContent: string): ThemeColors | null {
         extractVariable('accent-color') ||
         extractVariable('highlight-color') ||
         extractVariable('artist-color') ||
-        '#ff5500'; // SoundCloud orange fallback
+        '#1db954'; // New green fallback
 
     // Secondary color
     colors.secondary =
         extractVariable('secondary-color') ||
         extractVariable('button-secondary-background-color') ||
         extractVariable('artist-surface-color') ||
-        '#a89984'; // Gruvbox secondary fallback
+        '#157a3e'; // Muted green fallback
 
     // Background color
     colors.background =
@@ -115,7 +115,7 @@ export function extractThemeColors(cssContent: string): ThemeColors | null {
         extractVariable('font-special-color') ||
         extractVariable('special-color') ||
         extractVariable('artist-pro-color') ||
-        '#fe8019'; // Gruvbox accent fallback
+        '#1ed760'; // Brighter green fallback
 
     return colors as ThemeColors;
 }

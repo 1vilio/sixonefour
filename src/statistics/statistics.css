@@ -1,121 +1,192 @@
-/* Basic styling for the statistics page */
+/* src/statistics/statistics.css */
+:root {
+    --bg-color: rgba(18, 18, 18, 0.85);
+    --card-bg-color: rgba(42, 42, 42, 0.9);
+    --primary-text-color: #ffffff;
+    --secondary-text-color: #b3b3b3;
+    --accent-color: #1db954; /* A nice green, for example */
+    --border-color: rgba(255, 255, 255, 0.1);
+    --hover-color: rgba(255, 255, 255, 0.1);
+}
+
 body {
-    font-family: sans-serif;
-    background-color: rgba(30, 30, 30, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    color: var(--primary-text-color);
     margin: 0;
     padding: 20px;
     box-sizing: border-box;
     overflow-y: auto;
+    height: 100vh;
 }
 
 .close-btn {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 10px;
+    right: 10px;
     width: 32px;
     height: 32px;
-    border-radius: 4px;
+    border-radius: 50%;
     border: none;
-    background: transparent;
-    color: #fff;
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--primary-text-color);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s;
-    z-index: 10;
+    transition: background-color 0.2s, transform 0.2s;
+    z-index: 100;
 }
 
 .close-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.5);
+    transform: scale(1.1);
 }
 
 .close-btn svg {
-    width: 16px;
-    height: 16px;
-    fill: currentColor;
+    width: 18px;
+    height: 18px;
 }
 
 .container {
-    max-width: 600px;
+    max-width: 95%;
     margin: 0 auto;
+    padding-top: 40px;
 }
 
-h1 {
-    text-align: center;
+h1, h2 {
+    text-align: left;
     margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+}
+
+h2 {
+    font-size: 1.2em;
+    margin-top: 30px;
 }
 
 .tabs {
     display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+    justify-content: flex-start;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .tab-button {
     background: none;
-    border: 1px solid #555;
-    color: #fff;
-    padding: 10px 20px;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--secondary-text-color);
+    padding: 10px 15px;
     cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.tab-button:first-child {
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-
-.tab-button:last-child {
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-    border-left: none;
+    transition: color 0.3s, border-bottom-color 0.3s;
+    font-size: 1em;
+    margin-right: 10px;
 }
 
 .tab-button.active,
 .tab-button:hover {
-    background-color: #333;
+    color: var(--primary-text-color);
 }
 
-#stats-content {
-    background-color: #2a2a2a;
+.tab-button.active {
+    border-bottom-color: var(--accent-color);
+}
+
+.card {
+    background-color: var(--card-bg-color);
     padding: 20px;
-    border-radius: 5px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
 }
 
-.stat-item {
+#stats-content .stat-item {
     display: flex;
     justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #333;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.95em;
 }
 
-.stat-item:last-child {
+#stats-content .stat-item:last-child {
     border-bottom: none;
 }
 
 .stat-label {
-    font-weight: bold;
+    font-weight: 500;
+    color: var(--secondary-text-color);
 }
 
 .stat-value {
     text-align: right;
+    font-weight: 600;
+    color: var(--primary-text-color);
+}
+
+#top-tracks-list, #top-artists-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#top-tracks-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9em;
+}
+
+#top-artists-list li {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9em;
+}
+
+#top-tracks-list li:last-child, #top-artists-list li:last-child {
+    border-bottom: none;
+}
+
+.stat-artwork {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+#plays-per-hour-section {
+    padding: 20px;
 }
 
 .loader {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
+    border: 4px solid var(--border-color);
+    border-top: 4px solid var(--accent-color);
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     animation: spin 1s linear infinite;
-    margin: 20px auto;
+    margin: 50px auto;
 }
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: var(--primary-text-color);
+    text-decoration: underline;
 }

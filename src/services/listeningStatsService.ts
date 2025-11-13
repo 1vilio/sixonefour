@@ -1,6 +1,8 @@
 import { app } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import { EventEmitter } from 'events';
+import { artistArtworkService } from './artistArtworkService';
 
 interface TrackInfo {
     id: string;
@@ -20,16 +22,17 @@ interface ListeningStatsData {
 
 interface StatsResult {
     totalTracksPlayed: number;
-    mostPlayedTrack: { title: string; artist: string; playCount: number; url: string } | null;
+    mostPlayedTrack: { title: string; artist: string; playCount: number; url: string; } | null;
     totalListeningTime: { hours: number; minutes: number; seconds: number };
-    topTracks: Array<{ title: string; artist: string; playCount: number; url: string }>;
-    topArtists: Array<{ name: string; playCount: number }>;
+    topTracks: Array<{ title: string; artist: string; playCount: number; url: string; }>;
+    topArtists: Array<{ name: string; playCount: number; url: string; artwork?: string; }>;
     playsPerHour: number[]; // Array of 24 numbers, representing plays for each hour
 }
 
 class ListeningStatsService {
     private dataFilePath: string;
     private data: ListeningStatsData = { entries: [] };
+    public events = new EventEmitter();
 
     constructor() {
         const userDataPath = app.getPath('userData');
@@ -64,10 +67,11 @@ class ListeningStatsService {
         };
         this.data.entries.push(newEntry);
         this.saveData();
+        this.events.emit('stats-updated');
         console.log('Added new listening entry:', newEntry);
     }
 
-    public getStats(period: 'weekly' | 'monthly' | 'thisYear' | 'allTime'): StatsResult {
+    public async getStats(period: 'weekly' | 'monthly' | 'thisYear' | 'allTime'): Promise<StatsResult> {
         const now = Date.now();
         let startDate: number;
 
@@ -86,14 +90,15 @@ class ListeningStatsService {
 
         const totalTracksPlayed = filteredEntries.length;
 
-        const trackPlayCounts = new Map<string, { title: string; artist: string; count: number; url: string }>();
-        const artistPlayCounts = new Map<string, { name: string; count: number }>();
+        const trackPlayCounts = new Map<string, { title: string; artist: string; count: number; url: string; }>();
+        const artistPlayCounts = new Map<string, { name: string; count: number; url: string }>();
         const playsPerHour: number[] = new Array(24).fill(0);
         let totalListeningTimeSeconds = 0;
 
         for (const entry of filteredEntries) {
             const trackId = entry.track.id;
             const artistName = entry.track.artist;
+            const trackUrl = entry.track.id;
 
             // Track play counts
             if (trackPlayCounts.has(trackId)) {
@@ -103,7 +108,7 @@ class ListeningStatsService {
                     title: entry.track.title,
                     artist: artistName,
                     count: 1,
-                    url: entry.track.id,
+                    url: trackUrl,
                 });
             }
 
@@ -111,9 +116,13 @@ class ListeningStatsService {
             if (artistPlayCounts.has(artistName)) {
                 artistPlayCounts.get(artistName)!.count++;
             } else {
+                // Extract artist URL from track URL
+                const urlParts = trackUrl.split('/');
+                const artistUrl = urlParts.slice(0, 4).join('/');
                 artistPlayCounts.set(artistName, {
                     name: artistName,
                     count: 1,
+                    url: artistUrl,
                 });
             }
 
@@ -126,7 +135,7 @@ class ListeningStatsService {
         }
 
         // Most played track
-        let mostPlayedTrack: { title: string; artist: string; playCount: number; url: string } | null = null;
+        let mostPlayedTrack: { title: string; artist: string; playCount: number; url: string; } | null = null;
         let maxTrackPlayCount = 0;
         for (const [, trackData] of trackPlayCounts) {
             if (trackData.count > maxTrackPlayCount) {
@@ -134,7 +143,7 @@ class ListeningStatsService {
                 mostPlayedTrack = {
                     title: trackData.title,
                     artist: trackData.artist,
-                    playCount: trackData.count, // Corrected property name
+                    playCount: trackData.count,
                     url: trackData.url,
                 };
             }
@@ -147,18 +156,25 @@ class ListeningStatsService {
             .map(track => ({
                 title: track.title,
                 artist: track.artist,
-                playCount: track.count, // Corrected property name
+                playCount: track.count,
                 url: track.url,
             }));
 
         // Top 5 artists
-        const topArtists = Array.from(artistPlayCounts.values())
+        let topArtists = Array.from(artistPlayCounts.values())
             .sort((a, b) => b.count - a.count)
             .slice(0, 5)
             .map(artist => ({
                 name: artist.name,
-                playCount: artist.count, // Corrected property name
+                playCount: artist.count,
+                url: artist.url,
             }));
+
+        // Fetch artist artwork
+        topArtists = await Promise.all(topArtists.map(async (artist) => {
+            const artwork = await artistArtworkService.getArtistArtwork(artist.url);
+            return { ...artist, artwork };
+        }));
 
         const hours = Math.floor(totalListeningTimeSeconds / 3600);
         const minutes = Math.floor((totalListeningTimeSeconds % 3600) / 60);

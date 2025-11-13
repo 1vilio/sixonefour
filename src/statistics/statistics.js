@@ -36,6 +36,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Listen for real-time updates
+    ipcRenderer.on('stats-updated', () => {
+        const activeTab = document.querySelector('.tab-button.active');
+        if (activeTab) {
+            const period = activeTab.dataset.period;
+            loadStats(period);
+        }
+    });
+
     async function loadStats(period) {
         statsContent.innerHTML = '<div class="loader"></div>';
         
@@ -62,7 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="stat-item">
                 <span class="stat-label">Most Played Track:</span>
                 <span class="stat-value">
-                    ${stats.mostPlayedTrack ? `<a href="${stats.mostPlayedTrack.url}">${stats.mostPlayedTrack.title}</a> by ${stats.mostPlayedTrack.artist} (${stats.mostPlayedTrack.playCount} plays)` : 'N/A'}
+                    ${stats.mostPlayedTrack ? `
+                        <a href="${stats.mostPlayedTrack.url}">${stats.mostPlayedTrack.title}</a> by ${stats.mostPlayedTrack.artist} (${stats.mostPlayedTrack.playCount} plays)
+                    ` : 'N/A'}
                 </span>
             </div>
             <div class="stat-item">
@@ -75,7 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (stats.topTracks && stats.topTracks.length > 0) {
             document.getElementById('top-tracks-section').style.display = 'block';
             topTracksList.innerHTML = stats.topTracks.map(track => `
-                <li><a href="${track.url}">${track.title}</a> by ${track.artist} (${track.playCount} plays)</li>
+                <li>
+                    <a href="${track.url}">${track.title}</a> by ${track.artist} (${track.playCount} plays)
+                </li>
             `).join('');
         } else {
             document.getElementById('top-tracks-section').style.display = 'none';
@@ -84,8 +97,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Render Top Artists
         if (stats.topArtists && stats.topArtists.length > 0) {
             document.getElementById('top-artists-section').style.display = 'block';
+            const placeholder = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="gray"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
             topArtistsList.innerHTML = stats.topArtists.map(artist => `
-                <li>${artist.name} (${artist.playCount} plays)</li>
+                <li>
+                    <img src="${artist.artwork || placeholder}" class="stat-artwork" alt="Artist Artwork">
+                    <a href="${artist.url}">${artist.name}</a> (${artist.playCount} plays)
+                </li>
             `).join('');
         } else {
             document.getElementById('top-artists-section').style.display = 'none';
@@ -100,52 +117,98 @@ document.addEventListener('DOMContentLoaded', () => {
                 playsPerHourChart.destroy(); // Destroy existing chart instance
             }
 
-            // Generate a color palette for the doughnut chart
-            const backgroundColors = [
-                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FFCD56', '#C9CBCF',
-                '#7CFC00', '#ADD8E6', '#F08080', '#20B2AA', '#BA55D3', '#8B0000', '#008080', '#DDA0DD',
-                '#6A5ACD', '#FFD700', '#A9A9A9', '#B0C4DE', '#FFB6C1', '#87CEEB', '#32CD32', '#DA70D6'
-            ];
-            const borderColors = backgroundColors.map(color => color.replace('0.6', '1'));
+            const accentColor = '#1db954';
+            const backgroundColors = Array.from({ length: 24 }, (_, i) => 
+                `rgba(29, 185, 84, ${0.2 + (i / 36) * 0.8})` // More variance in opacity
+            );
+            const borderColors = Array.from({ length: 24 }, () => accentColor);
+            const totalPlays = stats.playsPerHour.reduce((a, b) => a + b, 0);
 
             playsPerHourChart = new Chart(ctx, {
-                type: 'doughnut', // Changed to doughnut chart
+                type: 'doughnut',
                 data: {
-                    labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+                    labels: Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`),
                     datasets: [{
                         label: 'Plays',
                         data: stats.playsPerHour,
                         backgroundColor: backgroundColors,
                         borderColor: borderColors,
-                        borderWidth: 1
+                        borderWidth: 1.5,
+                        hoverOffset: 8,
+                        hoverBorderColor: '#fff'
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true, // Set to true to respect container aspect ratio
+                    maintainAspectRatio: false,
+                    cutout: '80%',
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    },
                     plugins: {
                         legend: {
-                            position: 'right', // Position legend to the right for better readability
-                            labels: {
-                                color: '#fff'
-                            }
+                            display: false
                         },
                         tooltip: {
+                            enabled: true,
+                            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#b3b3b3',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            padding: 10,
+                            cornerRadius: 4,
+                            displayColors: false,
                             callbacks: {
+                                title: () => null, // Hide title
                                 label: function(context) {
-                                    let label = context.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed !== null) {
-                                        label += context.parsed + ' plays';
-                                    }
-                                    return label;
+                                    let hour = context.label || '';
+                                    let plays = context.parsed;
+                                    return `${hour}: ${plays} plays`;
                                 }
                             }
+                        },
+                        // A plugin to draw text in the center
+                        customCanvasBackgroundColor: {
+                            color: 'lightGreen',
+                        },
+                    },
+                    elements: {
+                        arc: {
+                            borderRadius: 5,
                         }
                     }
-                }
+                },
+                plugins: [{
+                    id: 'centerText',
+                    beforeDraw: function(chart) {
+                        const width = chart.width,
+                              height = chart.height,
+                              ctx = chart.ctx;
+                        ctx.restore();
+                        const fontSize = (height / 160).toFixed(2);
+                        ctx.font = `${fontSize}em sans-serif`;
+                        ctx.textBaseline = 'middle';
+
+                        const text = `${totalPlays}`,
+                              textX = Math.round((width - ctx.measureText(text).width) / 2),
+                              textY = height / 2 - 15;
+                        
+                        const text2 = 'Total Plays',
+                              text2X = Math.round((width - ctx.measureText(text2).width) / 2),
+                              text2Y = height / 2 + 15;
+
+                        ctx.fillStyle = '#fff';
+                        ctx.fillText(text, textX, textY);
+                        
+                        ctx.fillStyle = '#b3b3b3';
+                        ctx.font = `${(fontSize / 2).toFixed(2)}em sans-serif`;
+                        ctx.fillText(text2, text2X, text2Y);
+
+                        ctx.save();
+                    }
+                }]
             });
         } else {
             document.getElementById('plays-per-hour-section').style.display = 'none';

@@ -8,38 +8,41 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <button class="close-btn" id="close-statistics">
-        <svg viewBox="0 0 24 24">
+    <button class="close-btn" id="close-statistics" title="Close Statistics">
+        <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
         </svg>
     </button>
     <div class="container">
-        <h1>Listening Statistics</h1>
+        <h1>SoundCloud - Listening Statistics</h1>
         <div class="tabs">
             <button class="tab-button active" data-period="weekly">Weekly</button>
             <button class="tab-button" data-period="monthly">Monthly</button>
             <button class="tab-button" data-period="thisYear">This Year</button>
             <button class="tab-button" data-period="allTime">All Time</button>
         </div>
-        <div id="stats-content">
-            <!-- Stats will be loaded here -->
-            <div class="loader"></div>
-        </div>
 
-        <div class="stats-section" id="top-tracks-section" style="display: none;">
-            <h2>Top 5 Tracks</h2>
-            <ul id="top-tracks-list"></ul>
-        </div>
+        <div id="stats-container">
+            <div class="card" id="stats-content">
+                <!-- General stats will be loaded here -->
+                <div class="loader"></div>
+            </div>
 
-        <div class="stats-section" id="top-artists-section" style="display: none;">
-            <h2>Top 5 Artists</h2>
-            <ul id="top-artists-list"></ul>
-        </div>
+            <div class="card" id="top-tracks-section" style="display: none;">
+                <h2>Top 5 Tracks</h2>
+                <ul id="top-tracks-list"></ul>
+            </div>
 
-        <div class="stats-section" id="plays-per-hour-section" style="display: none;">
-            <h2>Listening Habits (Plays per Hour)</h2>
-            <div id="chart-container" style="position: relative; height: 40vh; width: 80vw; max-width: 400px; margin: auto;">
-                <canvas id="playsPerHourChart"></canvas>
+            <div class="card" id="top-artists-section" style="display: none;">
+                <h2>Top 5 Artists</h2>
+                <ul id="top-artists-list"></ul>
+            </div>
+
+            <div class="card" id="plays-per-hour-section" style="display: none;">
+                <h2>Plays per Hour</h2>
+                <div id="chart-container" style="position: relative; height:300px; width:100%;">
+                    <canvas id="playsPerHourChart"></canvas>
+                </div>
             </div>
         </div>
     </div>

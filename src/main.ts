@@ -548,6 +548,16 @@ async function init() {
     downloadService = new DownloadService(notificationManager, store);
     settingsManager = new SettingsManager(mainWindow, store, translationService);
     statisticsManager = new StatisticsManager(mainWindow);
+
+    listeningStatsService.events.on('stats-updated', () => {
+        if (statisticsManager) {
+            const statsView = statisticsManager.getView();
+            if (statsView && statsView.webContents) {
+                statsView.webContents.send('stats-updated');
+            }
+        }
+    });
+
     proxyService = new ProxyService(mainWindow, store, queueToastNotification);
     presenceService = new PresenceService(store, translationService);
     webhookService = new WebhookService(store);
