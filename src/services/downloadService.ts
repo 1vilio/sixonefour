@@ -7,6 +7,7 @@ import { NotificationManager } from '../notifications/notificationManager';
 import type { TrackInfo } from '../types';
 import type ElectronStore from 'electron-store';
 import sanitize from 'sanitize-filename';
+import { log } from '../utils/logger';
 
 export class DownloadService {
     private notificationManager: NotificationManager;
@@ -24,16 +25,16 @@ export class DownloadService {
         }
 
         try {
-            console.log('[DownloadService] Connecting to SoundCloud...');
+            log('[DownloadService] Connecting to SoundCloud...');
             await SoundCloud.connect();
             this.isConnected = true;
-            console.log('[DownloadService] Connection to SoundCloud successful.');
+            log('[DownloadService] Connection to SoundCloud successful.');
         } catch (error) {
             let errorMessage = 'Failed to connect to SoundCloud for downloading.';
             if (error instanceof Error) {
                 errorMessage = error.message;
             }
-            console.error(`[DownloadService] Connection failed:`, error);
+            log(`[ERROR] [DownloadService] Connection failed:`, error);
             this.notificationManager.show(errorMessage);
         }
     }
@@ -43,13 +44,13 @@ export class DownloadService {
         await this.connect();
 
         if (!this.isConnected) {
-            console.error('[DownloadService] Cannot download, not connected to SoundCloud.');
+            log('[ERROR] [DownloadService] Cannot download, not connected to SoundCloud.');
             onStateChange('idle');
             return;
         }
 
         if (!trackInfo || !trackInfo.url) {
-            console.error('[DownloadService] Invalid track info provided.');
+            log('[ERROR] [DownloadService] Invalid track info provided.');
             this.notificationManager.show('Download failed: Invalid track info');
             onStateChange('idle');
             return;
@@ -61,7 +62,7 @@ export class DownloadService {
         const downloadPath = this.store.get('downloadPath') as string || app.getPath('downloads');
         const filePath = path.join(downloadPath, filename);
 
-        console.log(`[DownloadService] Starting download for: ${filename}`);
+        log(`[DownloadService] Starting download for: ${filename}`);
         this.notificationManager.show(`Downloading: ${trackInfo.title}`);
 
         try {
@@ -71,13 +72,13 @@ export class DownloadService {
             stream.pipe(writer);
 
             writer.on('finish', () => {
-                console.log(`[DownloadService] Finished downloading: ${filename}`);
+                log(`[DownloadService] Finished downloading: ${filename}`);
                 this.notificationManager.show(`Download complete: ${trackInfo.title}`);
                 onStateChange('idle');
             });
 
             writer.on('error', (err) => {
-                console.error(`[DownloadService] Error writing file: ${err.message}`);
+                log(`[ERROR] [DownloadService] Error writing file: ${err.message}`);
                 this.notificationManager.show(`Download failed: ${trackInfo.title}`);
                 onStateChange('idle');
                 // Clean up partially downloaded file
@@ -88,7 +89,7 @@ export class DownloadService {
             if (error instanceof Error) {
                 errorMessage = error.message;
             }
-            console.error(`[DownloadService] Error downloading track: ${errorMessage}`);
+            log(`[ERROR] [DownloadService] Error downloading track: ${errorMessage}`);
             this.notificationManager.show(`Download failed: ${trackInfo.title}`);
             onStateChange('idle');
         }
@@ -96,7 +97,7 @@ export class DownloadService {
 
     public async downloadArtwork(trackInfo: TrackInfo): Promise<void> {
         if (!trackInfo || !trackInfo.artwork) {
-            console.error('[DownloadService] Invalid track info or no artwork provided for artwork download.');
+            log('[ERROR] [DownloadService] Invalid track info or no artwork provided for artwork download.');
             this.notificationManager.show('Artwork download failed: Invalid track info');
             return;
         }
@@ -113,13 +114,13 @@ export class DownloadService {
             const artworkFilename = sanitize(`${trackInfo.author} - ${trackInfo.title} (VilioSC).png`);
             const artworkPath = path.join(downloadPath, artworkFilename);
 
-            console.log(`[DownloadService] Attempting to download artwork as PNG: ${artworkFilename}`);
+            log(`[DownloadService] Attempting to download artwork as PNG: ${artworkFilename}`);
 
             let response = await fetch(artworkUrlPng);
             
             // If PNG fails, fallback to JPG
             if (!response.ok) {
-                console.log(`[DownloadService] PNG artwork not found, falling back to JPG.`);
+                log(`[DownloadService] PNG artwork not found, falling back to JPG.`);
                 response = await fetch(artworkUrlJpg);
             }
 
@@ -133,10 +134,10 @@ export class DownloadService {
             // Write the buffer to a file
             fs.writeFile(artworkPath, Buffer.from(imageBuffer), (err) => {
                 if (err) {
-                    console.error(`[DownloadService] Error writing artwork file: ${err.message}`);
+                    log(`[ERROR] [DownloadService] Error writing artwork file: ${err.message}`);
                     this.notificationManager.show(`Artwork download failed: ${trackInfo.title}`);
                 } else {
-                    console.log(`[DownloadService] Finished downloading artwork: ${artworkFilename}`);
+                    log(`[DownloadService] Finished downloading artwork: ${artworkFilename}`);
                     this.notificationManager.show(`Artwork download complete: ${trackInfo.title}`);
                 }
             });
@@ -146,7 +147,7 @@ export class DownloadService {
             if (artworkError instanceof Error) {
                 errorMessage = artworkError.message;
             }
-            console.error(`[DownloadService] Error downloading artwork: ${errorMessage}`);
+            log(`[ERROR] [DownloadService] Error downloading artwork: ${errorMessage}`);
             this.notificationManager.show(`Artwork download failed: ${trackInfo.title}`);
         }
     }

@@ -4,6 +4,7 @@ import { Client as DiscordClient, SetActivity } from '@xhayper/discord-rpc';
 import { TranslationService } from './translationService';
 import { normalizeTrackInfo } from '../utils/trackParser';
 import type { TrackInfo } from '../types';
+import { log } from '../utils/logger';
 
 export interface Info {
     rpc: DiscordClient;
@@ -34,7 +35,17 @@ export class PresenceService {
             autoReconnect: true,
         };
 
-        this.info.rpc.login().catch(console.error);
+        this.info.rpc.on('ready', () => {
+            log('[DiscordRPC] Client is ready.');
+            this.info.ready = true;
+        });
+
+        this.info.rpc.on('disconnected', () => {
+            this.info.ready = false;
+            log('[DiscordRPC] Client has been disconnected.');
+        });
+
+        this.info.rpc.login().catch(err => log('[ERROR] [DiscordRPC] Failed to login:', err));
     }
 
     public async updatePresence(trackInfo: TrackInfo): Promise<void> {
@@ -46,7 +57,7 @@ export class PresenceService {
 
             if (trackInfo.isPlaying) {
                 if (!trackInfo.title || !trackInfo.author) {
-                    console.log('Incomplete track info:', trackInfo);
+                    log('[WARN] [DiscordRPC] Incomplete track info, not updating presence:', trackInfo);
                     return;
                 }
 
@@ -89,7 +100,7 @@ export class PresenceService {
                 if (totalMilliseconds <= 0) return;
 
                 if (!this.info.rpc.isConnected) {
-                    if (await !this.info.rpc.login().catch(console.error)) {
+                    if (await !this.info.rpc.login().catch(err => log('[ERROR] [DiscordRPC] Failed to login during update:', err))) {
                         return;
                     }
                 }
@@ -136,7 +147,7 @@ export class PresenceService {
                 this.info.rpc.user?.clearActivity();
             }
         } catch (error) {
-            console.error('Error during RPC update:', error);
+            log('[ERROR] [DiscordRPC] Error during RPC update:', error);
         }
     }
 
@@ -153,7 +164,7 @@ export class PresenceService {
     }
 
     public async reconnect(): Promise<void> {
-        await this.info.rpc.login().catch(console.error);
+        await this.info.rpc.login().catch(err => log('[ERROR] [DiscordRPC] Failed to reconnect:', err));
     }
 
     public isConnected(): boolean {

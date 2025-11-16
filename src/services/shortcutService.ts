@@ -1,4 +1,5 @@
 import { BrowserWindow, globalShortcut } from 'electron';
+import { log } from '../utils/logger';
 
 interface Shortcut {
     accelerator: string;
@@ -53,18 +54,22 @@ export class ShortcutService {
         for (const [id, shortcut] of this.shortcuts) {
             if (shortcut.enabled === false) continue;
 
-            const success = globalShortcut.register(shortcut.accelerator, () => {
-                if (!shortcut.global && (!this.window || !this.window.isFocused())) return;
+            try {
+                const success = globalShortcut.register(shortcut.accelerator, () => {
+                    if (!shortcut.global && (!this.window || !this.window.isFocused())) return;
 
-                try {
-                    shortcut.action();
-                } catch (error) {
-                    console.error(`Error executing shortcut '${id}':`, error);
+                    try {
+                        shortcut.action();
+                    } catch (error) {
+                        log(`[ERROR] [Shortcuts] Error executing shortcut '${id}':`, error);
+                    }
+                });
+
+                if (!success) {
+                    log(`[WARN] [Shortcuts] Failed to register shortcut '${id}' (${shortcut.accelerator})`);
                 }
-            });
-
-            if (!success) {
-                console.warn(`Failed to register shortcut '${id}' (${shortcut.accelerator})`);
+            } catch (error) {
+                log(`[ERROR] [Shortcuts] Failed to register shortcut '${id}' (${shortcut.accelerator}):`, error);
             }
         }
 

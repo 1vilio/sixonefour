@@ -2,6 +2,7 @@ import type ElectronStore = require('electron-store');
 import fetch from 'cross-fetch';
 import { normalizeTrackInfo } from '../utils/trackParser';
 import type { WebhookTrackData as WebhookInputData } from '../types';
+import { log } from '../utils/logger';
 
 export interface WebhookTrackData {
     artist: string;
@@ -35,7 +36,7 @@ function timeStringToSeconds(timeStr: string | undefined): number {
         }
         return Math.max(1, Math.abs(seconds));
     } catch (error) {
-        console.error('Error parsing time string:', error);
+        log('[ERROR] [Webhook] Error parsing time string:', error);
         return 240;
     }
 }
@@ -120,12 +121,12 @@ export class WebhookService {
             });
 
             if (!response.ok) {
-                console.error('Webhook failed:', response.status, response.statusText);
+                log(`[ERROR] [Webhook] Webhook failed: ${response.status} ${response.statusText}`);
             } else {
-                console.log(`Webhook sent for ${trackData.artist} - ${trackData.track}`);
+                log(`[Webhook] Webhook sent for ${trackData.artist} - ${trackData.track}`);
             }
         } catch (error) {
-            console.error('Failed to send webhook:', error);
+            log('[ERROR] [Webhook] Failed to send webhook:', error);
         }
     }
 

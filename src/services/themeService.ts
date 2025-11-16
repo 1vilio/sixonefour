@@ -4,6 +4,7 @@ import { join, basename, extname } from 'path';
 import type ElectronStore from 'electron-store';
 import { EventEmitter } from 'events';
 import { extractThemeColors, type ThemeColors } from '../utils/colorExtractor';
+import { log } from '../utils/logger';
 
 export interface CustomTheme {
     name: string;
@@ -41,10 +42,10 @@ export class ThemeService {
         try {
             if (!existsSync(this.themesPath)) {
                 require('fs').mkdirSync(this.themesPath, { recursive: true });
-                console.log(`Created themes directory at: ${this.themesPath}`);
+                log(`[Themes] Created themes directory at: ${this.themesPath}`);
             }
         } catch (error) {
-            console.error('Failed to create themes directory:', error);
+            log('[ERROR] [Themes] Failed to create themes directory:', error);
         }
     }
 
@@ -95,14 +96,14 @@ export class ThemeService {
 
                         this.customThemes.set(themeName, theme);
 
-                        console.log(`Loaded custom theme: ${themeName}`);
+                        log(`[Themes] Loaded custom theme: ${themeName}`);
                     } catch (error) {
-                        console.error(`Failed to load theme ${file}:`, error);
+                        log(`[ERROR] [Themes] Failed to load theme ${file}:`, error);
                     }
                 }
             }
         } catch (error) {
-            console.error('Failed to load custom themes:', error);
+            log('[ERROR] [Themes] Failed to load custom themes:', error);
         }
     }
 
@@ -148,7 +149,7 @@ export class ThemeService {
                             this.emitter.emit('custom-theme-updated', themeName);
                         }
                     } catch (err) {
-                        console.error('Error handling theme file change:', err);
+                        log('[ERROR] [Themes] Error handling theme file change:', err);
                     }
                 };
 
@@ -162,7 +163,7 @@ export class ThemeService {
                 } catch {}
             };
         } catch (error) {
-            console.error('Failed to watch themes folder:', error);
+            log('[ERROR] [Themes] Failed to watch themes folder:', error);
         }
     }
 
@@ -212,7 +213,7 @@ export class ThemeService {
 
             const theme = this.customThemes.get(themeName);
             if (!theme) {
-                console.error(`Theme ${themeName} not found`);
+                log(`[ERROR] [Themes] Theme ${themeName} not found`);
                 return false;
             }
 
@@ -221,10 +222,10 @@ export class ThemeService {
             // Notify listeners so UI can update immediately
             this.emitter.emit('custom-theme-updated', themeName);
 
-            console.log(`Applied custom theme: ${themeName}`);
+            log(`[Themes] Applied custom theme: ${themeName}`);
             return true;
         } catch (error) {
-            console.error('Failed to apply custom theme:', error);
+            log('[ERROR] [Themes] Failed to apply custom theme:', error);
             return false;
         }
     }
@@ -236,10 +237,10 @@ export class ThemeService {
             // Notify listeners to remove style
             this.emitter.emit('custom-theme-updated', null);
 
-            console.log('Removed custom theme');
+            log('[Themes] Removed custom theme');
             return true;
         } catch (error) {
-            console.error('Failed to remove custom theme:', error);
+            log('[ERROR] [Themes] Failed to remove custom theme:', error);
             return false;
         }
     }

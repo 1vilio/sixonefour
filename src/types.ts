@@ -109,7 +109,7 @@ export interface Translations {
 /**
  * Update reason for track state changes
  */
-export type TrackUpdateReason = 'playback-state-change' | 'track-change' | 'seek-change' | 'initial-state';
+export type TrackUpdateReason = 'playback-state-change' | 'track-change' | 'seek-change' | 'initial-state' | 'playback-progress';
 
 /**
  * Message sent from renderer to main process for track updates

@@ -1095,6 +1095,15 @@ export class SettingsManager {
             </div>
 
             <div class="setting-group">
+                <h2>Debugging</h2>
+                <div class="setting-item">
+                    <span>View Application Logs</span>
+                    <button id="openLogFile" class="theme-button">Open Log</button>
+                </div>
+                <div class="description">If you encounter an issue, please include this log file in your bug report.</div>
+            </div>
+
+            <div class="setting-group">
                 <button class="button" id="applyChanges" data-i18n="applyChanges">${this.translationService.translate('applyChanges')}</button>
             </div>
         </div>
@@ -1772,6 +1781,11 @@ export class SettingsManager {
             // Listen for track updates from main process
             ipcRenderer.on('presence-preview-update', (_, trackInfo) => {
                 updatePreviewTrackInfo(trackInfo);
+            });
+
+            // Open log file
+            document.getElementById('openLogFile').addEventListener('click', () => {
+                ipcRenderer.send('open-log-file');
             });
 
             // Apply all changes

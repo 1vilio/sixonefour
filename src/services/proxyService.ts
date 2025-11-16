@@ -1,5 +1,6 @@
 import { BrowserWindow } from 'electron';
 import type ElectronStore = require('electron-store');
+import { log } from '../utils/logger';
 
 interface ProxyData {
     user: string;
@@ -25,16 +26,16 @@ export class ProxyService {
 
         if (proxyEnabled && proxyHost && proxyPort) {
             try {
-                await this.window.webContents.session.setProxy({
-                    proxyRules: `http://${proxyHost}:${proxyPort}`,
-                });
-                console.log(`Proxy enabled: http://${proxyHost}:${proxyPort}`);
+                const proxyRules = `http://${proxyHost}:${proxyPort}`;
+                await this.window.webContents.session.setProxy({ proxyRules });
+                log(`[ProxyService] Proxy enabled: ${proxyRules}`);
             } catch (err) {
-                console.error('Failed to set proxy:', err);
+                log('[ERROR] [ProxyService] Failed to set proxy:', err);
                 this.onNotification('Failed to set proxy. Check your settings.');
             }
         } else {
             await this.window.webContents.session.setProxy({ mode: 'direct' });
+            log('[ProxyService] Proxy disabled.');
         }
     }
 

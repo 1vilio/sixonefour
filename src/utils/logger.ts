@@ -1,11 +1,13 @@
 import { appendFileSync, writeFileSync } from 'fs';
 import path from 'path';
 import util from 'util';
+import { app } from 'electron';
 
-// Resolve path to be in the project root, assuming this file is in src/utils/
-const logFilePath = path.join(__dirname, '..', '..', 'Log.txt');
+// Resolve path to the standard log directory
+export const logFilePath = path.join(app.getPath('logs'), 'main.log');
 
 let initialized = false;
+
 
 /**
  * A simple file logger that writes messages to Log.txt in the project root.

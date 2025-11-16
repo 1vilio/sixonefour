@@ -1,4 +1,5 @@
 import fetch from 'cross-fetch';
+import { log } from '../utils/logger';
 
 class ArtistArtworkService {
     private artworkCache = new Map<string, string>();
@@ -11,7 +12,7 @@ class ArtistArtworkService {
         try {
             const response = await fetch(artistUrl);
             if (!response.ok) {
-                console.error(`Failed to fetch artist page: ${response.statusText}`);
+                log(`[ERROR] [Artwork] Failed to fetch artist page: ${response.statusText}`);
                 return null;
             }
 
@@ -20,15 +21,15 @@ class ArtistArtworkService {
 
             if (match && match[1]) {
                 const artworkUrl = match[1];
-                console.log(`Found artist artwork for ${artistUrl}: ${artworkUrl}`);
+                log(`[Artwork] Found artist artwork for ${artistUrl}: ${artworkUrl}`);
                 this.artworkCache.set(artistUrl, artworkUrl);
                 return artworkUrl;
             }
 
-            console.log(`Could not find artist artwork for ${artistUrl}`);
+            log(`[WARN] [Artwork] Could not find artist artwork for ${artistUrl}`);
             return null;
         } catch (error) {
-            console.error(`Error fetching or parsing artist page for ${artistUrl}:`, error);
+            log(`[ERROR] [Artwork] Error fetching or parsing artist page for ${artistUrl}:`, error);
             return null;
         }
     }

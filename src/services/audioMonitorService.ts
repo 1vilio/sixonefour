@@ -39,24 +39,34 @@ export const audioMonitorScript = `
   function notifyPlaybackStateChange() {
     const trackInfo = getTrackInfo();
     const stateChanged = trackInfo.isPlaying !== isCurrentlyPlaying;
-    const trackChanged = 
-      trackInfo.title !== currentTrackTitle || 
-      trackInfo.author !== currentTrackAuthor ||
-      trackInfo.url !== currentTrackUrl;
+    const trackChanged = trackInfo.url && trackInfo.url !== currentTrackUrl;
     const elapsedChanged = trackInfo.elapsed !== currentTrackElapsed;
-    const durationChanged = trackInfo.duration !== currentTrackDuration;
+
+    let reason = null;
     
-    if (stateChanged || trackChanged || elapsedChanged || !window.__initialStateSent) {
-      isCurrentlyPlaying = trackInfo.isPlaying;
-      currentTrackTitle = trackInfo.title;
-      currentTrackAuthor = trackInfo.author;
-      currentTrackUrl = trackInfo.url;
-      currentTrackElapsed = trackInfo.elapsed;
-      currentTrackDuration = trackInfo.duration;
-      window.__initialStateSent = true;
-      
-      window.soundcloudAPI.sendTrackUpdate(trackInfo, 'playback-state-change');
-      console.debug('Playbook state change:', trackInfo.isPlaying ? 'playing' : 'paused', trackInfo);
+    if (trackChanged) {
+        reason = 'track-change';
+    } else if (stateChanged) {
+        reason = 'playback-state-change';
+    } else if (elapsedChanged && trackInfo.isPlaying) {
+        reason = 'playback-progress';
+    }
+
+    if (reason || !window.__initialStateSent) {
+        if (!reason) {
+            reason = 'initial-state';
+        }
+
+        isCurrentlyPlaying = trackInfo.isPlaying;
+        currentTrackTitle = trackInfo.title;
+        currentTrackAuthor = trackInfo.author;
+        currentTrackUrl = trackInfo.url;
+        currentTrackElapsed = trackInfo.elapsed;
+        currentTrackDuration = trackInfo.duration;
+        window.__initialStateSent = true;
+        
+        window.soundcloudAPI.sendTrackUpdate(trackInfo, reason);
+        console.debug('Track update sent:', reason);
     }
   }
   

@@ -2,6 +2,7 @@ import { app } from 'electron';
 import path from 'path';
 import { promises as fs } from 'fs';
 import { spawn, ChildProcess } from 'child_process';
+import { log } from '../utils/logger';
 
 export class ZapretService {
     private zapretProcess: ChildProcess | null = null;
@@ -25,7 +26,7 @@ export class ZapretService {
 
     public async start(): Promise<void> {
         if (this.isRunning()) {
-            console.log('[ZapretService] Zapret is already running.');
+            log('[ZapretService] Zapret is already running.');
             return;
         }
 
@@ -33,7 +34,7 @@ export class ZapretService {
             await fs.access(this.zapretPath);
             const configArgs = await this.readConfigArguments();
             
-            console.log(`[ZapretService] Starting winws.exe with args: ${configArgs.join(' ')}`);
+            log(`[ZapretService] Starting winws.exe with args: ${configArgs.join(' ')}`);
 
             this.zapretProcess = spawn(this.zapretPath, configArgs, {
                 detached: true,
@@ -43,33 +44,33 @@ export class ZapretService {
             });
 
             this.zapretProcess.on('error', (err) => {
-                console.error('[ZapretService] Failed to start Zapret process:', err);
+                log('[ERROR] [ZapretService] Failed to start Zapret process:', err);
                 this.zapretProcess = null;
             });
 
             this.zapretProcess.on('exit', (code) => {
-                console.log(`[ZapretService] Zapret process exited with code ${code}`);
+                log(`[ZapretService] Zapret process exited with code ${code}`);
                 this.zapretProcess = null;
             });
 
             // Unreference the child process to allow the parent to exit independently
             if (this.zapretProcess.pid) {
                 this.zapretProcess.unref();
-                console.log(`[ZapretService] Zapret process started with PID: ${this.zapretProcess.pid}`);
+                log(`[ZapretService] Zapret process started with PID: ${this.zapretProcess.pid}`);
             }
 
         } catch (error) {
-            console.error(`[ZapretService] Could not find winws.exe at ${this.zapretPath}. Please ensure it exists.`);
+            log(`[ERROR] [ZapretService] Could not find winws.exe at ${this.zapretPath}. Please ensure it exists.`);
         }
     }
 
     public stop(): void {
         if (!this.isRunning() || !this.zapretProcess?.pid) {
-            console.log('[ZapretService] Zapret is not running.');
+            log('[ZapretService] Zapret is not running.');
             return;
         }
 
-        console.log(`[ZapretService] Stopping Zapret process with PID: ${this.zapretProcess.pid}`);
+        log(`[ZapretService] Stopping Zapret process with PID: ${this.zapretProcess.pid}`);
         
         // Use taskkill on Windows to forcefully terminate the process tree
         const pid = this.zapretProcess.pid;
@@ -102,7 +103,7 @@ export class ZapretService {
             // Split the processed string into an array of arguments
             return processedArgs.split(' ').filter(arg => arg);
         } catch (error) {
-            console.error(`[ZapretService] Could not read or process config.txt at ${this.configPath}.`);
+            log(`[ERROR] [ZapretService] Could not read or process config.txt at ${this.configPath}.`);
             return [];
         }
     }

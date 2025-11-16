@@ -26,6 +26,7 @@ import { UrlInterceptorService } from './services/urlInterceptorService';
 import { audioMonitorScript } from './services/audioMonitorService';
 import type { TrackInfo, TrackUpdateMessage } from './types';
 import { listeningStatsService } from './services/listeningStatsService';
+import { log, logFilePath } from './utils/logger';
 import path = require('path');
 
 import { platform } from 'os';
@@ -131,7 +132,7 @@ let displaySCSmallIcon = store.get('displaySCSmallIcon') as boolean;
 // Update handling
 function setupUpdater() {
     if (!store.get('autoUpdaterEnabled', true)) {
-        console.log('Auto-updater disabled by user setting');
+        log('[Updater] Auto-updater disabled by user setting.');
         return;
     }
 
@@ -139,11 +140,17 @@ function setupUpdater() {
     autoUpdater.autoInstallOnAppQuit = true;
 
     autoUpdater.on('update-available', () => {
+        log('[Updater] Update available.');
         queueToastNotification('Update Available');
     });
 
     autoUpdater.on('update-downloaded', () => {
+        log('[Updater] Update downloaded.');
         queueToastNotification('Update Completed');
+    });
+
+    autoUpdater.on('error', (err: any) => {
+        log('[ERROR] [Updater] ', err);
     });
 
     autoUpdater.checkForUpdates();
@@ -577,6 +584,10 @@ async function init() {
         settingsManager.toggle();
     });
 
+    ipcMain.on('open-log-file', () => {
+        shell.openPath(logFilePath).catch(err => log('[ERROR] Failed to open log file:', err));
+    });
+
     // Add statistics toggle handler
     ipcMain.on('open-statistics-window', () => {
         statisticsManager.toggle();
@@ -614,7 +625,7 @@ async function init() {
         const code = playerActions[action];
 
         if (code) {
-            contentView.webContents.executeJavaScript(code).catch(console.error);
+            contentView.webContents.executeJavaScript(code).catch(err => log('[ERROR] Failed to execute widget action JS:', err));
         }
     });
 
@@ -645,7 +656,7 @@ async function init() {
                 }
             });
         } else {
-            console.error('[Main] No track info available to download.');
+            log('[WARN] [Main] No track info available to download.');
             notificationManager.show('No track is currently playing.');
         }
     });
@@ -655,7 +666,7 @@ async function init() {
         if (lastTrackInfo && lastTrackInfo.url) {
             downloadService.downloadArtwork(lastTrackInfo);
         } else {
-            console.error('[Main] No track info available to download artwork.');
+            log('[WARN] [Main] No track info available to download artwork.');
             notificationManager.show('No track is currently playing.');
         }
     });
@@ -786,14 +797,14 @@ async function init() {
                     fullLists,
                     { enableCompression: true },
                     {
-                        path: 'engine.bin',
+                        path: path.join(app.getPath('userData'), 'engine.bin'),
                         read: async (...args) => readFileSync(...args),
                         write: async (...args) => writeFileSync(...args),
                     },
                 );
                 blocker.enableBlockingInSession(contentView.webContents.session);
             } catch (error) {
-                console.error('Failed to initialize adblocker:', error);
+                log('[ERROR] Failed to initialize adblocker:', error);
             }
         }
 
@@ -838,7 +849,7 @@ async function init() {
                 await presenceService.updatePresence(lastTrackInfo as any);
             }
         } catch (error) {
-            console.error('Failed to reinitialize after page load:', error);
+            log('[ERROR] Failed to reinitialize after page load:', error);
         }
     }
 
@@ -847,7 +858,7 @@ async function init() {
         const key = proxyService.transformKey(data.key);
         store.set(key, data.value);
 
-        console.log(key);
+        log(`Setting changed: ${key} = ${data.value}`);
 
         if (key === 'displayWhenIdling') {
             displayWhenIdling = data.value;
@@ -1128,22 +1139,22 @@ function applyThemeToContent(isDark: boolean) {
                         existingCustomStyle.remove();
                     }
                     document.head.appendChild(customStyle);
-                    console.log('Applied custom theme CSS');
+                    log('[Themes] Applied custom theme CSS to content view');
                 } else {
                     // Remove custom theme if none is selected
                     const existingCustomStyle = document.getElementById('custom-theme-style');
                     if (existingCustomStyle) {
                         existingCustomStyle.remove();
-                        console.log('Removed custom theme CSS');
+                        log('[Themes] Removed custom theme CSS from content view');
                     }
                 }
             } catch(e) {
-                console.error('Error applying theme:', e);
+                log('[ERROR] [Themes] Error applying theme to content view:', e);
             }
         })();
     `;
 
-    contentView.webContents.executeJavaScript(themeScript).catch(console.error);
+    contentView.webContents.executeJavaScript(themeScript).catch(err => log('[ERROR] [Themes] Failed to execute content view theme script:', err));
 
     // Also inject into header and settings views using their specific sections
     const headerCSS = sections.all + (sections.all && sections.header ? '\n' : '') + sections.header || '';
@@ -1160,12 +1171,11 @@ function applyThemeToContent(isDark: boolean) {
                         style.id = id;
                         style.textContent = css;
                         document.head.appendChild(style);
-                        console.log('Applied custom header theme CSS');
                     }
-                } catch(e){ console.error('Header theme inject error:', e); }
+                } catch(e){ log('[ERROR] [Themes] Header theme inject error:', e); }
             })();
         `;
-        headerView.webContents.executeJavaScript(headerScript).catch(console.error);
+        headerView.webContents.executeJavaScript(headerScript).catch(err => log('[ERROR] [Themes] Failed to execute header theme script:', err));
     }
 
     if (settingsManager) {
@@ -1182,12 +1192,11 @@ function applyThemeToContent(isDark: boolean) {
                         style.id = id;
                         style.textContent = css;
                         document.head.appendChild(style);
-                        console.log('Applied custom settings theme CSS');
                     }
-                } catch(e){ console.error('Settings theme inject error:', e); }
+                } catch(e){ log('[ERROR] [Themes] Settings theme inject error:', e); }
             })();
         `;
-        settingsManager.getView().webContents.executeJavaScript(settingsScript).catch(console.error);
+        settingsManager.getView().webContents.executeJavaScript(settingsScript).catch(err => log('[ERROR] [Themes] Failed to execute settings theme script:', err));
     }
 }
 
@@ -1393,7 +1402,13 @@ function parseTimeToSeconds(timeString: string): number {
 // Setup audio event handler for track updates
 function setupAudioHandler() {
     ipcMain.on('soundcloud:track-update', async (_event, { data: result, reason }: TrackUpdateMessage) => {
-        console.debug(`Track update received: ${reason}`);
+        if (reason !== 'playback-progress') { // Avoid spamming logs
+            log(`[DEBUG] Track update received: ${reason}`);
+        }
+
+        if (result.isPlaying && result.url && result.url !== lastTrackInfo.url) {
+            log(`[INFO] Now playing: ${result.author} - ${result.title}`);
+        }
 
         lastTrackInfo = result;
 
