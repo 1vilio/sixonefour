@@ -1,178 +1,115 @@
-/* src/statistics/statistics.css */
 :root {
-    --bg-color: rgba(18, 18, 18, 0.85);
-    --card-bg-color: rgba(42, 42, 42, 0.9);
-    --primary-text-color: #ffffff;
-    --secondary-text-color: #b3b3b3;
-    --accent-color: #1db954; /* A nice green, for example */
-    --border-color: rgba(255, 255, 255, 0.1);
-    --hover-color: rgba(255, 255, 255, 0.1);
+    --bg-color: #121212;
+    --card-bg-color: #181818;
+    --text-color: #ffffff;
+    --text-secondary: #b3b3b3;
+    --accent-color: #1db954;
+    --accent-hover: #1ed760;
+    --border-color: #282828;
+    --font-family: 'Circular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--font-family);
     background-color: var(--bg-color);
-    backdrop-filter: blur(15px) saturate(180%);
-    -webkit-backdrop-filter: blur(15px) saturate(180%);
-    color: var(--primary-text-color);
+    color: var(--text-color);
     margin: 0;
     padding: 20px;
-    box-sizing: border-box;
-    overflow-y: auto;
-    height: 100vh;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+h1, h2 {
+    color: var(--text-color);
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
 }
 
 .close-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+    top: 20px;
+    right: 20px;
+    background: none;
     border: none;
-    background: rgba(0, 0, 0, 0.3);
-    color: var(--primary-text-color);
+    color: var(--text-secondary);
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s, transform 0.2s;
+    padding: 5px;
+    border-radius: 50%;
+    transition: color 0.2s, background-color 0.2s;
     z-index: 100;
 }
 
 .close-btn:hover {
-    background-color: rgba(0, 0, 0, 0.5);
-    transform: scale(1.1);
+    color: var(--text-color);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .close-btn svg {
-    width: 18px;
-    height: 18px;
-}
-
-.container {
-    max-width: 95%;
-    margin: 0 auto;
-    padding-top: 40px;
-}
-
-h1, h2 {
-    text-align: left;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border-color);
-    font-weight: 600;
-}
-
-h2 {
-    font-size: 1.2em;
-    margin-top: 30px;
+    width: 24px;
+    height: 24px;
 }
 
 .tabs {
     display: flex;
-    justify-content: flex-start;
-    margin-bottom: 25px;
-    border-bottom: 1px solid var(--border-color);
+    justify-content: center;
+    margin-bottom: 30px;
+    gap: 10px;
 }
 
 .tab-button {
-    background: none;
-    border: none;
-    border-bottom: 3px solid transparent;
-    color: var(--secondary-text-color);
-    padding: 10px 15px;
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 10px 20px;
+    border-radius: 20px;
     cursor: pointer;
-    transition: color 0.3s, border-bottom-color 0.3s;
-    font-size: 1em;
-    margin-right: 10px;
+    font-weight: bold;
+    transition: all 0.2s;
 }
 
-.tab-button.active,
 .tab-button:hover {
-    color: var(--primary-text-color);
+    border-color: var(--text-color);
+    color: var(--text-color);
 }
 
 .tab-button.active {
-    border-bottom-color: var(--accent-color);
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #000;
 }
 
 .card {
     background-color: var(--card-bg-color);
-    padding: 20px;
     border-radius: 8px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border-color);
-}
-
-#stats-content .stat-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border-color);
-    font-size: 0.95em;
-}
-
-#stats-content .stat-item:last-child {
-    border-bottom: none;
-}
-
-.stat-label {
-    font-weight: 500;
-    color: var(--secondary-text-color);
-}
-
-.stat-value {
-    text-align: right;
-    font-weight: 600;
-    color: var(--primary-text-color);
-}
-
-#top-tracks-list, #top-artists-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-#top-tracks-list li {
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border-color);
-    font-size: 0.9em;
-}
-
-#top-artists-list li {
-    display: flex;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border-color);
-    font-size: 0.9em;
-}
-
-#top-tracks-list li:last-child, #top-artists-list li:last-child {
-    border-bottom: none;
-}
-
-.stat-artwork {
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
-    margin-right: 10px;
-    vertical-align: middle;
-}
-
-#plays-per-hour-section {
     padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .loader {
-    border: 4px solid var(--border-color);
-    border-top: 4px solid var(--accent-color);
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-left-color: var(--accent-color);
     border-radius: 50%;
     width: 40px;
     height: 40px;
     animation: spin 1s linear infinite;
-    margin: 50px auto;
+    margin: 20px auto;
 }
 
 @keyframes spin {
@@ -180,13 +117,273 @@ h2 {
     100% { transform: rotate(360deg); }
 }
 
-a {
-    color: var(--accent-color);
-    text-decoration: none;
-    transition: color 0.3s;
+/* Stats Content */
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color);
 }
 
-a:hover {
-    color: var(--primary-text-color);
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* Lists */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+li:last-child {
+    border-bottom: none;
+}
+
+li img.stat-artwork {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    margin-right: 15px;
+    object-fit: cover;
+}
+
+li a {
+    color: var(--text-color);
+    text-decoration: none;
+    margin-right: 5px;
+}
+
+li a:hover {
     text-decoration: underline;
+    color: var(--accent-color);
+}
+
+/* Advanced Metrics Grid */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.metric-item {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.metric-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent-color);
+    margin-bottom: 5px;
+}
+
+.metric-desc {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* Music Calendar Redesign */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendar-legend {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.legend-item {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.level-0 { background-color: #282828; }
+.level-1 { background-color: #0e4429; }
+.level-2 { background-color: #006d32; }
+.level-3 { background-color: #26a641; }
+.level-4 { background-color: #39d353; }
+
+.calendar-wrapper {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-rows: repeat(7, 12px);
+    grid-auto-flow: column;
+    gap: 3px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    flex-grow: 1;
+}
+
+.calendar-day {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    background-color: #282828;
+    cursor: pointer;
+    transition: transform 0.1s, border 0.1s;
+}
+
+.calendar-day:hover {
+    transform: scale(1.2);
+    border: 1px solid #fff;
+    z-index: 10;
+}
+
+.calendar-day.intensity-0 { background-color: #282828; }
+.calendar-day.intensity-1 { background-color: #0e4429; }
+.calendar-day.intensity-2 { background-color: #006d32; }
+.calendar-day.intensity-3 { background-color: #26a641; }
+.calendar-day.intensity-4 { background-color: #39d353; }
+
+.calendar-info-panel {
+    width: 250px;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 8px;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.info-date {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+
+.info-stats {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.info-artworks {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    width: 100%;
+}
+
+.info-artwork {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: var(--card-bg-color);
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    width: 80%;
+    max-width: 600px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.close-modal {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.tooltip-artworks {
+    display: grid;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.tooltip-artwork {
+    width: 100%;
+    border-radius: 2px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #888;
 }

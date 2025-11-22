@@ -2,9 +2,9 @@ import { app, BrowserWindow, Menu, ipcMain, BrowserView, Tray, nativeImage, prot
 // ... other imports
 
 // ... inside init() function, or after other ipcMain.on handlers
-    ipcMain.on('open-external-link', (_event, url: string) => {
-        shell.openExternal(url);
-    });
+ipcMain.on('open-external-link', (_event, url: string) => {
+    shell.openExternal(url);
+});
 import { ElectronBlocker, fullLists } from '@ghostery/adblocker-electron';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import fetch from 'cross-fetch';
@@ -25,7 +25,8 @@ import { ZapretService } from './services/zapretService';
 import { UrlInterceptorService } from './services/urlInterceptorService';
 import { audioMonitorScript } from './services/audioMonitorService';
 import type { TrackInfo, TrackUpdateMessage } from './types';
-import { listeningStatsService } from './services/listeningStatsService';
+import { listeningStatsService, StatsTrackInfo } from './services/listeningStatsService';
+import { databaseService } from './services/databaseService';
 import { log, logFilePath } from './utils/logger';
 import path = require('path');
 
@@ -316,7 +317,14 @@ let lastTrackInfo: TrackInfo = {
 };
 
 // Track current track for listening statistics
-let currentTrackForStats: { id: string; logged: boolean; duration: number; } | null = null;
+let currentTrackState: {
+    id: string;
+    totalListened: number; // Total seconds listened to this track (for 50% rule)
+    accumulatedTime: number; // Seconds waiting to be flushed to DB
+    loggedPlay: boolean;
+    lastTimestamp: number;
+    trackInfo: StatsTrackInfo;
+} | null = null;
 
 function setupWindowControls() {
     if (!mainWindow) return;
@@ -531,6 +539,7 @@ async function init() {
     urlInterceptorService.setup();
 
     // Initialize services
+    databaseService.initialize();
     translationService = new TranslationService();
     themeService = new ThemeService(store);
     widgetManager = new WidgetManager(); // Instantiate WidgetManager
@@ -591,6 +600,16 @@ async function init() {
     // Add statistics toggle handler
     ipcMain.on('open-statistics-window', () => {
         statisticsManager.toggle();
+    });
+
+    ipcMain.on('navigate-in-app', (_event, url: string) => {
+        if (contentView) {
+            contentView.webContents.loadURL(url);
+        } else if (mainWindow) {
+            mainWindow.loadURL(url);
+        }
+        // Close stats window if open
+        statisticsManager.hide();
     });
 
     ipcMain.on('toggle-statistics', () => {
@@ -885,102 +904,104 @@ async function init() {
             webhookService.setWebhookUrl(data.value);
         } else if (key === 'webhookTriggerPercentage') {
             webhookService.setTriggerPercentage(data.value);
-                            } else if (key === 'navigationControlsEnabled') {
-                                if (headerView && headerView.webContents) {
-                                    headerView.webContents.send('navigation-controls-toggle', data.value);
-                                }
-                            } else if (key === 'autoUpdaterEnabled') {
-                                if (data.value) {
-                                    setupUpdater();
-                                } else {
-                                    console.log('Auto-updater disabled by user');
-                                }
-                            } else if (key === 'bypassMode') {
-                                const oldMode = store.get('bypassMode') as string;
-                                const newMode = data.value as string;
-                        
-                                if (oldMode === 'zapret' && newMode !== 'zapret') {
-                                    zapretService.stop();
-                                }
-                        
-                                if (newMode === 'zapret') {
-                                    zapretService.start();
-                                }
-                        
-                                store.set('bypassMode', newMode);
-                        
-                                if (newMode === 'dns' || oldMode === 'dns') {
-                                    queueToastNotification('DNS settings changed. Please restart the app.');
-                                }
-                            } else if (key === 'dnsAddress') {
-                                store.set('dnsAddress', data.value);
-                                if (store.get('bypassMode') === 'dns') {
-                                    queueToastNotification('DNS settings changed. Please restart the app.');
-                                }
-                            } else if (key === 'customTheme') {            if (data.value === 'none') {
-                        themeService.removeCustomTheme();
-                    } else {
-                        themeService.applyCustomTheme(data.value);
-                    }
-                    // Re-apply the theme to all content
-                    applyThemeToContent(isDarkTheme);
-                } else if (key === 'backgroundBlur') {
-                    applyThemeToContent(isDarkTheme);
-                        } else if (key === 'widgetEnabled') {
-                            data.value ? widgetManager.show() : widgetManager.hide();
-                        } else if (key === 'openAtLogin') {
-                            app.setLoginItemSettings({ openAtLogin: data.value });
-                        } else if (key.startsWith('hotkeys.')) {
-                            registerGlobalShortcuts();
-                        }            });
-        
-            // Handle applying all changes
-            ipcMain.on('apply-changes', async () => {
-                if (store.get('proxyEnabled')) {
-                    await proxyService.apply();
-                }
-        
-                if (store.get('adBlocker')) {
-                    mainWindow.webContents.reload();
-                }
-        
-                if (store.get('discordRichPresence')) {
-                    // Refresh presence using the current track info instead of reconnecting
-                    await presenceService.updatePresence(lastTrackInfo as any);
-                } else {
-                    presenceService.clearActivity();
-                }
-            });
+        } else if (key === 'navigationControlsEnabled') {
+            if (headerView && headerView.webContents) {
+                headerView.webContents.send('navigation-controls-toggle', data.value);
+            }
+        } else if (key === 'autoUpdaterEnabled') {
+            if (data.value) {
+                setupUpdater();
+            } else {
+                console.log('Auto-updater disabled by user');
+            }
+        } else if (key === 'bypassMode') {
+            const oldMode = store.get('bypassMode') as string;
+            const newMode = data.value as string;
+
+            if (oldMode === 'zapret' && newMode !== 'zapret') {
+                zapretService.stop();
+            }
+
+            if (newMode === 'zapret') {
+                zapretService.start();
+            }
+
+            store.set('bypassMode', newMode);
+
+            if (newMode === 'dns' || oldMode === 'dns') {
+                queueToastNotification('DNS settings changed. Please restart the app.');
+            }
+        } else if (key === 'dnsAddress') {
+            store.set('dnsAddress', data.value);
+            if (store.get('bypassMode') === 'dns') {
+                queueToastNotification('DNS settings changed. Please restart the app.');
+            }
+        } else if (key === 'customTheme') {
+            if (data.value === 'none') {
+                themeService.removeCustomTheme();
+            } else {
+                themeService.applyCustomTheme(data.value);
+            }
+            // Re-apply the theme to all content
+            applyThemeToContent(isDarkTheme);
+        } else if (key === 'backgroundBlur') {
+            applyThemeToContent(isDarkTheme);
+        } else if (key === 'widgetEnabled') {
+            data.value ? widgetManager.show() : widgetManager.hide();
+        } else if (key === 'openAtLogin') {
+            app.setLoginItemSettings({ openAtLogin: data.value });
+        } else if (key.startsWith('hotkeys.')) {
+            registerGlobalShortcuts();
         }
-        
-        function registerGlobalShortcuts() {
-            shortcutService.unregister('playPause');
-            shortcutService.unregister('next');
-            shortcutService.unregister('previous');
-        
-            const hotkeys = store.get('hotkeys', {});
-            if (hotkeys.playPause) {
-                shortcutService.register('playPause', hotkeys.playPause, 'Play/Pause', () => {
-                    contentView.webContents.executeJavaScript('document.querySelector(".playControls__play").click()');
-                }, true, true);
-            }
-            if (hotkeys.next) {
-                shortcutService.register('next', hotkeys.next, 'Next', () => {
-                    contentView.webContents.executeJavaScript('document.querySelector(".playControls__next").click()');
-                }, true, true);
-            }
-            if (hotkeys.previous) {
-                shortcutService.register('previous', hotkeys.previous, 'Previous', () => {
-                    contentView.webContents.executeJavaScript('document.querySelector(".playControls__prev").click()');
-                }, true, true);
-            }
-            shortcutService.setup();
+    });
+
+    // Handle applying all changes
+    ipcMain.on('apply-changes', async () => {
+        if (store.get('proxyEnabled')) {
+            await proxyService.apply();
         }
-        
-        function setupThemeHandlers() {
-            // Load initial theme from store
-            isDarkTheme = store.get('theme', 'dark') === 'dark';
-            // Send initial theme to all views
+
+        if (store.get('adBlocker')) {
+            mainWindow.webContents.reload();
+        }
+
+        if (store.get('discordRichPresence')) {
+            // Refresh presence using the current track info instead of reconnecting
+            await presenceService.updatePresence(lastTrackInfo as any);
+        } else {
+            presenceService.clearActivity();
+        }
+    });
+}
+
+function registerGlobalShortcuts() {
+    shortcutService.unregister('playPause');
+    shortcutService.unregister('next');
+    shortcutService.unregister('previous');
+
+    const hotkeys = store.get('hotkeys', {});
+    if (hotkeys.playPause) {
+        shortcutService.register('playPause', hotkeys.playPause, 'Play/Pause', () => {
+            contentView.webContents.executeJavaScript('document.querySelector(".playControls__play").click()');
+        }, true, true);
+    }
+    if (hotkeys.next) {
+        shortcutService.register('next', hotkeys.next, 'Next', () => {
+            contentView.webContents.executeJavaScript('document.querySelector(".playControls__next").click()');
+        }, true, true);
+    }
+    if (hotkeys.previous) {
+        shortcutService.register('previous', hotkeys.previous, 'Previous', () => {
+            contentView.webContents.executeJavaScript('document.querySelector(".playControls__prev").click()');
+        }, true, true);
+    }
+    shortcutService.setup();
+}
+
+function setupThemeHandlers() {
+    // Load initial theme from store
+    isDarkTheme = store.get('theme', 'dark') === 'dark';
+    // Send initial theme to all views
     if (headerView && headerView.webContents) {
         headerView.webContents.send('theme-changed', isDarkTheme);
     }
@@ -1413,34 +1434,58 @@ function setupAudioHandler() {
         lastTrackInfo = result;
 
         // Logic for Listening Statistics
-        if (result.isPlaying && result.title && result.author && result.duration && result.url) {
-            const trackId = result.url; // Using URL as a unique ID for the track
-            const parsedDuration = parseTimeToSeconds(result.duration);
-            const parsedElapsed = parseTimeToSeconds(result.elapsed);
+        const now = Date.now();
 
-            if (parsedDuration > 0) { // Ensure duration is valid
-                // Check if it's a new track or the same track but not yet logged for stats
-                if (!currentTrackForStats || currentTrackForStats.id !== trackId) {
-                    currentTrackForStats = { id: trackId, logged: false, duration: parsedDuration };
-                    console.log(`New track detected for stats: ${result.title}`);
+        if (result.isPlaying && result.title && result.author && result.duration && result.url) {
+            const trackId = result.url;
+            const parsedDuration = parseTimeToSeconds(result.duration);
+
+            // Initialize state if new track
+            if (!currentTrackState || currentTrackState.id !== trackId) {
+                // Flush previous track if exists
+                if (currentTrackState && currentTrackState.accumulatedTime > 0) {
+                    listeningStatsService.logTime(currentTrackState.trackInfo, currentTrackState.accumulatedTime);
                 }
 
-                // Check if 50% of the track has been played and not yet logged
-                if (!currentTrackForStats.logged && parsedElapsed >= (currentTrackForStats.duration * 0.5)) {
-                    listeningStatsService.addListeningEntry({
-                        id: trackId,
+                currentTrackState = {
+                    id: trackId,
+                    totalListened: 0,
+                    accumulatedTime: 0,
+                    loggedPlay: false,
+                    lastTimestamp: now,
+                    trackInfo: {
+                        url: trackId,
                         title: result.title,
                         artist: result.author,
                         duration: parsedDuration,
-                    });
-                    currentTrackForStats.logged = true;
-                    console.log(`Track "${result.title}" logged for listening stats (50% played).`);
+                        artwork: result.artwork
+                    }
+                };
+                console.log(`[Stats] New track session: ${result.title}`);
+            } else {
+                // Same track, update time
+                const delta = (now - currentTrackState.lastTimestamp) / 1000;
+                if (delta > 0 && delta < 10) { // Sanity check: ignore huge jumps
+                    currentTrackState.accumulatedTime += delta;
+                    currentTrackState.totalListened += delta;
+
+                    // Check 50% rule
+                    if (!currentTrackState.loggedPlay && currentTrackState.totalListened >= (parsedDuration * 0.5)) {
+                        listeningStatsService.logPlay(currentTrackState.trackInfo);
+                        currentTrackState.loggedPlay = true;
+                    }
+                }
+                currentTrackState.lastTimestamp = now;
+            }
+        } else {
+            // Not playing (Paused or Stopped)
+            if (currentTrackState) {
+                // Flush accumulated time
+                if (currentTrackState.accumulatedTime > 0) {
+                    listeningStatsService.logTime(currentTrackState.trackInfo, currentTrackState.accumulatedTime);
+                    currentTrackState.accumulatedTime = 0;
                 }
             }
-        } else if (!result.isPlaying) {
-            // If playback stops or pauses, reset currentTrackForStats
-            currentTrackForStats = null;
-            console.log('Playback stopped/paused, resetting track stats monitor.');
         }
 
         // Update services only if track is playing

@@ -62,7 +62,7 @@ export class StatisticsManager {
         `);
     }
 
-    private hide(): void {
+    public hide(): void {
         this.isVisible = false;
         this.view.webContents.executeJavaScript(`
             document.body.style.opacity = '0';

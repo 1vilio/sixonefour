@@ -1,57 +1,32 @@
-Дело действительно тонкое. Проблема не в директиве @video-background (она у вас написана абсолютно правильно), а в том, как обрабатывается фон самого элемента <body> в теме Vilio.css.
-Короткий ответ: В чем ошибка?
-В файле Vilio.css вы закомментировали все свойства, отвечающие за фон <body>, из-за чего он, скорее всего, получает непрозрачный фон по умолчанию от самого приложения SoundCloud. Этот фон по умолчанию перекрывает ваше видео, которое находится на самом заднем слое.
-Подробное объяснение и решение
-Давайте сравним ключевые блоки в обоих файлах.
-1. Рабочая тема: PornHub.css
-Здесь для <body> задан фоновый GIF-файл в качестве запасного варианта:
-code
-CSS
-/* PornHub.css */
-body, #app {
-  /* Запасной фон, который успешно заменяется видео */
-  background-image: url('PornHubBackground.gif') !important;
-  background-size: cover !important;
-  background-position: center center !important;
-  background-attachment: fixed !important;
-  background-repeat: no-repeat !important;
-}
-Логика работы: Приложение видит директиву /* @video-background */, находит MP4-файл и заменяет им фон элемента <body>. Замена background-image на видео проходит успешно.
-2. Нерабочая тема: Vilio.css
-Здесь вы полностью убрали какой-либо фон для <body>, закомментировав строки:
-code
-CSS
-/* Vilio.css - НЕПРАВИЛЬНО */
-body, #app {
-  /* background-image is now handled by the video player */
-  /* background-color: var(--vilio-black) !important; */ /* Fallback background */
-  background-size: cover; background-position: center;
-  background-attachment: fixed; background-repeat: no-repeat;
-  /* ... */
-}
-Логика проблемы:
-Приложение видит директиву /* @video-background */ и размещает видеоплеер на самом заднем фоне (условно, на слое -1).
-Далее оно применяет стили темы к элементу <body> (слой 0).
-Поскольку в вашем CSS для body не задано никакого фона, body получает фон по умолчанию от приложения (например, сплошной черный цвет #121212).
-Этот сплошной черный фон элемента body полностью перекрывает видео, которое находится слоем ниже. Вы его просто не видите.
-РЕШЕНИЕ: Как это исправить
-Вам нужно явно указать, что фон у <body> и #app должен быть полностью прозрачным. Это позволит "увидеть" видео сквозь них.
-Замените блок body, #app в файле Vilio.css на следующий:
-code
-CSS
-/* ==========================================================================
-   2. ГЛОБАЛЬНЫЕ СТИЛИ, ХЕДЕР, ФУТЕР
-   ========================================================================== */
-body, #app {
-  /* ПРЯМО УКАЗЫВАЕМ, ЧТО ФОН ДОЛЖЕН БЫТЬ ПРОЗРАЧНЫМ, ЧТОБЫ БЫЛО ВИДНО ВИДЕО */
-  background: transparent !important;
-  
-  /* Остальные свойства можно оставить, они не мешают */
-  font-family: var(--font-ui) !important; 
-  color: var(--vilio-text-dim) !important;
-}
-Что делает это исправление:
-background: transparent !important; заставляет основной "холст" вашего приложения стать полностью прозрачным.
-Теперь видео, которое приложение разместило на самом заднем слое, будет просвечивать сквозь этот прозрачный холст.
-Все остальные ваши элементы (.header, .soundList__item и т.д.) с полупрозрачным фоном будут красиво "плавать" поверх видео, как вы и задумывали.
-Внесите это простое изменение, и ваша тема Vilio.css заработает как надо.
+PS C:\Users\Vilio\Desktop\vil gravity> npm run dev
+
+> soundcloud-rpc@0.1.4 dev
+> tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && electron ./tsc/main.js --dev
+
+src/main.ts:28:33 - error TS2305: Module '"./services/listeningStatsService"' has no exported member 'StatsTrackInfo'.
+
+28 import { listeningStatsService, StatsTrackInfo } from './services/listeningStatsService';
+                                   ~~~~~~~~~~~~~~
+
+src/main.ts:568:27 - error TS2339: Property 'events' does not exist on type 'ListeningStatsService'.
+
+568     listeningStatsService.events.on('stats-updated', () => {
+                              ~~~~~~
+
+src/main.ts:1447:43 - error TS2339: Property 'logTime' does not exist on type 'ListeningStatsService'.
+
+1447                     listeningStatsService.logTime(currentTrackState.trackInfo, currentTrackState.accumulatedTime);
+                                               ~~~~~~~
+
+src/main.ts:1474:47 - error TS2339: Property 'logPlay' does not exist on type 'ListeningStatsService'.
+
+1474                         listeningStatsService.logPlay(currentTrackState.trackInfo);
+                                                   ~~~~~~~
+
+src/main.ts:1485:43 - error TS2339: Property 'logTime' does not exist on type 'ListeningStatsService'.
+
+1485                     listeningStatsService.logTime(currentTrackState.trackInfo, currentTrackState.accumulatedTime);
+                                               ~~~~~~~
+
+
+Found 5 errors in the same file, starting at: src/main.ts:28

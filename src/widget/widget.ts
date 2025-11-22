@@ -1,12 +1,3 @@
-declare global {
-    interface Window {
-        electronAPI: {
-            on: (channel: string, callback: (...args: any[]) => void) => void;
-            send: (channel: string, data?: any) => void;
-        };
-    }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     const artworkEl = document.getElementById('widget-artwork') as HTMLImageElement;
     const titleEl = document.getElementById('widget-track-title');
@@ -34,74 +25,76 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Listen for track updates from main process
-    window.electronAPI.on('widget-track-update', (trackInfo) => {
-        if (!trackInfo || !trackInfo.title) {
-            if(titleEl) titleEl.textContent = 'No track playing';
-            if(authorEl) authorEl.textContent = '...';
-            if(artworkEl) artworkEl.src = '';
-            if(playBtn) playBtn.innerHTML = '&#9654;';
-            if(progressFill) progressFill.style.width = '0%';
-            if(timeElapsedEl) timeElapsedEl.textContent = '0:00';
-            if(timeDurationEl) timeDurationEl.textContent = '0:00';
-            return;
-        }
+    if (window.electronAPI?.on) {
+        window.electronAPI.on('widget-track-update', (trackInfo: any) => {
+            if (!trackInfo || !trackInfo.title) {
+                if (titleEl) titleEl.textContent = 'No track playing';
+                if (authorEl) authorEl.textContent = '...';
+                if (artworkEl) artworkEl.src = '';
+                if (playBtn) playBtn.innerHTML = '&#9654;';
+                if (progressFill) progressFill.style.width = '0%';
+                if (timeElapsedEl) timeElapsedEl.textContent = '0:00';
+                if (timeDurationEl) timeDurationEl.textContent = '0:00';
+                return;
+            }
 
-        if (trackInfo.isPlaying) {
-            if(playBtn) playBtn.innerHTML = '&#10074;&#10074;'; // Pause icon
-        } else {
-            if(playBtn) playBtn.innerHTML = '&#9654;'; // Play icon
-        }
+            if (trackInfo.isPlaying) {
+                if (playBtn) playBtn.innerHTML = '&#10074;&#10074;'; // Pause icon
+            } else {
+                if (playBtn) playBtn.innerHTML = '&#9654;'; // Play icon
+            }
 
-        if(titleEl) titleEl.textContent = trackInfo.title;
-        if(authorEl) authorEl.textContent = trackInfo.author;
-        if(artworkEl) artworkEl.src = trackInfo.artwork || '';
+            if (titleEl) titleEl.textContent = trackInfo.title;
+            if (authorEl) authorEl.textContent = trackInfo.author;
+            if (artworkEl) artworkEl.src = trackInfo.artwork || '';
 
-        if(timeElapsedEl) timeElapsedEl.textContent = trackInfo.elapsed || '0:00';
-        if(timeDurationEl) timeDurationEl.textContent = trackInfo.duration || '0:00';
+            if (timeElapsedEl) timeElapsedEl.textContent = trackInfo.elapsed || '0:00';
+            if (timeDurationEl) timeDurationEl.textContent = trackInfo.duration || '0:00';
 
-        // Calculate progress
-        const elapsedMs = parseTimeToMs(trackInfo.elapsed);
-        const durationMs = parseTimeToMs(trackInfo.duration);
-        if (durationMs > 0) {
-            const progressPercent = (elapsedMs / durationMs) * 100;
-            if(progressFill) progressFill.style.width = `${progressPercent}%`;
-        } else {
-            if(progressFill) progressFill.style.width = '0%';
-        }
-    });
+            // Calculate progress
+            const elapsedMs = parseTimeToMs(trackInfo.elapsed);
+            const durationMs = parseTimeToMs(trackInfo.duration);
+            if (durationMs > 0) {
+                const progressPercent = (elapsedMs / durationMs) * 100;
+                if (progressFill) progressFill.style.width = `${progressPercent}%`;
+            } else {
+                if (progressFill) progressFill.style.width = '0%';
+            }
+        });
 
-    // Listen for theme updates
-    window.electronAPI.on('widget-theme-update', ({ video, blur }) => {
-        if (video) {
-            videoBg.src = video;
-            if(blur) videoBg.style.filter = `blur(${blur}px)`;
-            videoBg.style.display = 'block';
-            videoBg.play().catch(e => console.error("Video play failed", e));
-        } else {
-            videoBg.style.display = 'none';
-            videoBg.src = ''; // Stop loading video
-        }
-    });
+        // Listen for theme updates
+        window.electronAPI.on('widget-theme-update', ({ video, blur }: { video: string, blur: number }) => {
+            if (video) {
+                videoBg.src = video;
+                if (blur) videoBg.style.filter = `blur(${blur}px)`;
+                videoBg.style.display = 'block';
+                videoBg.play().catch(e => console.error("Video play failed", e));
+            } else {
+                videoBg.style.display = 'none';
+                videoBg.src = ''; // Stop loading video
+            }
+        });
+
+        // Listen for pin state changes from main process
+        window.electronAPI.on('widget-pin-state-changed', (isPinned: boolean) => {
+            if (pinBtn) pinBtn.style.opacity = isPinned ? '1' : '0.5';
+        });
+    }
 
     // Send actions to main process
     playBtn?.addEventListener('click', () => {
-        window.electronAPI.send('widget-action', 'playPause');
+        window.electronAPI?.send?.('widget-action', 'playPause');
     });
 
     prevBtn?.addEventListener('click', () => {
-        window.electronAPI.send('widget-action', 'prevTrack');
+        window.electronAPI?.send?.('widget-action', 'prevTrack');
     });
 
     nextBtn?.addEventListener('click', () => {
-        window.electronAPI.send('widget-action', 'nextTrack');
+        window.electronAPI?.send?.('widget-action', 'nextTrack');
     });
 
     pinBtn?.addEventListener('click', () => {
-        window.electronAPI.send('widget-toggle-pin');
-    });
-
-    // Listen for pin state changes from main process
-    window.electronAPI.on('widget-pin-state-changed', (isPinned) => {
-        if(pinBtn) pinBtn.style.opacity = isPinned ? '1' : '0.5';
+        window.electronAPI?.send?.('widget-toggle-pin');
     });
 });

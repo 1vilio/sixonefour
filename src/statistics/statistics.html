@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,12 @@
     <link rel="stylesheet" href="statistics.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
     <button class="close-btn" id="close-statistics" title="Close Statistics">
         <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            <path
+                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
         </svg>
     </button>
     <div class="container">
@@ -38,14 +41,94 @@
                 <ul id="top-artists-list"></ul>
             </div>
 
+            <div class="card" id="music-calendar-section">
+                <div class="calendar-header">
+                    <h2>Music Calendar</h2>
+                    <div class="calendar-legend">
+                        <span>Less</span>
+                        <div class="legend-item level-0"></div>
+                        <div class="legend-item level-1"></div>
+                        <div class="legend-item level-2"></div>
+                        <div class="legend-item level-3"></div>
+                        <div class="legend-item level-4"></div>
+                        <span>More</span>
+                    </div>
+                </div>
+                <div class="calendar-wrapper">
+                    <div id="calendar-grid" class="calendar-grid"></div>
+                    <div id="calendar-info-panel" class="calendar-info-panel">
+                        <div class="info-date">Hover over a day</div>
+                        <div class="info-stats">to see statistics</div>
+                        <div class="info-artworks"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal for showing all artworks -->
+            <div id="artworks-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <h2 id="modal-date-title">Tracks Played</h2>
+                    <div id="modal-artworks-grid" class="tooltip-artworks"
+                        style="grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));"></div>
+                </div>
+            </div>
+
             <div class="card" id="plays-per-hour-section" style="display: none;">
                 <h2>Plays per Hour</h2>
                 <div id="chart-container" style="position: relative; height:300px; width:100%;">
                     <canvas id="playsPerHourChart"></canvas>
                 </div>
             </div>
+
+            <div class="card" id="advanced-metrics-section">
+                <h2>Advanced Metrics</h2>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <span class="metric-label">Variety Score</span>
+                        <span class="metric-value" id="variety-score">0</span>
+                        <span class="metric-desc">Unique Artists / Total Plays</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Obsession Rate</span>
+                        <span class="metric-value" id="obsession-rate">0%</span>
+                        <span class="metric-desc">Time spent on Top 5 Artists</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Max Tracks/Day</span>
+                        <span class="metric-value" id="max-tracks-day">0</span>
+                        <span class="metric-desc" id="max-tracks-date">-</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Max Repeats</span>
+                        <span class="metric-value" id="max-repeats">0</span>
+                        <span class="metric-desc" id="max-repeats-track">-</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Avg Track Length</span>
+                        <span class="metric-value" id="avg-track-length">0s</span>
+                        <span class="metric-desc">Average duration per track</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Avg Daily Listening</span>
+                        <span class="metric-value" id="avg-daily-listening">0s</span>
+                        <span class="metric-desc">Average time per day</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Consistency Score</span>
+                        <span class="metric-value" id="consistency-score">0%</span>
+                        <span class="metric-desc">% of days with music</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="rediscoveries-section" style="display: none;">
+                <h2>Rediscoveries (Forgotten Heroes)</h2>
+                <ul id="rediscoveries-list"></ul>
+            </div>
         </div>
     </div>
     <script src="statistics.js"></script>
 </body>
+
 </html>
