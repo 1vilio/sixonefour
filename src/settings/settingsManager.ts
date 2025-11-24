@@ -918,15 +918,12 @@ export class SettingsManager {
                         <span class="slider"></span>
                     </label>
                 </div>
-                <div class="input-group" id="proxyFields" style="display: ${
-                    this.store.get('proxyEnabled') ? 'block' : 'none'
-                }">
-                    <input type="text" class="textInput" id="proxyHost" placeholder="${this.translationService.translate('proxyHost')}" data-i18n-placeholder="proxyHost" value="${
-                        this.store.get('proxyHost') || ''
-                    }">
-                    <input type="text" class="textInput" id="proxyPort" placeholder="${this.translationService.translate('proxyPort')}" data-i18n-placeholder="proxyPort" value="${
-                        this.store.get('proxyPort') || ''
-                    }">
+                <div class="input-group" id="proxyFields" style="display: ${this.store.get('proxyEnabled') ? 'block' : 'none'
+            }">
+                    <input type="text" class="textInput" id="proxyHost" placeholder="${this.translationService.translate('proxyHost')}" data-i18n-placeholder="proxyHost" value="${this.store.get('proxyHost') || ''
+            }">
+                    <input type="text" class="textInput" id="proxyPort" placeholder="${this.translationService.translate('proxyPort')}" data-i18n-placeholder="proxyPort" value="${this.store.get('proxyPort') || ''
+            }">
                 </div>
             </div>
 
@@ -944,18 +941,15 @@ export class SettingsManager {
                         <span class="slider"></span>
                     </label>
                 </div>
-                <div class="input-group" id="webhookFields" style="display: ${
-                    this.store.get('webhookEnabled') ? 'block' : 'none'
-                }">
-                    <input type="url" class="textInput" id="webhookUrl" placeholder="${this.translationService.translate('webhookUrl')}" data-i18n-placeholder="webhookUrl" value="${
-                        this.store.get('webhookUrl') || ''
-                    }">
+                <div class="input-group" id="webhookFields" style="display: ${this.store.get('webhookEnabled') ? 'block' : 'none'
+            }">
+                    <input type="url" class="textInput" id="webhookUrl" placeholder="${this.translationService.translate('webhookUrl')}" data-i18n-placeholder="webhookUrl" value="${this.store.get('webhookUrl') || ''
+            }">
                     <div class="setting-item">
                         <span data-i18n="webhookTrigger">${this.translationService.translate('webhookTrigger')}</span>
                         <div class="input-with-unit">
-                            <input type="number" id="webhookTriggerPercentage" class="textInput" style="width: 80px;" min="0" max="100" step="1" value="${
-                                this.store.get('webhookTriggerPercentage') || 50
-                            }">
+                            <input type="number" id="webhookTriggerPercentage" class="textInput" style="width: 80px;" min="0" max="100" step="1" value="${this.store.get('webhookTriggerPercentage') || 50
+            }">
                             <span class="unit-symbol">%</span>
                         </div>
                     </div>
@@ -963,9 +957,8 @@ export class SettingsManager {
                 <div class="description" data-i18n="webhookDescription">
                     ${this.translationService.translate('webhookDescription')}
                 </div>
-                <div class="webhook-example-container" id="webhookFields2" style="display: ${
-                    this.store.get('webhookEnabled') ? 'block' : 'none'
-                }">
+                <div class="webhook-example-container" id="webhookFields2" style="display: ${this.store.get('webhookEnabled') ? 'block' : 'none'
+            }">
                     <div class="example-toggle" id="webhookExampleToggle">
                         <span class="example-toggle-text" data-i18n="showWebhookExample">${this.translationService.translate('showWebhookExample')}</span>
                         <svg class="example-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -995,27 +988,24 @@ export class SettingsManager {
                 <div class="setting-item">
                     <span data-i18n="enableRichPresence">${this.translationService.translate('enableRichPresence')}</span>
                     <label class="toggle">
-                        <input type="checkbox" id="discordRichPresence" ${
-                            this.store.get('discordRichPresence') ? 'checked' : ''
-                        }>
+                        <input type="checkbox" id="discordRichPresence" ${this.store.get('discordRichPresence') ? 'checked' : ''
+            }>
                         <span class="slider"></span>
                     </label>
                 </div>
                 <div class="setting-item">
                     <span data-i18n="displayWhenPaused">${this.translationService.translate('displayWhenPaused')}</span>
                     <label class="toggle">
-                        <input type="checkbox" id="displayWhenIdling" ${
-                            this.store.get('displayWhenIdling') ? 'checked' : ''
-                        }>
+                        <input type="checkbox" id="displayWhenIdling" ${this.store.get('displayWhenIdling') ? 'checked' : ''
+            }>
                         <span class="slider"></span>
                     </label>
                 </div>
                 <div class="setting-item">
                     <span data-i18n="displaySmallIcon">${this.translationService.translate('displaySmallIcon')}</span>
                     <label class="toggle">
-                        <input type="checkbox" id="displaySCSmallIcon" ${
-                            this.store.get('displaySCSmallIcon') ? 'checked' : ''
-                        }>
+                        <input type="checkbox" id="displaySCSmallIcon" ${this.store.get('displaySCSmallIcon') ? 'checked' : ''
+            }>
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -1029,18 +1019,16 @@ export class SettingsManager {
                 <div class="setting-item">
                     <span data-i18n="enableRichPresencePreview">${this.translationService.translate('enableRichPresencePreview')}</span>
                     <label class="toggle">
-                        <input type="checkbox" id="richPresencePreviewEnabled" ${
-                            this.store.get('richPresencePreviewEnabled', false) ? 'checked' : ''
-                        }>
+                        <input type="checkbox" id="richPresencePreviewEnabled" ${this.store.get('richPresencePreviewEnabled', false) ? 'checked' : ''
+            }>
                         <span class="slider"></span>
                     </label>
                 </div>
                 <div class="description" data-i18n="richPresencePreviewDescription">${this.translationService.translate('richPresencePreviewDescription')}</div>
                 
                 <!-- Rich Presence Preview -->
-                <div class="preview-container" id="presencePreviewContainer" style="display: ${
-                    this.store.get('richPresencePreviewEnabled', false) ? 'block' : 'none'
-                }">
+                <div class="preview-container" id="presencePreviewContainer" style="display: ${this.store.get('richPresencePreviewEnabled', false) ? 'block' : 'none'
+            }">
                     <div class="preview-panel">
                         <div class="preview-header-inline">
                             <span class="preview-title-inline" data-i18n="richPresencePreviewTitle">${this.translationService.translate('richPresencePreviewTitle')}</span>
@@ -1093,6 +1081,48 @@ export class SettingsManager {
                     </div>
                 </div>
             </div>
+
+            <div class="setting-group">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                    </svg>
+                    Fans Boosting
+                </h2>
+                <div class="description" style="color: #ff5555; margin-bottom: 10px;">
+                    WARNING: This feature violates SoundCloud TOS. Use at your own risk.
+                </div>
+                
+                <!-- Track Info Preview -->
+                <div id="boostTrackInfo" style="display: none; background: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 8px; margin-bottom: 10px; align-items: center; gap: 10px;">
+                    <div id="boostTrackArt" style="width: 50px; height: 50px; background-size: cover; background-position: center; border-radius: 4px; background-color: #333;"></div>
+                    <div style="flex: 1; overflow: hidden;">
+                        <div id="boostTrackTitle" style="font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+                        <div id="boostTrackArtist" style="font-size: 0.9em; opacity: 0.7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="boostUrl" class="textInput" placeholder="Track URL (e.g. https://soundcloud.com/artist/track)">
+                    <input type="number" id="boostCount" class="textInput" placeholder="Target Plays" value="100">
+                </div>
+                <div class="activity-buttons-preview" style="margin-top: 10px;">
+                    <button id="startBoost" class="button">Start Boosting</button>
+                    <button id="stopBoost" class="button" style="background: #ff5555; display: none;">Stop Boosting</button>
+                </div>
+                <div class="description" style="margin-top: 10px; font-size: 0.9em; color: #50fa7b; font-weight: bold;">
+                    NOTICE!<br>
+                    Ensure you have an avatar, liked the track, and follow the artist.<br>
+                    Statistics refresh every 24 hours.
+                </div>
+                <div id="boostLogs" class="example-content" style="height: 150px; overflow-y: auto; margin-top: 10px; font-family: monospace; font-size: 11px; white-space: pre-wrap;">Ready to boost...</div>
+            </div>
+
+            <style>
+                .log-success { color: #50fa7b; font-weight: bold; }
+                .log-error { color: #ff5555; }
+                .log-info { color: #8be9fd; }
+            </style>
 
             <div class="setting-group">
                 <h2>Debugging</h2>
@@ -1907,6 +1937,90 @@ export class SettingsManager {
                         }
                     });
                 });
+            });
+            // Fans Boosting Logic
+            const startBoostBtn = document.getElementById('startBoost');
+            const stopBoostBtn = document.getElementById('stopBoost');
+            const boostUrlInput = document.getElementById('boostUrl');
+            const boostCountInput = document.getElementById('boostCount');
+            const boostLogs = document.getElementById('boostLogs');
+            const boostTrackInfo = document.getElementById('boostTrackInfo');
+            const boostTrackArt = document.getElementById('boostTrackArt');
+            const boostTrackTitle = document.getElementById('boostTrackTitle');
+            const boostTrackArtist = document.getElementById('boostTrackArtist');
+
+            function logBoost(msg) {
+                const line = document.createElement('div');
+                const time = new Date().toLocaleTimeString();
+                
+                if (msg.includes('Completed play')) {
+                    line.className = 'log-success';
+                    line.textContent = \`[\${time}] \${msg.toUpperCase()}\`;
+                } else if (msg.includes('Error')) {
+                    line.className = 'log-error';
+                    line.textContent = \`[\${time}] \${msg}\`;
+                } else {
+                    line.className = 'log-info';
+                    line.textContent = \`[\${time}] \${msg}\`;
+                }
+                
+                boostLogs.appendChild(line);
+                boostLogs.scrollTop = boostLogs.scrollHeight;
+            }
+
+            if (startBoostBtn) {
+                startBoostBtn.addEventListener('click', () => {
+                    const url = boostUrlInput.value.trim();
+                    const count = parseInt(boostCountInput.value);
+                    
+                    if (!url || !url.includes('soundcloud.com')) {
+                        logBoost('Error: Invalid URL');
+                        return;
+                    }
+                    if (!count || count <= 0) {
+                        logBoost('Error: Invalid count');
+                        return;
+                    }
+
+                    startBoostBtn.style.display = 'none';
+                    stopBoostBtn.style.display = 'block';
+                    // Reset Info
+                    boostTrackInfo.style.display = 'none';
+                    
+                    logBoost('Requesting start...');
+                    ipcRenderer.send('fans-boost-start', { url, count });
+                });
+            }
+
+            if (stopBoostBtn) {
+                stopBoostBtn.addEventListener('click', () => {
+                    ipcRenderer.send('fans-boost-stop');
+                    startBoostBtn.style.display = 'block';
+                    stopBoostBtn.style.display = 'none';
+                    logBoost('Requesting stop...');
+                });
+            }
+
+            ipcRenderer.on('fans-boost-log', (_, msg) => {
+                logBoost(msg);
+            });
+
+            ipcRenderer.on('fans-boost-progress', (_, { current, target }) => {
+                if (current >= target) {
+                    startBoostBtn.style.display = 'block';
+                    stopBoostBtn.style.display = 'none';
+                }
+            });
+
+            ipcRenderer.on('fans-boost-info', (_, info) => {
+                if (info) {
+                    boostTrackInfo.style.display = 'flex';
+                    boostTrackTitle.textContent = info.title;
+                    boostTrackArtist.textContent = info.artist;
+                    if (info.artwork) {
+                        boostTrackArt.style.backgroundImage = \`url('\${info.artwork}')\`;
+                    }
+                }
             });
         `;
     }

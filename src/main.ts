@@ -21,6 +21,7 @@ import { ThemeService } from './services/themeService';
 import { ShortcutService } from './services/shortcutService';
 import { DownloadService } from './services/downloadService';
 import { WidgetManager } from './services/WidgetManager';
+import { FansBoostingService } from './services/fansBoostingService';
 import { ZapretService } from './services/zapretService';
 import { UrlInterceptorService } from './services/urlInterceptorService';
 import { audioMonitorScript } from './services/audioMonitorService';
@@ -92,6 +93,7 @@ let themeService: ThemeService;
 let shortcutService: ShortcutService;
 let downloadService: DownloadService;
 let zapretService: ZapretService;
+let fansBoostingService: FansBoostingService;
 let urlInterceptorService: UrlInterceptorService;
 let tray: Tray | null = null;
 let isQuitting = false;
@@ -580,6 +582,35 @@ async function init() {
     shortcutService = new ShortcutService();
     shortcutService.setWindow(mainWindow);
     zapretService = new ZapretService();
+    fansBoostingService = new FansBoostingService(contentView);
+
+    // Fans Boosting IPC
+    ipcMain.on('fans-boost-start', (_event, { url, count }) => {
+        fansBoostingService.setCallbacks(
+            (msg) => {
+                if (settingsManager) {
+                    settingsManager.getView().webContents.send('fans-boost-log', msg);
+                }
+            },
+            (current, target) => {
+                if (settingsManager) {
+                    settingsManager.getView().webContents.send('fans-boost-progress', { current, target });
+                }
+            },
+            (info) => {
+                if (settingsManager) {
+                    settingsManager.getView().webContents.send('fans-boost-info', info);
+                }
+            }
+        );
+        fansBoostingService.start(url, count);
+    });
+
+    ipcMain.on('fans-boost-stop', () => {
+        fansBoostingService.stop();
+    });
+
+
 
     // Start Zapret service if it was enabled on last run
     if (store.get('bypassMode') === 'zapret') {
@@ -1432,6 +1463,11 @@ function setupAudioHandler() {
         }
 
         lastTrackInfo = result;
+
+        // SKIP STATS IF BOOSTING
+        if (fansBoostingService && fansBoostingService.isActive) {
+            return;
+        }
 
         // Logic for Listening Statistics
         const now = Date.now();
