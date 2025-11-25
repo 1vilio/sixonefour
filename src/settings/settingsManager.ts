@@ -1102,7 +1102,86 @@ export class SettingsManager {
                     </div>
                 </div>
 
-                <div class="input-group">
+                
+                <!-- Advanced Settings Toggle -->
+                <div class="setting-item" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                    <span>Advanced Settings</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="boostAdvancedSettings">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div id="boostAdvancedContainer" style="display: none; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 10px;">
+                    
+                    <!-- Fingerprint Settings -->
+                    <div class="setting-item">
+                        <span>&#127917; Randomize Fingerprint</span>
+                        <label class="toggle">
+                            <input type="checkbox" id="boostFingerprintEnabled" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div id="boostFingerprintOptions" style="margin-left: 10px; margin-bottom: 10px;">
+                        <div class="setting-item">
+                            <span style="font-size: 0.9em; opacity: 0.8;">Mode</span>
+                            <select id="boostFingerprintMode" class="theme-selector" style="width: 120px;">
+                                <option value="auto">Auto (Smart)</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                        
+                        <div id="boostFingerprintCustom" style="display: none; margin-left: 10px;">
+                            <div class="setting-item">
+                                <span style="font-size: 0.9em; opacity: 0.8;">Device Type</span>
+                                <select id="boostFingerprintDevice" class="theme-selector" style="width: 120px;">
+                                    <option value="all">Any</option>
+                                    <option value="desktop">Desktop</option>
+                                    <option value="mobile">Mobile</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <span style="font-size: 0.9em; opacity: 0.8;">OS</span>
+                                <select id="boostFingerprintOS" class="theme-selector" style="width: 120px;">
+                                    <option value="all">Any</option>
+                                    <option value="windows">Windows</option>
+                                    <option value="macos">MacOS</option>
+                                    <option value="ios">iOS</option>
+                                    <option value="android">Android</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scheduling Settings -->
+                    <div class="setting-item" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                        <span>&#9201; Smart Scheduling</span>
+                        <label class="toggle">
+                            <input type="checkbox" id="boostScheduleEnabled">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div id="boostScheduleOptions" style="display: none; margin-left: 10px;">
+                        <div class="setting-item">
+                            <span style="font-size: 0.9em; opacity: 0.8;">Mode</span>
+                            <select id="boostScheduleMode" class="theme-selector" style="width: 120px;">
+                                <option value="fastest">Fastest</option>
+                                <option value="distribute">Distribute</option>
+                            </select>
+                        </div>
+                        
+                        <div id="boostScheduleDistribute" style="display: none; margin-left: 10px;">
+                            <div class="setting-item">
+                                <span style="font-size: 0.9em; opacity: 0.8;">Duration (Hours)</span>
+                                <input type="number" id="boostScheduleHours" class="textInput" style="width: 60px;" value="24" min="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin-top: 15px;">
                     <input type="text" id="boostUrl" class="textInput" placeholder="Track URL (e.g. https://soundcloud.com/artist/track)">
                     <input type="number" id="boostCount" class="textInput" placeholder="Target Plays" value="100">
                 </div>
@@ -1949,6 +2028,50 @@ export class SettingsManager {
             const boostTrackTitle = document.getElementById('boostTrackTitle');
             const boostTrackArtist = document.getElementById('boostTrackArtist');
 
+            // Advanced Settings UI Logic
+            const boostAdvancedSettings = document.getElementById('boostAdvancedSettings');
+            const boostAdvancedContainer = document.getElementById('boostAdvancedContainer');
+            
+            const boostFingerprintEnabled = document.getElementById('boostFingerprintEnabled');
+            const boostFingerprintOptions = document.getElementById('boostFingerprintOptions');
+            const boostFingerprintMode = document.getElementById('boostFingerprintMode');
+            const boostFingerprintCustom = document.getElementById('boostFingerprintCustom');
+            
+            const boostScheduleEnabled = document.getElementById('boostScheduleEnabled');
+            const boostScheduleOptions = document.getElementById('boostScheduleOptions');
+            const boostScheduleMode = document.getElementById('boostScheduleMode');
+            const boostScheduleDistribute = document.getElementById('boostScheduleDistribute');
+
+            if (boostAdvancedSettings) {
+                boostAdvancedSettings.addEventListener('change', (e) => {
+                    boostAdvancedContainer.style.display = e.target.checked ? 'block' : 'none';
+                });
+            }
+
+            if (boostFingerprintEnabled) {
+                boostFingerprintEnabled.addEventListener('change', (e) => {
+                    boostFingerprintOptions.style.display = e.target.checked ? 'block' : 'none';
+                });
+            }
+
+            if (boostFingerprintMode) {
+                boostFingerprintMode.addEventListener('change', (e) => {
+                    boostFingerprintCustom.style.display = e.target.value === 'custom' ? 'block' : 'none';
+                });
+            }
+
+            if (boostScheduleEnabled) {
+                boostScheduleEnabled.addEventListener('change', (e) => {
+                    boostScheduleOptions.style.display = e.target.checked ? 'block' : 'none';
+                });
+            }
+
+            if (boostScheduleMode) {
+                boostScheduleMode.addEventListener('change', (e) => {
+                    boostScheduleDistribute.style.display = e.target.value === 'distribute' ? 'block' : 'none';
+                });
+            }
+
             function logBoost(msg) {
                 const line = document.createElement('div');
                 const time = new Date().toLocaleTimeString();
@@ -1982,13 +2105,29 @@ export class SettingsManager {
                         return;
                     }
 
+                    // Collect Advanced Options
+                    const fingerprintOptions = {
+                        enabled: boostFingerprintEnabled ? boostFingerprintEnabled.checked : true,
+                        mode: boostFingerprintMode ? boostFingerprintMode.value : 'auto',
+                        filter: {
+                            deviceType: document.getElementById('boostFingerprintDevice')?.value || 'all',
+                            os: document.getElementById('boostFingerprintOS')?.value || 'all'
+                        }
+                    };
+
+                    const schedulingOptions = {
+                        enabled: boostScheduleEnabled ? boostScheduleEnabled.checked : false,
+                        mode: boostScheduleMode ? boostScheduleMode.value : 'fastest',
+                        hours: parseInt(document.getElementById('boostScheduleHours')?.value || '24')
+                    };
+
                     startBoostBtn.style.display = 'none';
                     stopBoostBtn.style.display = 'block';
                     // Reset Info
                     boostTrackInfo.style.display = 'none';
                     
                     logBoost('Requesting start...');
-                    ipcRenderer.send('fans-boost-start', { url, count });
+                    ipcRenderer.send('fans-boost-start', { url, count, fingerprintOptions, schedulingOptions });
                 });
             }
 

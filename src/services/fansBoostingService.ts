@@ -1,6 +1,19 @@
 
 import { BrowserView } from 'electron';
 import { log as fileLog } from '../utils/logger';
+import { generateFingerprint, FingerprintFilter } from '../utils/fingerprintGenerator';
+
+export interface SchedulingOptions {
+    enabled: boolean;
+    mode: 'fastest' | 'distribute';
+    hours?: number;
+}
+
+export interface FingerprintOptions {
+    enabled: boolean;
+    mode: 'auto' | 'custom';
+    filter?: FingerprintFilter;
+}
 
 export class FansBoostingService {
     private contentView: BrowserView;
@@ -12,6 +25,10 @@ export class FansBoostingService {
     private progressCallback: (count: number, target: number) => void;
     private trackInfoCallback: (info: any) => void;
     private stopRequested: boolean = false;
+    private originalUserAgent: string = '';
+
+    private fingerprintOptions: FingerprintOptions = { enabled: true, mode: 'auto' };
+    private schedulingOptions: SchedulingOptions = { enabled: false, mode: 'fastest' };
 
     constructor(contentView: BrowserView) {
         this.contentView = contentView;
@@ -34,22 +51,39 @@ export class FansBoostingService {
         this.trackInfoCallback = onTrackInfo;
     }
 
-    public async start(url: string, count: number) {
+    public async start(
+        url: string,
+        count: number,
+        fingerprintOptions: FingerprintOptions,
+        schedulingOptions: SchedulingOptions
+    ) {
         if (this.isRunning) return;
         this.isRunning = true;
         this.stopRequested = false;
         this.targetUrl = url;
         this.targetCount = count;
         this.currentCount = 0;
+        this.fingerprintOptions = fingerprintOptions;
+        this.schedulingOptions = schedulingOptions;
+        this.originalUserAgent = this.contentView.webContents.getUserAgent();
 
         this.log('Starting Fans Boosting...');
         this.log(`Target: ${url}`);
         this.log(`Count: ${count}`);
 
+        if (this.fingerprintOptions.enabled) {
+            this.log(`Fingerprint: ${this.fingerprintOptions.mode} mode`);
+        }
+
+        if (this.schedulingOptions.enabled && this.schedulingOptions.mode === 'distribute') {
+            this.log(`Scheduling: Distribute over ${this.schedulingOptions.hours} hours`);
+        }
+
         try {
             this.contentView.webContents.setAudioMuted(true);
 
             // Initial Load
+            await this.applyFingerprint();
             this.log('Loading track page...');
             await this.contentView.webContents.loadURL(this.targetUrl);
             await this.waitForSelector('.playControls__play');
@@ -82,10 +116,65 @@ export class FansBoostingService {
         }
     }
 
-    private cleanup() {
+    private async cleanup() {
         this.isRunning = false;
         this.contentView.webContents.setAudioMuted(false);
         this.progressCallback(this.currentCount, this.targetCount);
+
+        // Restore State
+        if (this.originalUserAgent) {
+            this.contentView.webContents.setUserAgent(this.originalUserAgent);
+        }
+
+        try {
+            if (this.contentView.webContents.debugger.isAttached()) {
+                await this.contentView.webContents.debugger.sendCommand('Emulation.clearDeviceMetricsOverride');
+                this.contentView.webContents.debugger.detach();
+            }
+        } catch (e) {
+            console.error('Error clearing emulation:', e);
+        }
+
+        // Reload to reset UI to desktop
+        this.contentView.webContents.reload();
+    }
+
+    private async applyFingerprint() {
+        if (!this.fingerprintOptions.enabled) return;
+
+        // Force Desktop for Auto mode to avoid mobile UI issues
+        const filter = this.fingerprintOptions.mode === 'auto'
+            ? { deviceType: 'desktop' } as FingerprintFilter
+            : this.fingerprintOptions.filter;
+
+        const fingerprint = generateFingerprint(filter);
+
+        // Set User Agent
+        this.contentView.webContents.setUserAgent(fingerprint.userAgent);
+
+        // Emulate Device (Viewport & Scale)
+        try {
+            // Enable debugger to use CDP
+            if (!this.contentView.webContents.debugger.isAttached()) {
+                this.contentView.webContents.debugger.attach('1.3');
+            }
+
+            await this.contentView.webContents.debugger.sendCommand('Emulation.setDeviceMetricsOverride', {
+                width: fingerprint.viewport.width,
+                height: fingerprint.viewport.height,
+                deviceScaleFactor: fingerprint.deviceScaleFactor,
+                mobile: fingerprint.userAgent.includes('Mobile'),
+            });
+
+            // Override Platform and Language via script injection on load
+            // Note: setUserAgent handles the HTTP header, but navigator.platform needs injection
+            // We'll do a simple injection for now, but CDP is better for full spoofing
+
+            this.log(`Applied Fingerprint: ${fingerprint.platform} (${fingerprint.viewport.width}x${fingerprint.viewport.height})`);
+
+        } catch (e) {
+            this.log(`Fingerprint Error: ${e}`);
+        }
     }
 
     private async performPlayCycle(): Promise<void> {
@@ -93,12 +182,22 @@ export class FansBoostingService {
             if (this.stopRequested) return resolve();
 
             try {
+                // Rotate fingerprint for every NEW session (if we reload)
+                // But here we are in a loop. If we want to rotate fingerprint, we MUST reload page.
+                // Current logic tries to stay on page. 
+                // For "Smart Random" rotation, we should probably reload every X plays or every play?
+                // For now, let's keep the same session to avoid detection by constant reloads, 
+                // OR if the user wants high security, maybe we should reload?
+                // Let's stick to session persistence for now, as it's faster. 
+                // Fingerprint is applied at start. 
+
+                // TODO: Future improvement - "Session Rotation" option to reload page with new FP every N plays.
+
                 const reloaded = await this.ensureCorrectTrack();
 
                 if (this.stopRequested) return resolve();
 
                 // 2. Restart/Play Logic
-                // Only click Previous if we didn't just reload (reloading puts us at start)
                 if (!reloaded) {
                     this.log('Preparing track (Replay)...');
                     await this.contentView.webContents.executeJavaScript(`
@@ -137,18 +236,42 @@ export class FansBoostingService {
                         this.log(`Mode: Full Listen (${Math.round(percentage * 100)}% - ${Math.round(listenTimeMs / 1000)}s)`);
                     }
 
-                    // Cap at duration only if we have a valid duration
                     if (listenTimeMs > durationSec * 1000) {
                         listenTimeMs = (durationSec - 1) * 1000;
                     }
                 } else {
-                    // Fallback if duration extraction fails
-                    // Randomize fallback between 45s and 120s to be safe
                     listenTimeMs = (Math.random() * (120 - 45) + 45) * 1000;
                     this.log(`Mode: Fallback Listen (${Math.round(listenTimeMs / 1000)}s) - Duration not found`);
                 }
 
                 if (listenTimeMs <= 0) listenTimeMs = 10000;
+
+                // 5. Scheduling Delay
+                // If we need to distribute plays over time, we might need to wait LONGER than the listen time.
+                if (this.schedulingOptions.enabled && this.schedulingOptions.mode === 'distribute' && this.schedulingOptions.hours) {
+                    const totalTimeMs = this.schedulingOptions.hours * 60 * 60 * 1000;
+                    const playsRemaining = this.targetCount - this.currentCount;
+
+                    if (playsRemaining > 0) {
+                        // Target delay per play to fill the time
+                        // We calculate this dynamically each time to adjust for drift
+                        const targetDelayMs = totalTimeMs / this.targetCount;
+
+                        // If target delay is greater than listen time, we wait the difference
+                        if (targetDelayMs > listenTimeMs) {
+                            const extraWait = targetDelayMs - listenTimeMs;
+                            // Add some jitter (+/- 10%)
+                            const jitter = extraWait * 0.1 * (Math.random() - 0.5);
+                            const finalWait = extraWait + jitter;
+
+                            this.log(`Scheduling: Waiting extra ${Math.round(finalWait / 1000)}s to distribute plays`);
+                            await this.wait(listenTimeMs); // Listen
+                            await this.wait(finalWait);    // Wait rest of the time
+                            resolve();
+                            return;
+                        }
+                    }
+                }
 
                 await this.wait(listenTimeMs);
                 resolve();

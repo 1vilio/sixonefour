@@ -585,7 +585,7 @@ async function init() {
     fansBoostingService = new FansBoostingService(contentView);
 
     // Fans Boosting IPC
-    ipcMain.on('fans-boost-start', (_event, { url, count }) => {
+    ipcMain.on('fans-boost-start', (_event, { url, count, fingerprintOptions, schedulingOptions }) => {
         fansBoostingService.setCallbacks(
             (msg) => {
                 if (settingsManager) {
@@ -603,7 +603,7 @@ async function init() {
                 }
             }
         );
-        fansBoostingService.start(url, count);
+        fansBoostingService.start(url, count, fingerprintOptions, schedulingOptions);
     });
 
     ipcMain.on('fans-boost-stop', () => {
