@@ -40,24 +40,24 @@ export class DownloadService {
         }
     }
 
-    public async downloadTrack(trackInfo: TrackInfo, onStateChange: (status: 'downloading' | 'idle') => void): Promise<void> {
+    public async downloadTrack(trackInfo: TrackInfo, onStateChange?: (status: 'downloading' | 'idle') => void): Promise<string | null> {
         // Ensure we are connected before trying to download
         await this.connect();
 
         if (!this.isConnected) {
             log('[ERROR] [DownloadService] Cannot download, not connected to SoundCloud.');
-            onStateChange('idle');
-            return;
+            if (onStateChange) onStateChange('idle');
+            return null;
         }
 
         if (!trackInfo || !trackInfo.url) {
             log('[ERROR] [DownloadService] Invalid track info provided.');
             this.notificationManager.show('Download failed: Invalid track info');
-            onStateChange('idle');
-            return;
+            if (onStateChange) onStateChange('idle');
+            return null;
         }
 
-        onStateChange('downloading');
+        if (onStateChange) onStateChange('downloading');
 
         const filename = sanitize(`${trackInfo.author} - ${trackInfo.title} (VilioSC).mp3`);
         const downloadPath = this.store.get('downloadPath') as string || app.getPath('downloads');
@@ -66,62 +66,67 @@ export class DownloadService {
         log(`[DownloadService] Starting download for: ${filename}`);
         this.notificationManager.show(`Downloading: ${trackInfo.title}`);
 
-        try {
-            const stream = await SoundCloud.download(trackInfo.url);
-            const writer = fs.createWriteStream(filePath);
+        return new Promise<string | null>(async (resolve) => {
+            try {
+                const stream = await SoundCloud.download(trackInfo.url);
+                const writer = fs.createWriteStream(filePath);
 
-            stream.pipe(writer);
-            writer.on('close', async () => {
-                log(`[DownloadService] Finished downloading: ${filename}`);
+                stream.pipe(writer);
+                writer.on('close', async () => {
+                    log(`[DownloadService] Finished downloading: ${filename}`);
 
-                // Wait a bit to ensure file lock is released
-                setTimeout(async () => {
-                    try {
-                        const tags: NodeID3.Tags = {
-                            title: trackInfo.title,
-                            artist: trackInfo.author,
-                            album: 'SoundCloud',
-                            userDefinedText: [{
-                                description: 'Downloaded via',
-                                value: 'VilioSC'
-                            }]
-                        };
+                    // Wait a bit to ensure file lock is released
+                    setTimeout(async () => {
+                        try {
+                            const tags: NodeID3.Tags = {
+                                title: trackInfo.title,
+                                artist: trackInfo.author,
+                                album: 'SoundCloud',
+                                userDefinedText: [{
+                                    description: 'Downloaded via',
+                                    value: 'VilioSC'
+                                }]
+                            };
 
-                        // Write tags to the file
-                        const success = NodeID3.write(tags, filePath);
-                        if (success) {
-                            log(`[DownloadService] Metadata embedded successfully for: ${filename}`);
-                        } else {
-                            log(`[ERROR] [DownloadService] Failed to embed metadata for: ${filename}. NodeID3 returned false.`);
+                            // Write tags to the file
+                            const success = NodeID3.write(tags, filePath);
+                            if (success) {
+                                log(`[DownloadService] Metadata embedded successfully for: ${filename}`);
+                            } else {
+                                log(`[ERROR] [DownloadService] Failed to embed metadata for: ${filename}. NodeID3 returned false.`);
+                            }
+                        } catch (metaError) {
+                            log(`[ERROR] [DownloadService] Error embedding metadata: ${metaError}`);
                         }
-                    } catch (metaError) {
-                        log(`[ERROR] [DownloadService] Error embedding metadata: ${metaError}`);
-                    }
 
-                    this.notificationManager.show(`Download complete: ${trackInfo.title}`);
-                    onStateChange('idle');
-                }, 1000); // 1 second delay
-            });
-
-            writer.on('error', (err) => {
-                log(`[ERROR] [DownloadService] Error writing file: ${err.message}`);
-                this.notificationManager.show(`Download failed: ${trackInfo.title}`);
-                onStateChange('idle');
-                // Clean up partially downloaded file
-                fs.unlink(filePath, (unlinkErr) => {
-                    if (unlinkErr) log(`[ERROR] [DownloadService] Failed to delete partial file: ${unlinkErr.message}`);
+                        this.notificationManager.show(`Download complete: ${trackInfo.title}`);
+                        if (onStateChange) onStateChange('idle');
+                        resolve(filePath);
+                    }, 1000); // 1 second delay
                 });
-            });
 
-        } catch (error) {
-            let errorMessage = 'An unknown error occurred';
-            if (error instanceof Error) {
-                errorMessage = error.message;
+                writer.on('error', (err) => {
+                    log(`[ERROR] [DownloadService] Error writing file: ${err.message}`);
+                    this.notificationManager.show(`Download failed: ${trackInfo.title}`);
+                    if (onStateChange) onStateChange('idle');
+                    // Clean up partially downloaded file
+                    fs.unlink(filePath, (unlinkErr) => {
+                        if (unlinkErr) log(`[ERROR] [DownloadService] Failed to delete partial file: ${unlinkErr.message}`);
+                    });
+                    resolve(null);
+                });
+
+            } catch (error) {
+                let errorMessage = 'An unknown error occurred';
+                if (error instanceof Error) {
+                    errorMessage = error.message;
+                }
+                log(`[ERROR] [DownloadService] Error downloading track: ${errorMessage}`);
+                this.notificationManager.show(`Download failed: ${trackInfo.title}`);
+                if (onStateChange) onStateChange('idle');
+                resolve(null);
             }
-            log(`[ERROR] [DownloadService] Error downloading track: ${errorMessage}`);
-            this.notificationManager.show(`Download failed: ${trackInfo.title}`);
-            onStateChange('idle');
-        }
+        });
     }
 
     private async fetchArtworkBuffer(trackInfo: TrackInfo): Promise<{ buffer: Buffer, mime: string } | null> {

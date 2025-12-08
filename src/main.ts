@@ -6,6 +6,7 @@ ipcMain.on('open-external-link', (_event, url: string) => {
     shell.openExternal(url);
 });
 import { ElectronBlocker, fullLists } from '@ghostery/adblocker-electron';
+import * as fs from 'fs';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import fetch from 'cross-fetch';
 import { setupDarwinMenu } from './macos/menu';
@@ -25,6 +26,8 @@ import { FansBoostingService } from './services/fansBoostingService';
 import { ZapretService } from './services/zapretService';
 import { UrlInterceptorService } from './services/urlInterceptorService';
 import { audioMonitorScript } from './services/audioMonitorService';
+import { TelegramService } from './services/telegramService';
+import { LikesScraperService, ScrapedTrack } from './services/likesScraperService';
 import type { TrackInfo, TrackUpdateMessage } from './types';
 import { listeningStatsService, StatsTrackInfo } from './services/listeningStatsService';
 import { databaseService } from './services/databaseService';
@@ -71,6 +74,10 @@ const store = new Store({
         widgetEnabled: false,
         openAtLogin: false,
         startInTray: false,
+        telegramBotToken: '',
+        telegramChannelId: '',
+        telegramUserId: '',
+        telegramLiveFeedEnabled: false,
     },
     clearInvalidConfig: true,
     encryptionKey: 'soundcloud-rpc-config',
@@ -95,6 +102,10 @@ let downloadService: DownloadService;
 let zapretService: ZapretService;
 let fansBoostingService: FansBoostingService;
 let urlInterceptorService: UrlInterceptorService;
+let telegramService: TelegramService;
+let likesScraperService: LikesScraperService;
+let scraperView: BrowserView;
+let liveFeedInterval: NodeJS.Timeout | null = null;
 let tray: Tray | null = null;
 let isQuitting = false;
 const devMode = process.argv.includes('--dev');
@@ -327,6 +338,8 @@ let currentTrackState: {
     lastTimestamp: number;
     trackInfo: StatsTrackInfo;
 } | null = null;
+
+let isExporting = false;
 
 function setupWindowControls() {
     if (!mainWindow) return;
@@ -582,6 +595,135 @@ async function init() {
     shortcutService = new ShortcutService();
     shortcutService.setWindow(mainWindow);
     zapretService = new ZapretService();
+    fansBoostingService = new FansBoostingService(contentView);
+
+    // Initialize Telegram Service
+    telegramService = new TelegramService();
+    telegramService.setCredentials(
+        store.get('telegramBotToken', '') as string,
+        store.get('telegramUserId', '') as string,
+        store.get('telegramChannelId', '') as string
+    );
+
+    // Initialize Scraper View and Service
+    scraperView = new BrowserView({
+        webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            // Share session with main window (default session)
+        }
+    });
+
+    // Attach scraper view but keep it behind content
+    mainWindow.addBrowserView(scraperView);
+    scraperView.setBounds({ x: 0, y: 0, width: 1280, height: 800 });
+    // Ensure content view is on top
+    mainWindow.setTopBrowserView(headerView);
+    mainWindow.setTopBrowserView(contentView);
+    likesScraperService = new LikesScraperService(scraperView);
+
+    // Telegram IPC Handlers
+    ipcMain.handle('telegram-save-settings', (_event, { token, userId, channelId, username }) => {
+        token = token.trim();
+        userId = userId.trim();
+        channelId = channelId.trim();
+        username = username.trim();
+        store.set('telegramBotToken', token);
+        store.set('telegramUserId', userId);
+        store.set('telegramChannelId', channelId);
+        store.set('telegramUsername', username);
+        telegramService.setCredentials(token, userId, channelId);
+        return true;
+    });
+
+    ipcMain.handle('telegram-get-settings', () => {
+        return {
+            token: store.get('telegramBotToken', ''),
+            userId: store.get('telegramUserId', ''),
+            channelId: store.get('telegramChannelId', ''),
+            username: store.get('telegramUsername', '')
+        };
+    });
+
+
+
+    ipcMain.handle('telegram-validate-token', async (_event, token) => {
+        return await telegramService.validateToken(token);
+    });
+
+    ipcMain.on('telegram-mass-export-start', async () => {
+        if (!telegramService.hasCredentials()) {
+            queueToastNotification('Please configure Telegram settings first.');
+            return;
+        }
+
+        log('[Telegram] Starting Mass Export...');
+        queueToastNotification('Starting Mass Export...');
+        isExporting = true;
+
+        // Listen for stop signal
+        ipcMain.once('telegram-mass-export-stop', () => {
+            isExporting = false;
+            console.log('[Telegram] Mass export stop signal received.');
+        });
+
+        await likesScraperService.scrapeAllLikes(
+            (count, total) => {
+                console.log(`[Telegram] Export progress: ${count}/${total}`);
+                if (settingsManager) {
+                    settingsManager.getView().webContents.send('telegram-export-progress', { count, total });
+                }
+            },
+            async (tracks) => {
+                if (!isExporting) return;
+                console.log(`[Telegram] Processing batch of ${tracks.length} tracks...`);
+                for (const [index, track] of tracks.entries()) {
+                    if (!isExporting) break;
+                    await processTrackForTelegram(track, false);
+
+                    // Rate limiting: 2 seconds between tracks
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    // Pause every 20 tracks for 60 seconds
+                    if ((index + 1) % 20 === 0) {
+                        console.log('[Telegram] Pausing for 60s to avoid spam filter...');
+                        await new Promise(resolve => setTimeout(resolve, 60000));
+                    }
+                }
+            },
+            () => {
+                if (!isExporting) console.log('[Telegram] Stop signal detected in scraper loop.');
+                return !isExporting;
+            }
+        );
+
+        isExporting = false;
+        log('[Telegram] Mass Export finished.');
+        console.log('[Telegram] Mass export finished.');
+        queueToastNotification(`Mass Export finished.`); // Removed exportedCount as it's not tracked in this version
+        if (settingsManager) {
+            settingsManager.getView().webContents.send('telegram-export-finished');
+        }
+    });
+
+    ipcMain.on('telegram-live-feed-toggle', (_event, enabled) => {
+        store.set('telegramLiveFeedEnabled', enabled);
+        if (enabled) {
+            startLiveFeed();
+        } else {
+            stopLiveFeed();
+        }
+    });
+
+    // Start Live Feed if enabled
+    // Start Live Feed if enabled (with delay to allow app to settle)
+    if (store.get('telegramLiveFeedEnabled', false)) {
+        log('[Telegram] Scheduling Live Feed start in 15s...');
+        setTimeout(() => {
+            startLiveFeed();
+        }, 15000);
+    }
+
     fansBoostingService = new FansBoostingService(contentView);
 
     // Fans Boosting IPC
@@ -1572,4 +1714,206 @@ function setupAudioHandler() {
             }
         }
     });
+}
+
+// Telegram Helper Functions
+
+async function processTrackForTelegram(track: ScrapedTrack, isLiveFeed: boolean = false) {
+    if (!telegramService.hasCredentials()) {
+        log('[Telegram] Missing credentials in worker.');
+        return;
+    }
+
+    const filename = sanitizeFilename(`${track.artist} - ${track.title} (VilioSC).mp3`);
+    const downloadPath = path.join(store.get('downloadPath') as string || app.getPath('downloads'), 'Vilio_Telegram_Export');
+    if (!fs.existsSync(downloadPath)) fs.mkdirSync(downloadPath, { recursive: true });
+
+    let filePath = path.join(downloadPath, filename);
+    const artworkFilename = sanitizeFilename(`${track.artist} - ${track.title} (VilioSC).jpg`);
+    const artworkPath = path.join(downloadPath, artworkFilename);
+
+    const trackInfo: TrackInfo = {
+        title: track.title,
+        author: track.artist,
+        url: track.url,
+        artwork: track.artwork,
+        duration: '',
+        elapsed: '0:00',
+        isPlaying: false
+    };
+
+    // Helper for retrying async operations
+    async function retryOperation<T>(operation: () => Promise<T>, retries: number = 3, delayMs: number = 2000): Promise<T> {
+        for (let i = 0; i < retries; i++) {
+            try {
+                return await operation();
+            } catch (error: any) {
+                const isTimeout = error.code === 'ETIMEDOUT' || error.message?.includes('ETIMEDOUT') || error.message?.includes('network timeout');
+                const isFetchError = error.name === 'FetchError' || error.message?.includes('fetch failed');
+
+                if ((isTimeout || isFetchError) && i < retries - 1) {
+                    log(`[Telegram] Error (attempt ${i + 1}/${retries}): ${error.message}. Retrying in ${delayMs}ms...`);
+                    await new Promise(resolve => setTimeout(resolve, delayMs));
+                } else {
+                    throw error;
+                }
+            }
+        }
+        throw new Error('Retries exhausted');
+    }
+
+    try {
+        log(`[Telegram] Processing track: ${track.artist} - ${track.title}`);
+        console.log(`[Telegram] Processing track: ${track.artist} - ${track.title}`);
+
+        // 1. Download Track
+        let downloadedFilePath: string | null = null;
+
+        // Wrap download in race conditions for timeout
+        try {
+            downloadedFilePath = await Promise.race([
+                downloadService.downloadTrack(trackInfo),
+                new Promise<string | null>((_, reject) => setTimeout(() => reject(new Error('Download timed out after 30s')), 30000))
+            ]);
+        } catch (downloadError: any) {
+            throw new Error(downloadError.message || 'Download timed out or failed');
+        }
+
+        if (!downloadedFilePath || !fs.existsSync(downloadedFilePath) || fs.statSync(downloadedFilePath).size === 0) {
+            throw new Error('Download failed: File is missing or empty');
+        }
+
+        // 2. Download Artwork (Retryable)
+        await retryOperation(async () => {
+            if (!track.artwork) return;
+            const response = await fetch(track.artwork.replace('-large', '-t500x500'));
+            if (!response.ok) throw new Error(`Artwork fetch failed: ${response.status}`);
+            const arrayBuffer = await response.arrayBuffer();
+            fs.writeFileSync(artworkPath, Buffer.from(arrayBuffer));
+        });
+
+        // 3. Send to Telegram
+        const telegramUsername = store.get('telegramUsername', '').replace('@', '');
+        const sourceLine = telegramUsername
+            ? `👤 Source: @${telegramUsername} (SoundCloud)`
+            : `👤 Source: SoundCloud`;
+
+        let captionPrefix = '';
+        if (isLiveFeed) {
+            captionPrefix = `<b>New track in library</b>\n\n`;
+        }
+
+        const caption = `${captionPrefix}<b>${track.artist} - ${track.title}</b>\n` +
+            `\n` +
+            `🔗 SoundCloud: <a href="${track.url}">Link</a>\n` +
+            `${sourceLine}\n` +
+            `\n` +
+            `📥 Exported via <a href="https://github.com/1vilio/sixonefour">sixonefour</a>\n` +
+            `\n` +
+            `Want custom skins? Discord status? A live widget?\n` +
+            `Export tracks to Telegram? Boost listens? See detailed stats?\n` +
+            `Bypass region blocks? Hotkeys? Download music & covers in one tap?\n` +
+            `\n` +
+            `<a href="https://github.com/1vilio/sixonefour">sixonefour</a> does <b>all of it.</b>`;
+
+        const sent = await telegramService.sendAudio(downloadedFilePath, caption, track.artist, track.title, artworkPath);
+
+        if (sent) {
+            log(`[Telegram] Sent track to Telegram: ${track.title}`);
+            console.log(`[Telegram] Sent track to Telegram: ${track.title}`);
+        } else {
+            log(`[Telegram] Failed to send track to Telegram: ${track.title}`);
+            console.log(`[Telegram] Failed to send track: ${track.title}`);
+            const message = `Failed to upload MP3 for: <b>${track.artist} - ${track.title}</b>\n<a href="${track.url}">Link</a>`;
+            await telegramService.sendMessage(message, { parse_mode: 'HTML' });
+        }
+
+        // Assign final path for cleanup
+        if (downloadedFilePath) filePath = downloadedFilePath;
+
+    } catch (err: any) {
+        log(`[Telegram] Error processing track ${track.title}: ${err.message}`);
+        console.error(`[Telegram] Error processing track ${track.title}: ${err.message}`);
+        const message = `Failed to upload MP3 for: <b>${track.artist} - ${track.title}</b>\nReason: ${err.message}\n<a href="${track.url}">Link</a>`;
+        await telegramService.sendMessage(message, { parse_mode: 'HTML' });
+    } finally {
+        if (filePath && fs.existsSync(filePath)) {
+            // Only strictly delete if in temp folder? The user path is usually Downloads. 
+            // The original code was using a temp folder 'Vilio_Telegram_Export'
+            if (filePath.includes('Vilio_Telegram_Export')) {
+                fs.unlink(filePath, (err) => {
+                    if (err) log(`[Telegram] Failed to delete temp file ${filePath}: ${err}`);
+                });
+            }
+        }
+        if (artworkPath && fs.existsSync(artworkPath)) {
+            fs.unlink(artworkPath, () => { });
+        }
+    }
+}
+
+function startLiveFeed() {
+    if (liveFeedInterval) clearInterval(liveFeedInterval);
+
+    log('[Telegram] Starting Live Feed...');
+    console.log('[Telegram] Live Feed started. Checking every 15 minutes.');
+
+    // Initial Check
+    checkLiveFeed();
+
+    // Check every 15 minutes
+    liveFeedInterval = setInterval(async () => {
+        await checkLiveFeed();
+    }, 15 * 60 * 1000);
+}
+
+async function checkLiveFeed() {
+    try {
+        console.log('[Telegram] Live Feed: Checking for new likes...');
+        const latestLikes = await likesScraperService.getLatestLikes(5);
+        if (latestLikes.length === 0) {
+            console.log('[Telegram] Live Feed: No tracks found.');
+            return;
+        }
+
+        const lastLikedUrl = store.get('telegramLastLikedUrl', '');
+        console.log(`[Telegram] Live Feed: Last liked URL: ${lastLikedUrl}`);
+
+        // Find new tracks
+        const newTracks = [];
+        for (const track of latestLikes) {
+            if (track.url === lastLikedUrl) break;
+            newTracks.push(track);
+        }
+
+        if (newTracks.length > 0) {
+            console.log(`[Telegram] Live Feed: Found ${newTracks.length} new tracks.`);
+            // Update last liked
+            store.set('telegramLastLikedUrl', latestLikes[0].url);
+
+            // Send notifications for new tracks (reversed to be chronological)
+            for (const track of newTracks.reverse()) {
+                console.log(`[Telegram] Live Feed: Processing new track ${track.title}`);
+                await processTrackForTelegram(track, true);
+            }
+        } else {
+            console.log('[Telegram] Live Feed: No new tracks since last check.');
+        }
+
+    } catch (error) {
+        log(`[Telegram] Live Feed error: ${error}`);
+        console.error(`[Telegram] Live Feed error: ${error}`);
+    }
+}
+
+function stopLiveFeed() {
+    if (liveFeedInterval) {
+        clearInterval(liveFeedInterval);
+        liveFeedInterval = null;
+    }
+    log('[Telegram] Live Feed stopped.');
+}
+
+function sanitizeFilename(name: string): string {
+    return name.replace(/[^a-z0-9 \.-]/gi, '_');
 }

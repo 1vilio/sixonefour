@@ -44,6 +44,7 @@ export class NotificationManager {
         const height = 70; // increased from 50
 
         this.parentWindow.addBrowserView(this.view);
+        this.parentWindow.setTopBrowserView(this.view);
         this.view.setBounds({
             x: Math.floor((bounds.width - width) / 2),
             y: bounds.height - height - 100, // increased from 20 to move it up

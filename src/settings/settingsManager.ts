@@ -1213,6 +1213,92 @@ export class SettingsManager {
             </div>
 
             <div class="setting-group">
+                <h2>
+                    <svg viewBox="0 0 24 24" style="fill: #229ED9;">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                    Telegram Integration
+                </h2>
+                
+                <div class="setting-item">
+                    <div class="input-group" style="width: 100%;">
+                        <span style="margin-bottom: 5px;">Bot Token</span>
+                        <div style="position: relative;">
+                            <input type="text" id="telegramBotToken" class="textInput" placeholder="123456789:ABCdefGHIjklMNOpqrsTUVwxyz" style="padding-right: 30px;">
+                            <button class="close-btn" style="position: absolute; right: 0; top: 0; height: 100%; width: 30px; opacity: 0.6;" onclick="document.getElementById('telegramBotToken').value = ''">
+                                <svg viewBox="0 0 24 24" style="width: 14px; height: 14px;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="input-group" style="width: 100%;">
+                        <span style="margin-bottom: 5px;">Channel ID (Optional)</span>
+                        <div style="position: relative;">
+                            <input type="text" id="telegramChannelId" class="textInput" placeholder="-1001234567890" style="padding-right: 30px;">
+                            <button class="close-btn" style="position: absolute; right: 0; top: 0; height: 100%; width: 30px; opacity: 0.6;" onclick="document.getElementById('telegramChannelId').value = ''">
+                                <svg viewBox="0 0 24 24" style="width: 14px; height: 14px;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="input-group" style="width: 100%;">
+                        <span style="margin-bottom: 5px;">Telegram Username (e.g. @1vilio)</span>
+                        <div style="position: relative;">
+                            <input type="text" id="telegramUsername" class="textInput" placeholder="@username" style="padding-right: 30px;">
+                            <button class="close-btn" style="position: absolute; right: 0; top: 0; height: 100%; width: 30px; opacity: 0.6;" onclick="document.getElementById('telegramUsername').value = ''">
+                                <svg viewBox="0 0 24 24" style="width: 14px; height: 14px;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="input-group" style="width: 100%;">
+                        <span style="margin-bottom: 5px;">Your User ID (Optional)</span>
+                        <div style="position: relative;">
+                            <input type="text" id="telegramUserId" class="textInput" placeholder="123456789" style="padding-right: 30px;">
+                            <button class="close-btn" style="position: absolute; right: 0; top: 0; height: 100%; width: 30px; opacity: 0.6;" onclick="document.getElementById('telegramUserId').value = ''">
+                                <svg viewBox="0 0 24 24" style="width: 14px; height: 14px;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-item" style="margin-top: 10px;">
+                    <button id="telegramSave" class="button">Save Credentials</button>
+                </div>
+
+                <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px;">
+                    <div class="setting-item">
+                        <span>Live Feed (Post new likes)</span>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <label class="toggle">
+                                <input type="checkbox" id="telegramLiveFeed">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px;">
+                    <div class="setting-item">
+                        <span>Mass Export (All Liked Tracks)</span>
+                        <button id="telegramMassExport" class="theme-button" style="width: auto;">Start Export</button>
+                    </div>
+                    <div id="telegramExportProgress" style="display: none; margin-top: 10px;">
+                        <span id="telegramExportStatus" style="font-size: 12px; color: var(--text-secondary);">Processing...</span>
+                        <div class="progress-bar-preview" style="margin-top: 5px;">
+                            <div id="telegramExportBar" class="progress-bar-fill-preview" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="setting-group">
                 <button class="button" id="applyChanges" data-i18n="applyChanges">${this.translationService.translate('applyChanges')}</button>
             </div>
         </div>
@@ -2161,12 +2247,94 @@ export class SettingsManager {
                     }
                 }
             });
+
+            // Telegram Integration Logic
+            const telegramBotToken = document.getElementById('telegramBotToken');
+            const telegramChannelId = document.getElementById('telegramChannelId');
+            const telegramUserId = document.getElementById('telegramUserId');
+            const telegramSave = document.getElementById('telegramSave');
+            const telegramLiveFeed = document.getElementById('telegramLiveFeed');
+            const telegramMassExport = document.getElementById('telegramMassExport');
+            const telegramExportProgress = document.getElementById('telegramExportProgress');
+            const telegramExportStatus = document.getElementById('telegramExportStatus');
+            const telegramExportBar = document.getElementById('telegramExportBar');
+
+            // Load initial settings
+            ipcRenderer.invoke('telegram-get-settings').then(settings => {
+                if (settings.token) telegramBotToken.value = settings.token;
+                if (settings.channelId) telegramChannelId.value = settings.channelId;
+                if (settings.userId) telegramUserId.value = settings.userId;
+                if (settings.username) document.getElementById('telegramUsername').value = settings.username;
+            });
+            
+            // Load live feed state
+            ipcRenderer.invoke('get-store-value', 'telegramLiveFeedEnabled').then(enabled => {
+                telegramLiveFeed.checked = enabled;
+            });
+
+            telegramSave.addEventListener('click', async () => {
+                const token = telegramBotToken.value.trim();
+                const channelId = telegramChannelId.value.trim();
+                const userId = telegramUserId.value.trim();
+                const username = document.getElementById('telegramUsername').value.trim();
+
+                if (!token || !channelId) {
+                    alert('Please enter both Bot Token and Channel ID.');
+                    return;
+                }
+
+                telegramSave.textContent = 'Validating...';
+                const isValid = await ipcRenderer.invoke('telegram-validate-token', token);
+                
+                if (isValid) {
+                    await ipcRenderer.invoke('telegram-save-settings', { token, channelId, userId, username });
+                    telegramSave.textContent = 'Saved!';
+                    setTimeout(() => telegramSave.textContent = 'Save Credentials', 2000);
+                } else {
+                    telegramSave.textContent = 'Invalid Token!';
+                    setTimeout(() => telegramSave.textContent = 'Save Credentials', 2000);
+                }
+            });
+
+            telegramLiveFeed.addEventListener('change', (e) => {
+                ipcRenderer.send('telegram-live-feed-toggle', e.target.checked);
+            });
+
+            telegramMassExport.addEventListener('click', () => {
+                if (telegramMassExport.textContent === 'Start Export') {
+                    telegramMassExport.textContent = 'Stop Export';
+                    telegramExportProgress.style.display = 'block';
+                    telegramExportStatus.textContent = 'Starting...';
+                    telegramExportBar.style.width = '0%';
+                    ipcRenderer.send('telegram-mass-export-start');
+                } else {
+                    telegramMassExport.textContent = 'Start Export';
+                    ipcRenderer.send('telegram-mass-export-stop');
+                    telegramExportStatus.textContent = 'Stopped.';
+                }
+            });
+
+            ipcRenderer.on('telegram-export-progress', (_, { count, total }) => {
+                const percent = Math.round((count / total) * 100);
+                telegramExportBar.style.width = \`\${percent}%\`;
+                telegramExportStatus.textContent = \`Processed \${count} of \${total} tracks (\${percent}%)\`;
+            });
+
+            ipcRenderer.on('telegram-export-finished', () => {
+                telegramMassExport.textContent = 'Start Export';
+                telegramExportStatus.textContent = 'Export Completed!';
+                telegramExportBar.style.width = '100%';
+                setTimeout(() => {
+                    telegramExportProgress.style.display = 'none';
+                }, 5000);
+            });
         `;
     }
 
     private show(): void {
         this.isVisible = true;
         this.updateBounds();
+        this.parentWindow.setTopBrowserView(this.view);
         this.view.webContents.executeJavaScript(`
             // Force a reflow to ensure animation works
             document.body.style.opacity;

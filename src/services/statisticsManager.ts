@@ -51,6 +51,7 @@ export class StatisticsManager {
     private show(): void {
         this.isVisible = true;
         this.updateBounds();
+        this.parentWindow.setTopBrowserView(this.view);
         this.view.webContents.executeJavaScript(`
             document.body.style.opacity = '0';
             document.body.style.transform = 'translateX(20px)';
