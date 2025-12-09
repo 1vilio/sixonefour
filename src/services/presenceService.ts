@@ -111,14 +111,14 @@ export class PresenceService {
 
                 const activity: SetActivity & { name?: string; statusDisplayType?: number } = {
                     type: ActivityType.Listening,
-                    name: 'VilSoundcloud',
+                    name: 'sixonefour',
                     details: `${this.shortenString(currentTrack.title)}${currentTrack.title.length < 2 ? '⠀⠀' : ''}`,
                     state: `by ${this.shortenString(currentTrack.author)}`,
                     largeImageKey: artworkUrl.replace('50x50.', '500x500.'),
                     startTimestamp,
                     endTimestamp,
-                    smallImageKey: this.displaySCSmallIcon ? 'vilsc' : '',
-                    smallImageText: this.displaySCSmallIcon ? 'VilSoundcloud' : '',
+                    smallImageKey: this.displaySCSmallIcon ? 'sixonefour' : '',
+                    smallImageText: this.displaySCSmallIcon ? 'sixonefour' : '',
                     instance: false,
                 };
 
@@ -134,13 +134,13 @@ export class PresenceService {
                 this.info.rpc.user?.setActivity(activity);
             } else if (this.displayWhenIdling && this.store.get('discordRichPresence')) {
                 this.info.rpc.user?.setActivity({
-                    name: 'VilSoundcloud',
+                    name: 'sixonefour',
                     details: 'Idling',
                     state: 'Paused',
                     largeImageKey: 'idling',
                     largeImageText: 'Paused',
-                    smallImageKey: 'vilsc',
-                    smallImageText: 'VilSoundcloud',
+                    smallImageKey: 'sixonefour',
+                    smallImageText: 'sixonefour',
                     instance: false,
                 });
             } else {

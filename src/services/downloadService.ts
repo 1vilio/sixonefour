@@ -59,7 +59,7 @@ export class DownloadService {
 
         if (onStateChange) onStateChange('downloading');
 
-        const filename = sanitize(`${trackInfo.author} - ${trackInfo.title} (VilioSC).mp3`);
+        const filename = sanitize(`${trackInfo.author} - ${trackInfo.title} (sixonefour).mp3`);
         const downloadPath = this.store.get('downloadPath') as string || app.getPath('downloads');
         const filePath = path.join(downloadPath, filename);
 
@@ -84,7 +84,7 @@ export class DownloadService {
                                 album: 'SoundCloud',
                                 userDefinedText: [{
                                     description: 'Downloaded via',
-                                    value: 'VilioSC'
+                                    value: 'sixonefour'
                                 }]
                             };
 
@@ -201,7 +201,7 @@ export class DownloadService {
             const downloadPath = this.store.get('downloadPath') as string || app.getPath('downloads');
             // Determine extension based on mime type
             const ext = artworkData.mime === 'image/png' ? 'png' : 'jpg';
-            const artworkFilename = sanitize(`${trackInfo.author} - ${trackInfo.title} (VilioSC).${ext}`);
+            const artworkFilename = sanitize(`${trackInfo.author} - ${trackInfo.title} (sixonefour).${ext}`);
             const artworkPath = path.join(downloadPath, artworkFilename);
 
             log(`[DownloadService] Saving artwork to: ${artworkFilename}`);

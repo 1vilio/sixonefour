@@ -15,7 +15,7 @@ export class UrlInterceptorService {
         // This is necessary to make the app a handler for URLs on macOS
         // For Windows, registry changes are needed during installation.
         // We'll add the protocol client for a custom scheme to help with registration.
-        const customProtocol = 'vilsc';
+        const customProtocol = 'sixonefour';
         if (process.defaultApp) {
             if (process.argv.length >= 2) {
                 app.setAsDefaultProtocolClient(customProtocol, process.execPath, [path.resolve(process.argv[1])]);

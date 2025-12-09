@@ -80,7 +80,7 @@ const store = new Store({
         telegramLiveFeedEnabled: false,
     },
     clearInvalidConfig: true,
-    encryptionKey: 'soundcloud-rpc-config',
+    encryptionKey: 'sixonefour-config',
 });
 
 let isDarkTheme = store.get('theme') !== 'light';
@@ -189,7 +189,7 @@ function setupTray() {
     const trayIcon = icon.resize({ width: 16, height: 16 });
 
     tray = new Tray(trayIcon);
-    tray.setToolTip('SoundCloud RPC');
+    tray.setToolTip('sixonefour');
 
     // Create tray menu
     const contextMenu = Menu.buildFromTemplate([
@@ -1701,13 +1701,13 @@ function setupAudioHandler() {
         }
 
         if (result.isPlaying && result.title) {
-            const title = `VilSC - ${result.title} (${result.elapsed})`;
+            const title = `sixonefour - ${result.title} (${result.elapsed})`;
             mainWindow.setTitle(title);
             if (tray) {
                 tray.setToolTip(title);
             }
         } else {
-            const title = 'VilSC';
+            const title = 'sixonefour';
             mainWindow.setTitle(title);
             if (tray) {
                 tray.setToolTip(title);
@@ -1724,12 +1724,12 @@ async function processTrackForTelegram(track: ScrapedTrack, isLiveFeed: boolean 
         return;
     }
 
-    const filename = sanitizeFilename(`${track.artist} - ${track.title} (VilioSC).mp3`);
+    const filename = sanitizeFilename(`${track.artist} - ${track.title} (sixonefour).mp3`);
     const downloadPath = path.join(store.get('downloadPath') as string || app.getPath('downloads'), 'Vilio_Telegram_Export');
     if (!fs.existsSync(downloadPath)) fs.mkdirSync(downloadPath, { recursive: true });
 
     let filePath = path.join(downloadPath, filename);
-    const artworkFilename = sanitizeFilename(`${track.artist} - ${track.title} (VilioSC).jpg`);
+    const artworkFilename = sanitizeFilename(`${track.artist} - ${track.title} (sixonefour).jpg`);
     const artworkPath = path.join(downloadPath, artworkFilename);
 
     const trackInfo: TrackInfo = {

@@ -1,5 +1,5 @@
 /**
- * Core type definitions for the SoundCloud RPC application
+ * Core type definitions for the sixonefour application
  */
 
 /**

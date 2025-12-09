@@ -4,7 +4,7 @@
       <img src="assets/icons/soundcloud.png" width="200" />
 </picture>
 
-# soundcloud-rpc
+# sixonefour
 
 A **SoundCloud** Client with **Discord Rich Presence**, **Dark Mode**, **Last.fm** and **AdBlock** support
 
@@ -12,8 +12,8 @@ A **SoundCloud** Client with **Discord Rich Presence**, **Dark Mode**, **Last.fm
 
 ## ⚡️ Quick start
 
-For the latest version of soundcloud-rpc, download the installer or executable file from the
-[latest release](https://github.com/richardhbtz/soundcloud-rpc/releases) page.
+For the latest version of sixonefour, download the installer or executable file from the
+[latest release](https://github.com/1vilio/sixonefour/releases) page.
 
 > [!NOTE]
 >

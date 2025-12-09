@@ -25,7 +25,7 @@ const template: Electron.MenuItemConstructorOptions[] = [
             {
                 label: 'Learn More',
                 click() {
-                    require('electron').shell.openExternal('https://github.com/richardhbtz/soundcloud-rpc');
+                    require('electron').shell.openExternal('https://github.com/richardhbtz/sixonefour');
                 },
             },
         ],
