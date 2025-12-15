@@ -29,6 +29,8 @@
     "richPresencePreview": "Preview",
     "richPresencePreviewDescription": "Show a live preview of your Discord Rich Presence in the settings panel",
     "applyChanges": "Apply Changes",
+    "openAtLogin": "Run at Startup",
+    "startInTray": "Start in Tray",
     "minimizeToTray": "Enable Minimize to Tray",
     "enableNavigationControls": "Enable Navigation Controls",
     "enableTrackParser": "Enable Track Parser",

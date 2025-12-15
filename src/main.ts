@@ -1122,7 +1122,17 @@ async function init() {
         } else if (key === 'widgetEnabled') {
             data.value ? widgetManager.show() : widgetManager.hide();
         } else if (key === 'openAtLogin') {
-            app.setLoginItemSettings({ openAtLogin: data.value });
+            app.setLoginItemSettings({
+                openAtLogin: data.value,
+                openAsHidden: store.get('startInTray', false),
+            });
+        } else if (key === 'startInTray') {
+            if (store.get('openAtLogin', false)) {
+                app.setLoginItemSettings({
+                    openAtLogin: true,
+                    openAsHidden: data.value,
+                });
+            }
         } else if (key.startsWith('hotkeys.')) {
             registerGlobalShortcuts();
         }
@@ -1547,6 +1557,8 @@ function setupTranslationHandlers() {
             richPresencePreview: translationService.translate('richPresencePreview'),
             richPresencePreviewDescription: translationService.translate('richPresencePreviewDescription'),
             applyChanges: translationService.translate('applyChanges'),
+            openAtLogin: translationService.translate('openAtLogin'),
+            startInTray: translationService.translate('startInTray'),
             minimizeToTray: translationService.translate('minimizeToTray'),
             enableNavigationControls: translationService.translate('enableNavigationControls'),
             enableTrackParser: translationService.translate('enableTrackParser'),

@@ -802,6 +802,20 @@ export class SettingsManager {
                     </label>
                 </div>
                 <div class="setting-item">
+                    <span data-i18n="openAtLogin">${this.translationService.translate('openAtLogin')}</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="openAtLogin" ${this.store.get('openAtLogin', false) ? 'checked' : ''}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span data-i18n="startInTray">${this.translationService.translate('startInTray')}</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="startInTray" ${this.store.get('startInTray', false) ? 'checked' : ''}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
                     <span data-i18n="enableNavigationControls">${this.translationService.translate('enableNavigationControls')}</span>
                     <label class="toggle">
                         <input type="checkbox" id="navigationControlsEnabled" ${this.store.get('navigationControlsEnabled', false) ? 'checked' : ''}>
@@ -1529,6 +1543,14 @@ export class SettingsManager {
 
             document.getElementById('minimizeToTray').addEventListener('change', (e) => {
                 ipcRenderer.send('setting-changed', { key: 'minimizeToTray', value: e.target.checked });
+            });
+
+            document.getElementById('openAtLogin').addEventListener('change', (e) => {
+                ipcRenderer.send('setting-changed', { key: 'openAtLogin', value: e.target.checked });
+            });
+
+            document.getElementById('startInTray').addEventListener('change', (e) => {
+                ipcRenderer.send('setting-changed', { key: 'startInTray', value: e.target.checked });
             });
 
             document.getElementById('navigationControlsEnabled').addEventListener('change', (e) => {
