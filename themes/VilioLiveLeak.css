@@ -1,0 +1,371 @@
+/* @video-background: "enterhere.mp4"; */
+
+/*
+ *   THEME: VilioLiveLeak v1.0
+ *   CONCEPT: 2000s Shock Site, Raw Footage, Uncensored Web
+ */
+
+/* ==========================================================================
+   1. :root & CONFIG
+   ========================================================================== */
+:root {
+  --ll-red-dark: #3a0000;      /* Deep background red */
+  --ll-red-main: #800000;      /* Header red */
+  --ll-red-bright: #cc0000;    /* Highlights */
+  --ll-grey-bg: #e4e4e4;       /* Content background (like the screenshots) */
+  --ll-grey-dark: #1a1a1a;     /* Text/Contrast */
+  --ll-link-blue: #003399;     /* Classic forum link color */
+  --ll-border-color: #666666;  /* 1px borders */
+  
+  --font-main: 'Verdana', 'Arial', sans-serif;
+}
+
+/* ==========================================================================
+   2. GENERAL & GLOBAL
+   ========================================================================== */
+body {
+  background-color: var(--ll-red-dark) !important;
+  font-family: var(--font-main) !important;
+  color: #000 !important; /* Force dark text for readability on light blocks */
+}
+
+/* The main scrollable area - mimicking the white content container of LiveLeak */
+#app .l-container.l-content {
+  background-color: rgba(228, 228, 228, 0.95) !important; /* Light grey/white */
+  border: 1px solid #000 !important;
+  box-shadow: 0 0 20px #000;
+  max-width: 1240px; /* Constrain width like old sites */
+  margin: 0 auto;
+}
+
+/* Scrollbars - Old Windows Classic style */
+::-webkit-scrollbar { width: 12px !important; background-color: #d4d0c8; }
+::-webkit-scrollbar-thumb { 
+  background-color: #d4d0c8 !important; 
+  border: 2px outset #fff;
+  box-shadow: inset 1px 1px 0 #808080;
+}
+
+/* ==========================================================================
+   3. HEADER & FOOTER
+   ========================================================================== */
+.header {
+  background: linear-gradient(to bottom, #990000 0%, #500000 100%) !important;
+  border-bottom: 2px solid #000 !important;
+  height: 50px !important;
+}
+
+.header__inner { max-width: 1240px !important; }
+
+/* LOGO REPLACEMENT */
+.header__logo a.header__logoLink {
+  background-image: url('YOUR_LOGO_URL_HERE.png') !important; /* REPLACE THIS */
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: left center !important;
+  width: 200px !important;
+  filter: drop-shadow(0 0 2px #000);
+}
+.header__logo a.header__logoLink::before { display: none !important; } /* Hide default cloud */
+
+.footer {
+  background: #000 !important;
+  color: #666 !important;
+  border-top: 3px solid var(--ll-red-main) !important;
+}
+
+/* ==========================================================================
+   4. TYPOGRAPHY & LINKS
+   ========================================================================== */
+h1, h2, h3, .soundTitle__title {
+  font-family: var(--font-main) !important;
+  font-weight: bold !important;
+  color: var(--ll-red-dark) !important;
+  text-transform: none !important;
+}
+
+/* Classic Link Styles */
+a, .soundTitle__title, .playableTile__title {
+  color: var(--ll-link-blue) !important;
+  text-decoration: underline !important;
+}
+a:hover, .soundTitle__title:hover {
+  color: var(--ll-red-bright) !important;
+  background-color: #ffffcc !important; /* Classic highlight effect */
+  text-decoration: none !important;
+}
+
+/* Usernames */
+.soundTitle__username, .playableTile__username {
+  color: #333 !important;
+  font-size: 11px !important;
+  font-weight: bold;
+}
+
+/* ==========================================================================
+   5. TRACK ITEMS & CARDS (The "Featured Items" look)
+   ========================================================================== */
+/* Square everything */
+.playableTile, .soundList__item, .userBadgeListItem {
+  border-radius: 0 !important;
+  background: #fff !important;
+  border: 1px solid #ccc !important;
+  margin-bottom: 5px !important;
+  padding: 5px !important;
+}
+
+.playableTile__artwork, .userBadgeListItem__artwork {
+  border-radius: 0 !important;
+  border: 1px solid #000 !important;
+}
+
+/* "Found Footage" Image Effect */
+.playableTile .image, .userBadgeListItem__artwork {
+  filter: contrast(1.1) sepia(0.2) brightness(0.9);
+  transition: filter 0.2s;
+}
+.playableTile:hover .image {
+  filter: contrast(1.2) brightness(1.1) sepia(0);
+}
+
+/* Add a "LIVE" or "REC" overlay to artworks */
+.playableTile__artwork::after {
+  content: 'REC ●';
+  position: absolute;
+  top: 5px; right: 5px;
+  color: red;
+  font-size: 10px;
+  font-family: monospace;
+  background: rgba(0,0,0,0.7);
+  padding: 2px 4px;
+  animation: blink 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes blink { 0% {opacity: 1;} 50% {opacity: 0;} 100% {opacity: 1;} }
+
+/* ==========================================================================
+   6. SIDEBAR & TABS
+   ========================================================================== */
+.sidebar {
+  background: transparent !important;
+}
+
+/* Tabs like the "Must See / Yoursay" tabs */
+.g-tabs-link {
+  background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%) !important;
+  border: 1px solid #999 !important;
+  border-bottom: none !important;
+  color: #000 !important;
+  font-weight: bold !important;
+  margin-right: 2px !important;
+  border-radius: 0 !important;
+}
+.g-tabs-link.active {
+  background: #fff !important;
+  border-bottom: 2px solid #fff !important; /* Connects to content */
+  color: var(--ll-red-main) !important;
+}
+
+/* ==========================================================================
+   7. PLAYER CONTROLS (Flash Player / Windows 98 Style - FIXED v2)
+   ========================================================================== */
+.playControls {
+  background: linear-gradient(to bottom, #333 0%, #1a1a1a 100%) !important;
+  border-top: 3px solid var(--ll-red-main) !important;
+  height: 62px !important;
+}
+
+.playControls__inner {
+    padding-top: 6px !important;
+}
+
+/* --- КНОПКИ УПРАВЛЕНИЯ (Назад, Пауза, Вперед и т.д.) --- */
+
+/* Общий стиль для ВСЕХ кнопок в плеере */
+.playControls__elements button,
+.playControls__elements .playControl,
+.playControls__elements .skipControl,
+.playControls__elements .shuffleControl,
+.playControls__elements .repeatControl,
+.playControls__soundBadge .sc-button-icon, /* Кнопки лайка/списка справа */
+.volume__button { /* Кнопка громкости */
+  background-color: #c0c0c0 !important; /* Классический серый Win98 */
+  border-top: 2px solid #fff !important;   /* Свет сверху */
+  border-left: 2px solid #fff !important;  /* Свет слева */
+  border-right: 2px solid #404040 !important; /* Тень справа */
+  border-bottom: 2px solid #404040 !important; /* Тень снизу */
+  border-radius: 0 !important;
+  
+  margin: 0 3px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  
+  /* Размеры */
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  
+  /* Скрываем текст, но НЕ трогаем иконки */
+  color: transparent !important;
+  font-size: 0 !important;
+  overflow: hidden !important; 
+}
+
+/* Эффект нажатия (вдавленная кнопка) */
+.playControls__elements button:active,
+.playControls__elements .playControl:active,
+.playControls__elements .skipControl:active {
+    border-top: 2px solid #404040 !important;
+    border-left: 2px solid #404040 !important;
+    border-right: 2px solid #fff !important;
+    border-bottom: 2px solid #fff !important;
+    transform: translateY(1px);
+}
+
+/* Кнопка PLAY - делаем чуть больше */
+.playControls__elements .playControl {
+    width: 42px !important;
+    height: 42px !important;
+}
+
+/* --- ИКОНКИ (САМОЕ ВАЖНОЕ) --- */
+/* Принудительно красим SVG в черный цвет, игнорируя прозрачный текст */
+.playControls button svg,
+.playControls .playControl svg,
+.playControls .skipControl svg,
+.playControls .shuffleControl svg,
+.playControls .repeatControl svg,
+.volume__button svg {
+    fill: #000 !important; /* Черный цвет */
+    stroke: #000 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+    
+    /* Размеры иконок */
+    width: 16px !important;
+    height: 16px !important;
+    
+    /* Сброс позиционирования, чтобы они были по центру */
+    position: static !important;
+    margin: 0 auto !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+}
+
+/* Исправление для кнопки Play (она иногда использует background-image вместо SVG) */
+.playControl .sc-ir {
+    background-color: #000 !important; /* Если это маска */
+    filter: brightness(0) !important;  /* Делаем черной */
+}
+
+/* Активные кнопки (Shuffle/Repeat включены) */
+.m-active, .sc-button-active {
+    background-color: #e0e0e0 !important;
+    border: 2px inset #fff !important; /* Вдавленный вид */
+    box-shadow: inset 1px 1px 2px #000;
+}
+.m-active svg, .sc-button-active svg {
+    fill: #b30000 !important; /* Темно-красный для активного состояния */
+}
+
+
+/* --- ПРОГРЕСС БАР --- */
+.playbackTimeline__progressWrapper {
+  background: #333 !important;
+  border: 2px inset #fff !important; /* Вдавленная рамка */
+  height: 10px !important;
+  border-radius: 0 !important;
+  margin-top: 2px !important;
+}
+
+.playbackTimeline__progressBar {
+  background-color: var(--ll-red-bright) !important;
+  border-radius: 0 !important;
+}
+
+.playbackTimeline__progressHandle {
+  background: #c0c0c0 !important;
+  border-top: 1px solid #fff !important;
+  border-left: 1px solid #fff !important;
+  border-right: 1px solid #404040 !important;
+  border-bottom: 1px solid #404040 !important;
+  border-radius: 0 !important;
+  width: 12px !important; height: 16px !important;
+  top: -3px !important;
+  box-shadow: none !important;
+}
+
+/* Инфо о треке в плеере */
+.playbackSoundBadge__artwork {
+  border: 1px solid #000 !important;
+  margin-right: 10px !important;
+}
+.playbackSoundBadge__title { 
+    color: #fff !important; 
+    font-family: 'Verdana', sans-serif !important;
+    font-size: 11px !important;
+    text-shadow: 1px 1px 0 #000;
+}
+.playbackSoundBadge__light { display: none !important; } /* Скрываем автора для компактности */
+
+/* ==========================================================================
+   8. WAVEFORM
+   ========================================================================== */
+/* Making the waveform look like static noise or spectrum analyzer */
+.sound__waveform {
+  opacity: 0.8;
+}
+.waveform {
+  filter: grayscale(100%) contrast(500%); /* Makes it black and white blocky */
+  background: rgba(0,0,0,0.05) !important;
+  border: 1px solid #ccc;
+}
+
+/* ==========================================================================
+   9. ACTION BUTTONS (The "Share", "Like" buttons)
+   ========================================================================== */
+.sc-button {
+  background: linear-gradient(to bottom, #fff 0%, #e0e0e0 100%) !important;
+  border: 1px solid #999 !important;
+  border-radius: 2px !important;
+  color: #333 !important;
+  font-family: var(--font-main) !important;
+  font-size: 10px !important;
+  font-weight: bold !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+.sc-button:hover {
+  border-color: #666 !important;
+  background: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%) !important;
+}
+.sc-button-like[aria-selected="true"] {
+  color: var(--ll-red-main) !important;
+  border-color: var(--ll-red-main) !important;
+}
+
+/* WARNING BADGE */
+/* Transforming the "Pro" or specific badges into warnings */
+.badgeList {
+  border: 1px dashed var(--ll-red-main);
+  background: #fff0f0;
+  padding: 5px;
+}
+
+/* ==========================================================================
+   10. EXTRAS: SCANLINES OVERLAY
+   ========================================================================== */
+body::before {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+  background-size: 100% 4px;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.3;
+}

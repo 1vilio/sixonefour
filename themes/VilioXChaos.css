@@ -1,0 +1,281 @@
+/* 
+   @video-background: "VilioXChaosBackground.mp4";
+   @logo: "opium_logo.png";
+*/
+
+/*
+ *   THEME: DRKSHDW_OS v1.2 (FIXED)
+ *   AESTHETIC: Rick Owens / Balenciaga / Gothic Punk
+ */
+
+/* ==========================================================================
+   1. :root & CONFIG
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Pirata+One&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+  --void: #000000;
+  --concrete: #1a1a1a;
+  --chrome: #e0e0e0;
+  --font-goth: 'Pirata One', cursive;
+  --font-raw: 'Space Mono', monospace;
+}
+
+/* ==========================================================================
+   2. GLOBAL TRANSPARENCY (Для видимости видео)
+   ========================================================================== */
+body, #app, html {
+  background: transparent !important;
+}
+
+/* Контейнер контента - Стекло */
+#app .l-container.l-content {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(5px);
+  border-left: 1px dashed #333;
+  border-right: 1px dashed #333;
+  box-shadow: 0 0 50px rgba(0,0,0,1);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px !important; background: transparent; }
+::-webkit-scrollbar-thumb { background: #fff !important; border-radius: 0; }
+
+/* ==========================================================================
+   3. TYPOGRAPHY
+   ========================================================================== */
+h1, h2, h3, .soundTitle__title {
+  font-family: var(--font-goth) !important;
+  font-weight: 400 !important;
+  font-size: 2.2em !important;
+  letter-spacing: 1px !important;
+  color: #fff !important;
+  text-transform: lowercase !important;
+}
+
+.soundTitle__username, .playableTile__username {
+  background: #fff;
+  color: #000 !important;
+  padding: 0 4px;
+  font-size: 10px !important;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-family: var(--font-raw) !important;
+}
+
+/* ==========================================================================
+   4. HEADER
+   ========================================================================== */
+.header {
+  background: rgba(0, 0, 0, 0.95) !important;
+  border-bottom: 1px dashed #555 !important;
+  height: 50px !important;
+}
+
+.header__logo a.header__logoLink {
+  filter: grayscale(100%) brightness(1000%); 
+}
+
+/* ==========================================================================
+   5. CARDS & ARTWORK
+   ========================================================================== */
+.playableTile, .soundList__item {
+  background: transparent !important;
+  border: 1px solid transparent;
+  padding: 10px !important;
+}
+
+.playableTile__artwork {
+  border-radius: 0 !important;
+  border: 1px solid #333;
+  filter: grayscale(100%) contrast(1.2);
+  transition: all 0.4s ease;
+}
+
+/* Hover: Negative Invert */
+.playableTile:hover .playableTile__artwork {
+  filter: invert(1);
+  border-color: #fff;
+}
+
+/* Goth Cross Overlay */
+.playableTile__artwork::after {
+  content: "†";
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-goth);
+  font-size: 40px;
+  color: #fff; /* Станет черным при инверсии */
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.playableTile:hover .playableTile__artwork::after { opacity: 1; }
+
+/* ==========================================================================
+   6. PLAYER CONTROLS (FINAL RECOVERY FIX)
+   ========================================================================== */
+.playControls {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  background: #080808 !important;
+  border-top: 1px solid #fff !important;
+  height: 62px !important;
+  z-index: 9999 !important;
+}
+
+.playControls__inner {
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* --- 1. СБРОС ОБЕРТОК (FIX ДЛЯ SHUFFLE/REPEAT) --- */
+/* Делаем внешние контейнеры невидимыми, чтобы остались только кнопки */
+.playControls__elements .shuffleControl,
+.playControls__elements .repeatControl,
+.playControls__elements .skipControl {
+    border: none !important;
+    background: transparent !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+
+/* --- 2. СТИЛИ КНОПОК (ЧЕРНЫЕ КВАДРАТЫ) --- */
+/* Применяем стиль конкретно к тегу <button> и ссылкам-кнопкам */
+.playControls__elements button,
+.playControls__elements .playControl,
+.volume__button {
+  /* Визуал */
+  background: #000 !important;
+  border: 1px solid #fff !important;
+  border-radius: 0 !important;
+  
+  /* Размеры */
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  margin: 0 4px !important;
+  
+  /* Скрываем текст, но НЕ убираем размер шрифта (чтобы не убить SVG) */
+  color: transparent !important; 
+  
+  /* Позиционирование */
+  position: relative !important; /* Чтобы иконка могла позиционироваться абсолютно внутри */
+  padding: 0 !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+/* Убираем любые псевдо-элементы, которые могут создавать "мусор" */
+.playControls__elements button::before,
+.playControls__elements button::after { display: none !important; }
+
+/* --- 3. СПАСЕНИЕ ИКОНОК (SVG) --- */
+.playControls__elements button svg,
+.playControls__elements .playControl svg,
+.volume__button svg {
+    /* 1. ПРИНУДИТЕЛЬНАЯ ВИДИМОСТЬ */
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    
+    /* 2. ПРИНУДИТЕЛЬНЫЙ ЦВЕТ (Игнорируем transparent родителя) */
+    fill: #ffffff !important;
+    stroke: #ffffff !important; 
+    color: #ffffff !important;
+    
+    /* 3. ПРИНУДИТЕЛЬНЫЙ РАЗМЕР (Если он зависел от font-size) */
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    
+    /* 4. АБСОЛЮТНОЕ ЦЕНТРИРОВАНИЕ */
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    z-index: 10 !important;
+}
+
+/* --- 4. ЭФФЕКТЫ --- */
+/* Hover: Белый фон, Черная иконка */
+.playControls__elements button:hover,
+.playControls__elements .playControl:hover,
+.volume__button:hover {
+  background: #fff !important;
+  cursor: crosshair !important;
+}
+
+.playControls__elements button:hover svg,
+.playControls__elements .playControl:hover svg,
+.volume__button:hover svg {
+  fill: #000 !important;
+  stroke: #000 !important;
+}
+
+/* Active: Нажатая кнопка (Shuffle On) */
+.m-active button,
+.sc-button-active {
+    background: #222 !important;
+    border: 1px dashed #fff !important;
+}
+
+/* --- 5. PROGRESS BAR --- */
+.playbackTimeline__progressWrapper {
+  background: #333 !important;
+  height: 2px !important;
+  margin-top: 0 !important;
+}
+.playbackTimeline__progressBar {
+  background: #fff !important;
+}
+.playbackTimeline__progressHandle {
+  background: #000 !important;
+  border: 2px solid #fff !important;
+  width: 12px !important; height: 12px !important;
+  border-radius: 50% !important;
+  top: -5px !important;
+  box-shadow: none !important;
+}
+
+/* --- 6. VOLUME POPUP FIX --- */
+.volume__sliderWrapper {
+    background: #000 !important;
+    border: 1px solid #fff !important;
+    z-index: 10001 !important;
+}
+
+/* ==========================================================================
+   7. EXTRAS
+   ========================================================================== */
+.sc-button {
+  background: #000 !important;
+  color: #fff !important;
+  border: 1px solid #333 !important;
+  font-family: var(--font-raw) !important;
+  text-transform: uppercase;
+  font-size: 10px !important;
+  border-radius: 0 !important;
+}
+
+/* Grain Overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 9990;
+}

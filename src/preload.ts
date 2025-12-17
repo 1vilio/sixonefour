@@ -47,22 +47,32 @@ ipcRenderer.on('theme-set-video-background', (_event, videoUrl, blur) => {
 });
 
 // Logo Handler
+// Logo Handler
+let originalLogoContent: string | null = null; // Cache for the original logo
+
 ipcRenderer.on('theme-set-logo', (_event, logoUrl) => {
     const logoContainer = document.querySelector('.header__logo a.header__logoLink');
 
     if (logoContainer) {
-        // Clear existing logo
-        logoContainer.innerHTML = '';
+        // Capture original content only once
+        if (originalLogoContent === null) {
+            originalLogoContent = logoContainer.innerHTML;
+        }
 
         if (logoUrl) {
+            // Apply custom logo
+            logoContainer.innerHTML = '';
             const logoImg = document.createElement('img');
             logoImg.src = logoUrl;
             logoImg.style.height = '24px'; // Or any appropriate styling
             logoImg.style.width = 'auto';
             logoImg.style.padding = '4px';
             logoContainer.appendChild(logoImg);
+        } else {
+            // Restore default logo if it was cached
+            if (originalLogoContent !== null) {
+                logoContainer.innerHTML = originalLogoContent;
+            }
         }
-        // If logoUrl is null, the container remains empty, effectively removing the logo.
-        // The default logo might reappear if it's part of the initial HTML, which is fine.
     }
 });

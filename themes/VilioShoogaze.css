@@ -1,0 +1,275 @@
+/* @video-background: "VilioShoogazeBackground.mp4"; */
+
+/*
+ТЕМА: Ether (614 Edition) v3.1 - FINAL
+- Логотип "614".
+- Плеер жестко зафиксирован внизу.
+- Обложки: эффект "LSD Melt".
+- Фон: Light Leaks.
+- FIX: Исправлен размер кнопки Upgrade.
+*/
+
+/* ==========================================================================
+1. ШРИФТЫ И ЦВЕТА
+========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+    --ether-green: #dfff4f;
+    --ether-dim: #a4bd4b;
+    --ether-burn: #ff4f4f; 
+    
+    --text-main: #ffffff;
+    --glass-player: #111; 
+    
+    --font-title: 'Zen Old Mincho', serif;
+    --font-ui: 'Space Mono', monospace;
+}
+
+/* ==========================================================================
+2. ЭКСПЕРИМЕНТАЛЬНЫЙ ФОН (LIGHT LEAKS)
+========================================================================== */
+body {
+    background-color: transparent !important;
+    font-family: var(--font-ui) !important;
+    color: var(--text-main) !important;
+    overflow-x: hidden;
+}
+
+/* Слой 1: Тонировка */
+body::before {
+    content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, rgba(223, 255, 79, 0.02), rgba(0,0,0,0.4));
+    pointer-events: none; z-index: -2;
+}
+
+/* Слой 2: Light Leaks */
+body::after {
+    content: '';
+    position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: 
+        radial-gradient(circle at 50% 50%, rgba(223, 255, 79, 0.15), transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(255, 100, 100, 0.05), transparent 30%);
+    z-index: -1;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    animation: light-leak 15s infinite alternate ease-in-out;
+    opacity: 0.6;
+}
+
+@keyframes light-leak {
+    0% { transform: rotate(0deg) translate(0, 0); }
+    100% { transform: rotate(3deg) translate(0, 0); }
+}
+
+#app .l-container.l-content { background: transparent !important; box-shadow: none !important; }
+::-webkit-scrollbar { width: 6px !important; background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--ether-green) !important; }
+
+/* ==========================================================================
+3. ХЕДЕР, ЛОГОТИП "614" И ФИКС КНОПКИ
+========================================================================== */
+.header {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, transparent 100%) !important;
+    height: 60px !important;
+    border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+    backdrop-filter: blur(2px);
+    display: flex; align-items: center;
+}
+
+/* Логотип 614 */
+.header__logo { width: 80px !important; height: 100% !important; display: flex; align-items: center; }
+.header__logo a.header__logoLink {
+    background: transparent !important;
+    width: 100% !important; height: 100% !important;
+    text-indent: 0 !important;
+    display: flex; align-items: center; justify-content: center;
+}
+.header__logo a.header__logoLink::before, 
+.header__logo a.header__logoLink > * { display: none !important; }
+
+.header__logo a.header__logoLink::after {
+    content: '614';
+    font-family: var(--font-title);
+    font-weight: 900;
+    font-size: 36px;
+    color: var(--ether-green);
+    text-shadow: 2px 2px 0px #000;
+    line-height: 1;
+    margin-top: -4px;
+}
+
+/* Меню */
+.header__navMenu > li > a {
+    font-family: var(--font-title) !important;
+    font-weight: 700 !important;
+    color: #aaa !important;
+    line-height: 60px !important;
+}
+.header__navMenu > li > a.selected {
+    color: var(--ether-green) !important;
+    border-bottom: 2px solid var(--ether-green) !important;
+}
+
+/* --- FIX: КНОПКА UPGRADE --- */
+.header__right {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+/* Сбрасываем высоту и отступы для кнопки Upgrade и других в правой части */
+.header__right a, 
+.header__right button,
+.header__right .header__link,
+.header__right .g-button-cta {
+    height: 30px !important; /* Фиксируем высоту */
+    line-height: 28px !important; /* Центруем текст по вертикали */
+    padding: 0 12px !important;
+    width: auto !important;
+    margin: 0 5px !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ==========================================================================
+4. ОБЛОЖКИ - "SHOEGAZE MELT"
+========================================================================== */
+.playableTile__artwork {
+    border: none !important;
+    transition: all 0.1s ease;
+    overflow: visible !important;
+    position: relative;
+}
+
+/* Слой RGB-сдвига */
+.playableTile__artwork::before {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: inherit;
+    box-shadow: 2px 0 0 var(--ether-burn), -2px 0 0 var(--ether-green);
+    mix-blend-mode: exclusion;
+    opacity: 0;
+    z-index: 2;
+    transition: opacity 0.2s;
+    pointer-events: none;
+}
+
+.playableTile:hover .playableTile__artwork {
+    transform: scale(1.05) skewX(-2deg);
+    filter: contrast(130%) saturate(150%) hue-rotate(-5deg);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    z-index: 10;
+}
+
+.playableTile:hover .playableTile__artwork::before {
+    opacity: 0.7;
+    animation: glitch-anim 0.3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+    0% { transform: translate(0,0); }
+    25% { transform: translate(-2px, 1px); }
+    50% { transform: translate(1px, -1px); }
+    75% { transform: translate(2px, 0); }
+    100% { transform: translate(0, -2px); }
+}
+
+.soundTitle__title, .playableTile__title {
+    color: var(--ether-green) !important;
+    font-family: var(--font-title) !important;
+    text-shadow: 0 2px 2px #000;
+}
+.soundTitle__username, .playableTile__username {
+    background: #000;
+    color: #fff !important;
+    padding: 2px 4px;
+    font-size: 11px;
+}
+
+/* ==========================================================================
+5. ПЛЕЕР - ФИКС (Закреплен внизу)
+========================================================================== */
+body.playControlsVisible { padding-bottom: 0 !important; }
+
+.playControls {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: 68px !important;
+    z-index: 99999 !important;
+    background: #0e0e0e !important;
+    border-top: 1px solid var(--ether-green) !important;
+    margin: 0 !important;
+}
+
+.playControls__inner {
+    padding-top: 0 !important;
+    height: 100% !important;
+    display: flex; align-items: center;
+}
+
+/* Кнопки плеера */
+.skipControl, .shuffleControl, .repeatControl {
+    filter: invert(1); opacity: 0.6;
+}
+.skipControl:hover, .shuffleControl:hover, .repeatControl:hover { opacity: 1; }
+
+.playControl {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    border-radius: 50% !important;
+    width: 44px !important; height: 44px !important;
+    margin: 0 15px !important;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    transition: all 0.3s;
+}
+.playControl::before { filter: brightness(0) invert(1) !important; }
+
+.playControl:hover {
+    background: var(--ether-green) !important;
+    border-color: var(--ether-green) !important;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px var(--ether-green);
+}
+.playControl:hover::before { filter: brightness(0) !important; }
+
+/* Прогресс бар */
+.playbackTimeline__progressWrapper {
+    background: #333 !important;
+    height: 4px !important;
+}
+.playbackTimeline__progressBar {
+    background: var(--ether-green) !important;
+    box-shadow: 0 0 10px var(--ether-green);
+}
+.playbackTimeline__progressHandle {
+    background: #fff !important;
+    border: none !important;
+    width: 12px !important; height: 12px !important;
+    top: -4px !important;
+    box-shadow: 0 0 5px #000;
+}
+
+/* ==========================================================================
+6. ПРОЧЕЕ
+========================================================================== */
+.soundList__item, .trackItem {
+    background: rgba(0, 0, 0, 0.5) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+}
+.soundList__item:hover {
+    background: rgba(223, 255, 79, 0.1) !important;
+}
+
+.sc-button {
+    background: transparent !important;
+    border: 1px solid #444 !important;
+    color: #aaa !important;
+}
+.sc-button-like[aria-pressed="true"] {
+    color: var(--ether-green) !important;
+    border-color: var(--ether-green) !important;
+}

@@ -67,12 +67,7 @@ export class ThemeService {
                         const themeName = basename(file, '.css');
 
                         // Parse metadata from CSS comments
-                        const metadata: { [key: string]: string } = {};
-                        const metadataRegex = /\/\*\s*@([\w-]+):\s*"(.*?)";?\s*\*\//g;
-                        let match;
-                        while ((match = metadataRegex.exec(css)) !== null) {
-                            metadata[match[1]] = match[2];
-                        }
+                        const metadata = this.parseThemeMetadata(css);
 
                         const theme: CustomTheme = {
                             name: themeName,
@@ -160,7 +155,7 @@ export class ThemeService {
             this.stopWatching = () => {
                 try {
                     watcher.close();
-                } catch {}
+                } catch { }
             };
         } catch (error) {
             log('[ERROR] [Themes] Failed to watch themes folder:', error);
@@ -279,9 +274,18 @@ export class ThemeService {
         this.loadCustomThemes();
     }
 
-    // Subscribe to hot-reload notifications when current theme CSS changes
     public onCustomThemeUpdated(listener: (themeName: string | null) => void): () => void {
         this.emitter.on('custom-theme-updated', listener);
         return () => this.emitter.off('custom-theme-updated', listener);
+    }
+
+    private parseThemeMetadata(css: string): { [key: string]: string } {
+        const metadata: { [key: string]: string } = {};
+        const metadataRegex = /\/\*\s*@([\w-]+):\s*"(.*?)";?\s*\*\//g;
+        let match;
+        while ((match = metadataRegex.exec(css)) !== null) {
+            metadata[match[1]] = match[2];
+        }
+        return metadata;
     }
 }
