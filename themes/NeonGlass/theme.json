@@ -1,0 +1,10 @@
+{
+    "name": "NeonGlass",
+    "description": "zaebalo nazvanie pridumivat'",
+    "version": "1.0.0",
+    "author": "1vilio",
+    "style": "NeonGlass.css",
+    "assets": {
+        "videoBackground": "NeonGlassBackground.mp4"
+    }
+}

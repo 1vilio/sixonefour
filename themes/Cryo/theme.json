@@ -1,0 +1,11 @@
+{
+    "name": "Cryo",
+    "description": "six seven",
+    "version": "1.0.0",
+    "author": "1vilio",
+    "style": "Cryo.css",
+    "assets": {
+        "logo": "CryoLogo.png",
+        "videoBackground": "CryoBackground.mp4"
+    }
+}

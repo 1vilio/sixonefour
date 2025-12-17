@@ -1,0 +1,11 @@
+{
+    "name": "PornHub",
+    "description": "Pornhub/Osamason theme",
+    "version": "1.0.0",
+    "author": "1vilio",
+    "style": "Pornhub.css",
+    "assets": {
+        "logo": "PornHubLogo.png",
+        "videoBackground": "PornHubBackground.mp4"
+    }
+}

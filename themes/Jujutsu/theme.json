@@ -1,0 +1,11 @@
+{
+    "name": "Jujutsu",
+    "description": "Are you the strongest because you're Satoru Gojo? Or are you Satoru Gojo because you're the strongest?",
+    "version": "1.0.0",
+    "author": "1vilio",
+    "style": "Jujutsu.css",
+    "assets": {
+        "logo": "JujutsuLogo.png",
+        "videoBackground": "JujutsuBackground.mp4"
+    }
+}

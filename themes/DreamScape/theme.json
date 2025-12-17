@@ -1,0 +1,11 @@
+{
+    "name": "Dreamscape",
+    "description": "blah blah blah",
+    "version": "1.0.0",
+    "author": "1vilio",
+    "style": "Dreamscape.css",
+    "assets": {
+        "logo": "DreamscapeLogo.png",
+        "videoBackground": "DreamscapeBackground.mp4"
+    }
+}

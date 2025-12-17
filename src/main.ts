@@ -1220,22 +1220,41 @@ function applyThemeToContent(isDark: boolean) {
 
     // Handle video background and logo
     if (contentView) {
-        const videoUrl = theme?.videoBackground ? `theme://${path.basename(theme.videoBackground)}` : null;
+        let videoUrl = null;
+        if (theme?.videoBackground) {
+            const themesPath = themeService.getThemesPath();
+            const relativePath = path.relative(themesPath, theme.videoBackground);
+            videoUrl = `theme://${relativePath.replace(/\\/g, '/')}`;
+        }
         const blur = store.get('backgroundBlur', 0);
         contentView.webContents.send('theme-set-video-background', videoUrl, blur);
 
         const logoPath = theme?.logo;
         let logoUrl = null;
-        if (logoPath && existsSync(logoPath)) {
-            const logoBuffer = readFileSync(logoPath);
-            logoUrl = `data:image/png;base64,${logoBuffer.toString('base64')}`;
+        if (logoPath) {
+            if (existsSync(logoPath)) {
+                try {
+                    const logoBuffer = readFileSync(logoPath);
+                    logoUrl = `data:image/png;base64,${logoBuffer.toString('base64')}`;
+                    log(`[Themes] Applied logo from ${logoPath}`);
+                } catch (e) {
+                    log(`[ERROR] [Themes] Failed to read logo file at ${logoPath}:`, e);
+                }
+            } else {
+                log(`[WARN] [Themes] Logo file not found at ${logoPath}`);
+            }
         }
         contentView.webContents.send('theme-set-logo', logoUrl);
     }
 
     // Handle video background and logo for the widget
     if (widgetManager) {
-        const videoUrl = theme?.videoBackground ? `theme://${path.basename(theme.videoBackground)}` : null;
+        let videoUrl = null;
+        if (theme?.videoBackground) {
+            const themesPath = themeService.getThemesPath();
+            const relativePath = path.relative(themesPath, theme.videoBackground);
+            videoUrl = `theme://${relativePath.replace(/\\/g, '/')}`;
+        }
         const blur = store.get('backgroundBlur', 0);
         widgetManager.updateTheme(null, videoUrl, blur);
     }

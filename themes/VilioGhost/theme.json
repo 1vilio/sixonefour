@@ -1,0 +1,11 @@
+{
+    "name": "Ghost",
+    "description": "Ghost theme migrated to manifest structure",
+    "version": "1.0.0",
+    "author": "1vilio",
+    "style": "VilioGhost.css",
+    "assets": {
+        "logo": "VilioGhostLogo.png",
+        "videoBackground": "VilioGhostBackground.mp4"
+    }
+}

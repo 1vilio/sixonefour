@@ -1,0 +1,10 @@
+{
+    "name": "Christmas",
+    "description": "2026",
+    "version": "1.0.0",
+    "author": "1vilio",
+    "style": "Christmas.css",
+    "assets": {
+        "videoBackground": "ChristmasBackground.mp4"
+    }
+}

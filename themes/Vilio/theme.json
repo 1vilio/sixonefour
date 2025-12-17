@@ -1,0 +1,11 @@
+{
+    "name": "Vilio",
+    "description": "Theme that i use everyday ngl",
+    "version": "1.0.0",
+    "author": "1vilio",
+    "style": "Vilio.css",
+    "assets": {
+		"logo": "VilioLogo.png",
+        "videoBackground": "VilioBackground.mp4"
+    }
+}

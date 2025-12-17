@@ -1,0 +1,11 @@
+{
+    "name": "2002",
+    "description": "fucking love this theme",
+    "version": "1.0.0",
+    "author": "1vilio",
+    "style": "2002.css",
+    "assets": {
+        "logo": "2002Logo.png",
+        "videoBackground": "2002Background.mp4"
+    }
+}

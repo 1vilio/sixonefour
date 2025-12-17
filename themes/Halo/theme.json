@@ -1,0 +1,11 @@
+{
+    "name": "Halo",
+    "description": "Ambient type shi",
+    "version": "1.0.0",
+    "author": "1vilio",
+    "style": "Halo.css",
+    "assets": {
+        "logo": "HaloLogo.png",
+        "videoBackground": "HaloBackground.mp4"
+    }
+}

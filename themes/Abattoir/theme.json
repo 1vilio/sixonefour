@@ -1,0 +1,11 @@
+{
+    "name": "Abattoir",
+    "description": "Manhunt alike theme",
+    "version": "1.0.0",
+    "author": "1vilio",
+    "style": "VilioAbattoir.css",
+    "assets": {
+        "logo": "AbattoirLogo.png",
+        "videoBackground": "AbattoirBackground.mp4"
+    }
+}

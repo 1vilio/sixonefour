@@ -6,12 +6,30 @@ import { EventEmitter } from 'events';
 import { extractThemeColors, type ThemeColors } from '../utils/colorExtractor';
 import { log } from '../utils/logger';
 
+export interface ThemeManifest {
+    name: string;
+    description?: string;
+    version?: string;
+    author?: string;
+    style: string;
+    assets?: {
+        logo?: string;
+        videoBackground?: string;
+    };
+    targetStyles?: {
+        header?: string;
+        settings?: string;
+    };
+}
+
 export interface CustomTheme {
     name: string;
-    filePath: string;
+    filePath: string; // Path to the main CSS file or manifest file
     css: string;
     videoBackground?: string;
     logo?: string;
+    isManifest?: boolean;
+    rootPath?: string; // Root folder of the theme if manifest-based
 }
 
 export class ThemeService {
@@ -55,50 +73,113 @@ export class ThemeService {
                 return;
             }
 
-            const files = readdirSync(this.themesPath);
+            const items = readdirSync(this.themesPath);
 
-            for (const file of files) {
-                const filePath = join(this.themesPath, file);
-                const stat = statSync(filePath);
+            for (const item of items) {
+                const itemPath = join(this.themesPath, item);
+                const stat = statSync(itemPath);
 
-                if (stat.isFile() && extname(file).toLowerCase() === '.css') {
-                    try {
-                        const css = readFileSync(filePath, 'utf-8');
-                        const themeName = basename(file, '.css');
-
-                        // Parse metadata from CSS comments
-                        const metadata = this.parseThemeMetadata(css);
-
-                        const theme: CustomTheme = {
-                            name: themeName,
-                            filePath,
-                            css,
-                        };
-
-                        if (metadata['video-background']) {
-                            const videoPath = join(this.themesPath, metadata['video-background']);
-                            if (existsSync(videoPath)) {
-                                theme.videoBackground = videoPath;
-                            }
-                        }
-
-                        if (metadata['logo']) {
-                            const logoPath = join(this.themesPath, metadata['logo']);
-                            if (existsSync(logoPath)) {
-                                theme.logo = logoPath;
-                            }
-                        }
-
-                        this.customThemes.set(themeName, theme);
-
-                        log(`[Themes] Loaded custom theme: ${themeName}`);
-                    } catch (error) {
-                        log(`[ERROR] [Themes] Failed to load theme ${file}:`, error);
-                    }
+                if (stat.isDirectory()) {
+                    // Try to load as Manifest Theme
+                    this.loadManifestTheme(itemPath);
+                } else if (stat.isFile() && extname(item).toLowerCase() === '.css') {
+                    // Load as Legacy Theme
+                    this.loadLegacyTheme(itemPath, item);
                 }
             }
         } catch (error) {
             log('[ERROR] [Themes] Failed to load custom themes:', error);
+        }
+    }
+
+    private loadManifestTheme(themeFolderPath: string): void {
+        try {
+            const manifestPath = join(themeFolderPath, 'theme.json');
+            if (!existsSync(manifestPath)) return;
+
+            const manifestContent = readFileSync(manifestPath, 'utf-8');
+            const manifest: ThemeManifest = JSON.parse(manifestContent);
+
+            if (!manifest.name || !manifest.style) {
+                log(`[WARN] [Themes] Invalid manifest in ${themeFolderPath}: missing name or style`);
+                return;
+            }
+
+            // Load main CSS
+            const stylePath = join(themeFolderPath, manifest.style);
+            if (!existsSync(stylePath)) {
+                log(`[WARN] [Themes] Main style file missing for theme ${manifest.name}: ${stylePath}`);
+                return;
+            }
+            const css = readFileSync(stylePath, 'utf-8');
+
+            const theme: CustomTheme = {
+                name: manifest.name,
+                filePath: manifestPath,
+                css: css,
+                isManifest: true,
+                rootPath: themeFolderPath
+            };
+
+            // Resolve assets relative to theme folder
+            if (manifest.assets?.videoBackground) {
+                const videoPath = join(themeFolderPath, manifest.assets.videoBackground);
+                if (existsSync(videoPath)) {
+                    theme.videoBackground = videoPath;
+                }
+            }
+
+            if (manifest.assets?.logo) {
+                const logoPath = join(themeFolderPath, manifest.assets.logo);
+                if (existsSync(logoPath)) {
+                    theme.logo = logoPath;
+                }
+            }
+
+            // Future: Handle targetStyles by appending them to css with markers if needed, 
+            // or storing them separately in CustomTheme. For now, we assume simple migration.
+
+            this.customThemes.set(manifest.name, theme);
+            log(`[Themes] Loaded manifest theme: ${manifest.name}`);
+
+        } catch (error) {
+            log(`[ERROR] [Themes] Failed to load manifest theme from ${themeFolderPath}:`, error);
+        }
+    }
+
+    private loadLegacyTheme(filePath: string, fileName: string): void {
+        try {
+            const css = readFileSync(filePath, 'utf-8');
+            const themeName = basename(fileName, '.css');
+
+            // Parse metadata from CSS comments
+            const metadata = this.parseThemeMetadata(css);
+
+            const theme: CustomTheme = {
+                name: themeName,
+                filePath,
+                css,
+                isManifest: false
+            };
+
+            if (metadata['video-background']) {
+                const videoPath = join(this.themesPath, metadata['video-background']);
+                if (existsSync(videoPath)) {
+                    theme.videoBackground = videoPath;
+                }
+            }
+
+            if (metadata['logo']) {
+                const logoPath = join(this.themesPath, metadata['logo']);
+                if (existsSync(logoPath)) {
+                    theme.logo = logoPath;
+                }
+            }
+
+            this.customThemes.set(themeName, theme);
+            log(`[Themes] Loaded legacy theme: ${themeName}`);
+        } catch (error) {
+            log(`[ERROR] [Themes] Failed to load legacy theme ${fileName}:`, error);
         }
     }
 
@@ -112,40 +193,25 @@ export class ThemeService {
                 this.stopWatching = undefined;
             }
 
-            const watcher = watch(this.themesPath, { persistent: true }, (eventType, filename) => {
-                if (!filename || extname(filename).toLowerCase() !== '.css') return;
+            const watcher = watch(this.themesPath, { persistent: true, recursive: true }, (_eventType, filename) => {
+                if (!filename) return;
+                const ext = extname(filename).toLowerCase();
+                const base = basename(filename);
+                if (ext !== '.css' && base !== 'theme.json') return;
 
                 // Debounce rapid events per file
-                const themeName = basename(filename, '.css');
-                const filePath = join(this.themesPath, filename);
+                // Note: filename might be inside a subdirectory if recursive watch was supported,
+                // but fs.watch on Windows/Mac usually supports recursive or we need multiple watchers.
+                // However, this.themesPath watcher might only see immediate children or we need to check how it behaves.
+                // If we want to support nested theme.json editing, we might need a better watcher or recursive: true.
+                // For now, assuming basic structure updates or standard fs.watch behavior.
+
+                // Actually, Node's fs.watch 'recursive' option is platform dependent (macOS/Windows yes, Linux no).
+                // Let's assume we want to refresh all themes on any relevant change.
 
                 const handleChange = () => {
-                    try {
-                        if (eventType === 'rename') {
-                            // File added or removed or renamed – refresh all
-                            this.refreshThemes();
-                            // If current theme was removed, clear it
-                            if (this.currentCustomTheme && !this.customThemes.has(this.currentCustomTheme)) {
-                                this.currentCustomTheme = null;
-                                this.store.delete('customTheme');
-                                this.emitter.emit('custom-theme-updated', null);
-                                return;
-                            }
-                        } else if (eventType === 'change') {
-                            // Update just this file
-                            if (existsSync(filePath)) {
-                                const css = readFileSync(filePath, 'utf-8');
-                                this.customThemes.set(themeName, { name: themeName, filePath, css });
-                            }
-                        }
-
-                        // If the changed/added file is the current theme, notify listeners
-                        if (this.currentCustomTheme && this.currentCustomTheme === themeName) {
-                            this.emitter.emit('custom-theme-updated', themeName);
-                        }
-                    } catch (err) {
-                        log('[ERROR] [Themes] Error handling theme file change:', err);
-                    }
+                    log(`[Themes] File changed: ${filename}, refreshing themes...`);
+                    this.refreshThemes();
                 };
 
                 // Minimal debounce using microtask queue (avoids extra timers and still coalesces bursts)
@@ -216,6 +282,10 @@ export class ThemeService {
             this.store.set('customTheme', themeName);
             // Notify listeners so UI can update immediately
             this.emitter.emit('custom-theme-updated', themeName);
+
+            // Important: Protocol handler 'theme://' now needs to know relative paths?
+            // Actually, if we use absolute paths in themeService and pass them to UI,
+            // we might need to adjust how we handle video backgrounds if they rely on simple filenames.
 
             log(`[Themes] Applied custom theme: ${themeName}`);
             return true;

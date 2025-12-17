@@ -1,0 +1,11 @@
+{
+    "name": "Hypnotic",
+    "description": "hypnotic",
+    "version": "1.0.0",
+    "author": "1vilio",
+    "style": "Hypnotic.css",
+    "assets": {
+        "logo": "HypnoticLogo.png",
+        "videoBackground": "HypnoticBackground.mp4"
+    }
+}

@@ -32,8 +32,11 @@ export function log(...args: any[]) {
     const message = util.format(...args);
     try {
         appendFileSync(logFilePath, message + '\n');
+        // Mirror to console as requested
+        console.log(message);
     } catch (err) {
         // Fallback for subsequent writes
         console.error('Failed to write to log file:', err);
+        console.log(message);
     }
 }

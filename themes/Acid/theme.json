@@ -1,0 +1,11 @@
+{
+    "name": "Acid",
+    "description": "for rave mf's",
+    "version": "1.0.0",
+    "author": "1vilio",
+    "style": "Acid.css",
+    "assets": {
+        "logo": "AcidLogo.png",
+        "videoBackground": "AcidBackground.mp4"
+    }
+}

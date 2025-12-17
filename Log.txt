@@ -1,116 +1,91 @@
-[LikesScraper] Timeout capturing credentials.
-[Telegram] Live Feed: No tracks found.
-[LikesScraper] Starting API-based scrape...
-[LikesScraper] Capturing credentials via network interception...
-[LikesScraper] Credentials captured successfully!
-[LikesScraper] Got User ID: 1040271823
-[LikesScraper] Total likes to fetch: 1197
-[LikesScraper] Fetching: https://api-v2.soundcloud.com/users/1040271823/track_likes?client_id=Tbe9YspsDY5jcNlK6GmSimUxBQeXn8Ho&limit=50&offset=0&linked_partitioning=1
-[Telegram] Processing batch of 50 tracks...
-[Telegram] Processing track: arp - floorit ig live leak
-[Telegram] Sent track to Telegram: floorit ig live leak
-[Telegram] Processing track: dedbasta - ТП - huzzy b
-[Telegram] Sent track to Telegram: ТП - huzzy b
-[Telegram] Processing track: Future - March Madness
-[Telegram] Sent track to Telegram: March Madness
-[Telegram] Processing track: omni - STILL GEEK UP PROD KINSAGE
-[Telegram] Sent track to Telegram: STILL GEEK UP PROD KINSAGE
-[Telegram] Processing track: gx0stt - Glo - SORRY NOT SORRY NO SORROW (prod bbysizzun) [gx0stt exclusive]
-[Telegram] Sent track to Telegram: Glo - SORRY NOT SORRY NO SORROW (prod bbysizzun) [gx0stt exclusive]
-[Telegram] Processing track: 1oneam - agent 47
-[Telegram] Sent track to Telegram: agent 47
-[Telegram] Processing track: DooMee - Anastasia (feat. LOVV66)
-[Telegram] Sent track to Telegram: Anastasia (feat. LOVV66)
-[Telegram] Processing track: AUGUST - Fauna (feat. DooMee)
-[Telegram] Sent track to Telegram: Fauna (feat. DooMee)
-[Telegram] Processing track: slayr - Never Going Down
-[Telegram] Error processing track Never Going Down: Download failed: File is missing or empty
-[Telegram] Processing track: dj - 2/1
-[Telegram] Sent track to Telegram: 2/1
-[Telegram] Processing track: INDUSTRY - НЕ ЗАБЫВАЙ МЕНЯ
-[Telegram] Sent track to Telegram: НЕ ЗАБЫВАЙ МЕНЯ
-[Telegram] Processing track: INDUSTRY - BOY LONDON
-[Telegram] Sent track to Telegram: BOY LONDON
-[Telegram] Processing track: EsDeeKid - Cali Man
-[Telegram] Error processing track Cali Man: Download timed out after 30s
-[Telegram] Processing track: FRIENDLY THUG 52 NGG - Mille Grazie
-[Telegram] Sent track to Telegram: Mille Grazie
-[Telegram] Processing track: PocketsFullaGuap - REXV2 CAKE BATTER
-[Telegram] Sent track to Telegram: REXV2 CAKE BATTER
-[Telegram] Processing track: EsDeeKid - Century
-[Telegram] Sent track to Telegram: Century
-[Telegram] Processing track: retroz(@uhretroz) - TEANNA TRUMP
-[Telegram] Sent track to Telegram: TEANNA TRUMP
-[Telegram] Processing track: Dom Corleo - WASSUP
-[Telegram] Sent track to Telegram: WASSUP
-[Telegram] Processing track: soldhersoul - rexv2 - goyard [snippet]
-[Telegram] Error processing track rexv2 - goyard [snippet]: Download failed: File is missing or empty
-[Telegram] Processing track: glo - Codeine
-[Telegram] Sent track to Telegram: Codeine
-[Telegram] Processing track: PocketsFullaGuap - REXV2 PRAY KOZINE FREE BUKKETS
-[Telegram] Sent track to Telegram: REXV2 PRAY KOZINE FREE BUKKETS
-[Telegram] Processing track: Joony - DRIFTING IN TOKYO
-[Telegram] Sent track to Telegram: DRIFTING IN TOKYO
-[Telegram] Processing track: Yeat - Crashëd dat bitch
-[Telegram] Sent track to Telegram: Crashëd dat bitch
-[Telegram] Processing track: pullupamg - BREAD PROD V2
-[Telegram] Sent track to Telegram: BREAD PROD V2
-[Telegram] Processing track: Redda - witness
-[Telegram] Sent track to Telegram: witness
-[Telegram] Processing track: 0t - OSAMASON - PRINTING GUAP PROD.SKAI
-[Telegram] Error processing track OSAMASON - PRINTING GUAP PROD.SKAI: Download failed: File is missing or empty
-[Telegram] Processing track: rexv2 - YOUTUBE
-[Telegram] Sent track to Telegram: YOUTUBE
-[Telegram] Processing track: Redda - propane
-[Telegram] Sent track to Telegram: propane
-[Telegram] Processing track: yaze - you again
-[Telegram] Sent track to Telegram: you again
-[Telegram] Processing track: ⃟ - how you flex [prod. ginseng & sean baby]
-[Telegram] Sent track to Telegram: how you flex [prod. ginseng & sean baby]
-[Telegram] Processing track: ohsxnta - All Day
-[Telegram] Sent track to Telegram: All Day
-[Telegram] Processing track: omni - OXIE RELIGIOUS Prod Sosa4th
-[Telegram] Sent track to Telegram: OXIE RELIGIOUS Prod Sosa4th
-[Telegram] Processing track: glo - DEVIL RULE THE WORLD
-[Telegram] Sent track to Telegram: DEVIL RULE THE WORLD
-[Telegram] Processing track: glo - POLICE STORY
-[Telegram] Sent track to Telegram: POLICE STORY
-[Telegram] Processing track: seane 2 - waste
-[Telegram] Sent track to Telegram: waste
-[Telegram] Processing track: FIMIGUERRERO - Vogue
-[Telegram] Sent track to Telegram: Vogue
-[Telegram] Processing track: Skrilla - Rich Sinners
-[Telegram] Sent track to Telegram: Rich Sinners
-[Telegram] Processing track: rexv2 - KOUNT NOW KRY LATER
-[Telegram] Sent track to Telegram: KOUNT NOW KRY LATER
-[Telegram] Processing track: тёмный принц - овердоз
-[Telegram] Sent track to Telegram: овердоз
-[Telegram] Processing track: glo - BOYS WANNA HAVE FUN 2
-[Telegram] Live Feed: Checking for new likes...
-[Telegram] Live Feed: Last liked URL: https://soundcloud.com/user-206373269/tp-huzzy-b
-[Telegram] Live Feed: Found 1 new tracks.
-[Telegram] Live Feed: Processing new track floorit ig live leak
-[Telegram] Processing track: arp - floorit ig live leak
-[Telegram] Sent track to Telegram: floorit ig live leak
-[Telegram] Error processing track BOYS WANNA HAVE FUN 2: Download timed out after 30s
-[Telegram] Processing track: YT (@tolafolaa) - Diamonds
-[Telegram] Error processing track Diamonds: Download timed out after 30s
-[Telegram] Processing track: sincere - issue prod me
-[Telegram] Sent track to Telegram: issue prod me
-[Telegram] Processing track: Sozzy - Unphased Prod Keni
-[Telegram] Sent track to Telegram: Unphased Prod Keni
-[Telegram] Processing track: dj - keep my guard up
-[Telegram] Sent track to Telegram: keep my guard up
-[Telegram] Processing track: osamason - Habits
-[Telegram] Sent track to Telegram: Habits
-[Telegram] Processing track: teccmeta - kuttin up
-[Telegram] Sent track to Telegram: kuttin up
-[Telegram] Processing track: lakesidesumo - Mushroom Gorge
-[Telegram] Sent track to Telegram: Mushroom Gorge
-[Telegram] Processing track: fakemink - Music And Me (Prod OK)
-[Telegram] Mass export stop signal received.
-[Telegram] Sent track to Telegram: Music And Me (Prod OK)
-[Telegram] Export progress: 50/1197
-[Telegram] Stop signal detected in scraper loop.
-[LikesScraper] Scraping finished.
-[Telegram] Mass export finished.
+Resources path: C:\Users\Vilio\Desktop\vil gravity\assets
+[Database] Initialized NeDB stores at C:\Users\Vilio\AppData\Roaming\Electron
+[Themes] Loaded manifest theme: 2002
+[Themes] Loaded manifest theme: Abattoir
+[Themes] Loaded manifest theme: Acid
+[Themes] Loaded manifest theme: Christmas
+[Themes] Loaded manifest theme: Cryo
+[Themes] Loaded manifest theme: Dreamscape
+[Themes] Loaded manifest theme: Halo
+[Themes] Loaded manifest theme: Hypnotic
+[Themes] Loaded manifest theme: Jujutsu
+[Themes] Loaded manifest theme: LiveLeak
+[Themes] Loaded manifest theme: NeonGlass
+[Themes] Loaded manifest theme: PornHub
+[Themes] Loaded manifest theme: SCI
+[Themes] Loaded manifest theme: Serum
+[Themes] Loaded manifest theme: Steam
+[Themes] Loaded manifest theme: Vilio
+[Themes] Loaded manifest theme: Ghost
+[Themes] Loaded manifest theme: XChaos
+[Themes] Loaded manifest theme: Y2K
+[TelegramService] Credentials set. Bot Token length: 0, User ID: '', Channel ID: ''
+Initialized 10 keyboard shortcuts
+[WARN] [Shortcuts] Failed to register shortcut 'devTools' (F11)
+[WARN] [Shortcuts] Failed to register shortcut 'devTools' (F11)
+[ProxyService] Proxy disabled.
+[DiscordRPC] Client is ready.
+Setting changed: dnsAddress = 8.8.8.8
+[17156:1218/002642.755:ERROR:net\socket\ssl_client_socket_impl.cc:896] handshake failed; returned -1, SSL error code 1, net_error -100
+[17156:1218/002642.778:ERROR:net\socket\ssl_client_socket_impl.cc:896] handshake failed; returned -1, SSL error code 1, net_error -100
+[17156:1218/002642.806:ERROR:net\socket\ssl_client_socket_impl.cc:896] handshake failed; returned -1, SSL error code 1, net_error -100
+[17156:1218/002642.928:ERROR:net\socket\ssl_client_socket_impl.cc:896] handshake failed; returned -1, SSL error code 1, net_error -100
+[17156:1218/002642.955:ERROR:net\socket\ssl_client_socket_impl.cc:896] handshake failed; returned -1, SSL error code 1, net_error -100
+[17156:1218/002642.969:ERROR:net\socket\ssl_client_socket_impl.cc:896] handshake failed; returned -1, SSL error code 1, net_error -100
+[17156:1218/002643.000:ERROR:net\socket\ssl_client_socket_impl.cc:896] handshake failed; returned -1, SSL error code 1, net_error -100
+[17156:1218/002643.128:ERROR:net\socket\ssl_client_socket_impl.cc:896] handshake failed; returned -1, SSL error code 1, net_error -100
+[17156:1218/002643.312:ERROR:net\socket\ssl_client_socket_impl.cc:896] handshake failed; returned -1, SSL error code 1, net_error -100
+[17156:1218/002643.496:ERROR:net\socket\ssl_client_socket_impl.cc:896] handshake failed; returned -1, SSL error code 1, net_error -100
+[ERROR] [Themes] Failed to execute content view theme script: Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.
+    at node:electron/js2c/sandbox_bundle:2:127868
+    at IpcRendererInternal.<anonymous> (node:electron/js2c/sandbox_bundle:2:122136)
+    at IpcRendererInternal.emit (node:electron/js2c/sandbox_bundle:2:45997)
+    at Object.onMessage (node:electron/js2c/sandbox_bundle:2:121195)
+[ERROR] [Themes] Failed to execute content view theme script: Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.
+    at node:electron/js2c/sandbox_bundle:2:127868
+    at IpcRendererInternal.<anonymous> (node:electron/js2c/sandbox_bundle:2:122136)
+    at IpcRendererInternal.emit (node:electron/js2c/sandbox_bundle:2:45997)
+    at Object.onMessage (node:electron/js2c/sandbox_bundle:2:121195)
+Skip checkForUpdates because application is not packed and dev update config is not forced
+[ERROR] [Themes] Failed to execute content view theme script: Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.
+    at node:electron/js2c/sandbox_bundle:2:127868
+    at IpcRendererInternal.<anonymous> (node:electron/js2c/sandbox_bundle:2:122136)
+    at IpcRendererInternal.emit (node:electron/js2c/sandbox_bundle:2:45997)
+    at Object.onMessage (node:electron/js2c/sandbox_bundle:2:121195)
+[DEBUG] Track update received: track-change
+[Themes] Applied custom theme: Abattoir
+Setting changed: customTheme = Abattoir
+[Themes] Applied custom theme: Abattoir
+[ERROR] [Themes] Failed to execute content view theme script: Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.
+    at node:electron/js2c/sandbox_bundle:2:127868
+    at IpcRendererInternal.<anonymous> (node:electron/js2c/sandbox_bundle:2:122136)
+    at IpcRendererInternal.emit (node:electron/js2c/sandbox_bundle:2:45997)
+    at Object.onMessage (node:electron/js2c/sandbox_bundle:2:121195)
+[ERROR] [Themes] Failed to execute content view theme script: Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.
+    at node:electron/js2c/sandbox_bundle:2:127868
+    at IpcRendererInternal.<anonymous> (node:electron/js2c/sandbox_bundle:2:122136)
+    at IpcRendererInternal.emit (node:electron/js2c/sandbox_bundle:2:45997)
+    at Object.onMessage (node:electron/js2c/sandbox_bundle:2:121195)
+[ERROR] [Themes] Failed to execute content view theme script: Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.
+    at node:electron/js2c/sandbox_bundle:2:127868
+    at IpcRendererInternal.<anonymous> (node:electron/js2c/sandbox_bundle:2:122136)
+    at IpcRendererInternal.emit (node:electron/js2c/sandbox_bundle:2:45997)
+    at Object.onMessage (node:electron/js2c/sandbox_bundle:2:121195)
+[Themes] Applied custom theme: Ghost
+Setting changed: customTheme = Ghost
+[Themes] Applied custom theme: Ghost
+[ERROR] [Themes] Failed to execute content view theme script: Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.
+    at node:electron/js2c/sandbox_bundle:2:127868
+    at IpcRendererInternal.<anonymous> (node:electron/js2c/sandbox_bundle:2:122136)
+    at IpcRendererInternal.emit (node:electron/js2c/sandbox_bundle:2:45997)
+    at Object.onMessage (node:electron/js2c/sandbox_bundle:2:121195)
+[ERROR] [Themes] Failed to execute content view theme script: Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.
+    at node:electron/js2c/sandbox_bundle:2:127868
+    at IpcRendererInternal.<anonymous> (node:electron/js2c/sandbox_bundle:2:122136)
+    at IpcRendererInternal.emit (node:electron/js2c/sandbox_bundle:2:45997)
+    at Object.onMessage (node:electron/js2c/sandbox_bundle:2:121195)
+[ERROR] [Themes] Failed to execute content view theme script: Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.
+    at node:electron/js2c/sandbox_bundle:2:127868
+    at IpcRendererInternal.<anonymous> (node:electron/js2c/sandbox_bundle:2:122136)
+    at IpcRendererInternal.emit (node:electron/js2c/sandbox_bundle:2:45997)
+    at Object.onMessage (node:electron/js2c/sandbox_bundle:2:121195)
