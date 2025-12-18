@@ -36,6 +36,12 @@
                 "to": "assets/icons"
             }
         ],
+        "extraFiles": [
+            {
+                "from": "themes",
+                "to": "themes"
+            }
+        ],
         "files": [
             "tsc/**/*"
         ],
