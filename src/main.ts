@@ -76,7 +76,6 @@ const store = new Store({
         startInTray: false,
         telegramBotToken: '',
         telegramChannelId: '',
-        telegramUserId: '',
         telegramLiveFeedEnabled: false,
     },
     clearInvalidConfig: true,
@@ -601,7 +600,6 @@ async function init() {
     telegramService = new TelegramService();
     telegramService.setCredentials(
         store.get('telegramBotToken', '') as string,
-        store.get('telegramUserId', '') as string,
         store.get('telegramChannelId', '') as string
     );
 
@@ -623,23 +621,20 @@ async function init() {
     likesScraperService = new LikesScraperService(scraperView);
 
     // Telegram IPC Handlers
-    ipcMain.handle('telegram-save-settings', (_event, { token, userId, channelId, username }) => {
+    ipcMain.handle('telegram-save-settings', (_event, { token, channelId, username }) => {
         token = token.trim();
-        userId = userId.trim();
         channelId = channelId.trim();
         username = username.trim();
         store.set('telegramBotToken', token);
-        store.set('telegramUserId', userId);
         store.set('telegramChannelId', channelId);
         store.set('telegramUsername', username);
-        telegramService.setCredentials(token, userId, channelId);
+        telegramService.setCredentials(token, channelId);
         return true;
     });
 
     ipcMain.handle('telegram-get-settings', () => {
         return {
             token: store.get('telegramBotToken', ''),
-            userId: store.get('telegramUserId', ''),
             channelId: store.get('telegramChannelId', ''),
             username: store.get('telegramUsername', '')
         };

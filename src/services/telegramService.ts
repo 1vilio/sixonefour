@@ -12,28 +12,22 @@ export interface TelegramOptions {
 
 export class TelegramService {
     private botToken: string = '';
-    private userId: string = '';
     private channelId: string = '';
 
     constructor() { }
 
-    public setCredentials(token: string, userId: string = '', channelId: string = '') {
+    public setCredentials(token: string, channelId: string = '') {
         this.botToken = token.trim();
-        this.userId = userId.trim();
         this.channelId = channelId.trim();
-        log(`[TelegramService] Credentials set. Bot Token length: ${this.botToken.length}, User ID: '${this.userId}', Channel ID: '${this.channelId}'`);
+        log(`[TelegramService] Credentials set. Bot Token length: ${this.botToken.length}, Channel ID: '${this.channelId}'`);
     }
 
     private get targetChatId(): string {
-        return this.channelId ? this.channelId : this.userId;
+        return this.channelId;
     }
 
     public hasCredentials(): boolean {
-        return !!this.botToken && !!this.userId;
-    }
-
-    public getUserId(): string {
-        return this.userId;
+        return !!this.botToken && !!this.channelId;
     }
 
     private get baseUrl(): string {

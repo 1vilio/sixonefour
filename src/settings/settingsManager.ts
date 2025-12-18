@@ -1270,17 +1270,7 @@ export class SettingsManager {
                     </div>
                 </div>
 
-                <div class="setting-item">
-                    <div class="input-group" style="width: 100%;">
-                        <span style="margin-bottom: 5px;">Your User ID (Optional)</span>
-                        <div style="position: relative;">
-                            <input type="text" id="telegramUserId" class="textInput" placeholder="123456789" style="padding-right: 30px;">
-                            <button class="close-btn" style="position: absolute; right: 0; top: 0; height: 100%; width: 30px; opacity: 0.6;" onclick="document.getElementById('telegramUserId').value = ''">
-                                <svg viewBox="0 0 24 24" style="width: 14px; height: 14px;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+
 
                 <div class="setting-item" style="margin-top: 10px;">
                     <button id="telegramSave" class="button">Save Credentials</button>
@@ -2271,9 +2261,6 @@ export class SettingsManager {
             });
 
             // Telegram Integration Logic
-            const telegramBotToken = document.getElementById('telegramBotToken');
-            const telegramChannelId = document.getElementById('telegramChannelId');
-            const telegramUserId = document.getElementById('telegramUserId');
             const telegramSave = document.getElementById('telegramSave');
             const telegramLiveFeed = document.getElementById('telegramLiveFeed');
             const telegramMassExport = document.getElementById('telegramMassExport');
@@ -2285,7 +2272,7 @@ export class SettingsManager {
             ipcRenderer.invoke('telegram-get-settings').then(settings => {
                 if (settings.token) telegramBotToken.value = settings.token;
                 if (settings.channelId) telegramChannelId.value = settings.channelId;
-                if (settings.userId) telegramUserId.value = settings.userId;
+                if (settings.channelId) telegramChannelId.value = settings.channelId;
                 if (settings.username) document.getElementById('telegramUsername').value = settings.username;
             });
             
@@ -2297,11 +2284,10 @@ export class SettingsManager {
             telegramSave.addEventListener('click', async () => {
                 const token = telegramBotToken.value.trim();
                 const channelId = telegramChannelId.value.trim();
-                const userId = telegramUserId.value.trim();
                 const username = document.getElementById('telegramUsername').value.trim();
 
-                if (!token || !channelId) {
-                    alert('Please enter both Bot Token and Channel ID.');
+                if (!token || !channelId || !username) {
+                    alert('Please enter Bot Token, Channel ID, AND Username.');
                     return;
                 }
 
@@ -2309,7 +2295,7 @@ export class SettingsManager {
                 const isValid = await ipcRenderer.invoke('telegram-validate-token', token);
                 
                 if (isValid) {
-                    await ipcRenderer.invoke('telegram-save-settings', { token, channelId, userId, username });
+                    await ipcRenderer.invoke('telegram-save-settings', { token, channelId, username });
                     telegramSave.textContent = 'Saved!';
                     setTimeout(() => telegramSave.textContent = 'Save Credentials', 2000);
                 } else {
