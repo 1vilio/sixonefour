@@ -31,6 +31,7 @@ import { LikesScraperService, ScrapedTrack } from './services/likesScraperServic
 import type { TrackInfo, TrackUpdateMessage } from './types';
 import { listeningStatsService, StatsTrackInfo } from './services/listeningStatsService';
 import { databaseService } from './services/databaseService';
+import { performanceService } from './services/performanceService';
 import { log, logFilePath } from './utils/logger';
 import path = require('path');
 
@@ -523,6 +524,7 @@ async function init() {
     headerView.setBounds({ x: 0, y: 0, width: mainWindow.getBounds().width, height: 32 });
     headerView.setAutoResize({ width: true, height: false });
     headerView.webContents.loadFile(path.join(__dirname, 'header', 'header.html'));
+    performanceService.setHeaderView(headerView);
 
     contentView = new BrowserView({
         webPreferences: {

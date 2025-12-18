@@ -201,6 +201,41 @@ body.platform-darwin .navigation-controls {
     }
 }
 
+.performance-monitor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    height: 22px;
+    border-radius: 4px;
+    background-color: var(--hover-bg);
+    margin: 0 5px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--header-text);
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    -webkit-app-region: no-drag;
+    cursor: default;
+    white-space: nowrap;
+}
+
+.performance-monitor:hover {
+    opacity: 1;
+}
+
+.perf-item {
+    display: flex;
+    align-items: center;
+    opacity: 0.9;
+}
+
+.perf-item:not(:last-child)::after {
+    content: '|';
+    margin-left: 8px;
+    opacity: 0.3;
+}
+
 
 .window-controls {
     display: flex;

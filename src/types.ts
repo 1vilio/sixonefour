@@ -120,3 +120,13 @@ export interface TrackUpdateMessage {
     /** Reason for the update */
     reason: TrackUpdateReason;
 }
+
+/**
+ * Performance statistics for the application
+ */
+export interface PerformanceStats {
+    /** Total CPU usage percentage across all processes */
+    cpu: number;
+    /** Total memory usage in MB across all processes */
+    memory: number;
+}

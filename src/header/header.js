@@ -144,28 +144,28 @@ document.querySelector('.navigation-controls')?.addEventListener('click', (e) =>
         case 'forward-btn':
             if (canGoForward) ipcRenderer.send('navigate-forward');
             break;
-                    case 'refresh-btn':
-                        if (isRefreshing) {
-                            ipcRenderer.send('cancel-refresh');
-                            updateNavigationState({ refreshing: false });
-                        } else {
-                            ipcRenderer.send('refresh-page');
-                            updateNavigationState({ refreshing: true });
-                        }
-                        break;
-                                        case 'download-btn':
-                                            ipcRenderer.send('download-current-track');
-                                            break;
-                                        case 'download-artwork-btn':
-                                            ipcRenderer.invoke('download-artwork');
-                                            break;
-                                        case 'settings-btn':
-                                            ipcRenderer.send('toggle-settings');
-                                            break;
-                                        case 'statistics-btn':
-                                            ipcRenderer.send('open-statistics-window');
-                                            break;
-                        }
+        case 'refresh-btn':
+            if (isRefreshing) {
+                ipcRenderer.send('cancel-refresh');
+                updateNavigationState({ refreshing: false });
+            } else {
+                ipcRenderer.send('refresh-page');
+                updateNavigationState({ refreshing: true });
+            }
+            break;
+        case 'download-btn':
+            ipcRenderer.send('download-current-track');
+            break;
+        case 'download-artwork-btn':
+            ipcRenderer.invoke('download-artwork');
+            break;
+        case 'settings-btn':
+            ipcRenderer.send('toggle-settings');
+            break;
+        case 'statistics-btn':
+            ipcRenderer.send('open-statistics-window');
+            break;
+    }
 });
 
 // Window control event listeners for Windows
@@ -294,6 +294,37 @@ document.addEventListener('DOMContentLoaded', () => {
             if (urlBar.value !== url) {
                 urlBar.value = url;
             }
+        });
+    }
+
+    // Performance Monitor Logic
+    const fpsVal = document.getElementById('fps-val');
+    const cpuVal = document.getElementById('cpu-val');
+    const ramVal = document.getElementById('ram-val');
+
+    if (fpsVal && cpuVal && ramVal) {
+        let frameCount = 0;
+        let lastTime = performance.now();
+
+        function updateFPS() {
+            frameCount++;
+            const now = performance.now();
+            const elapsed = now - lastTime;
+
+            if (elapsed >= 1000) {
+                const fps = Math.round((frameCount * 1000) / elapsed);
+                fpsVal.textContent = `${fps} FPS`;
+                frameCount = 0;
+                lastTime = now;
+            }
+            requestAnimationFrame(updateFPS);
+        }
+
+        updateFPS();
+
+        ipcRenderer.on('performance-stats', (_, stats) => {
+            cpuVal.textContent = `${stats.cpu}% CPU`;
+            ramVal.textContent = `${stats.memory} MB`;
         });
     }
 });
