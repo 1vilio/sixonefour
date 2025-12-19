@@ -78,6 +78,7 @@ const store = new Store({
         telegramBotToken: '',
         telegramChannelId: '',
         telegramLiveFeedEnabled: false,
+        zapretPreset: 'general',
     },
     clearInvalidConfig: true,
     encryptionKey: 'sixonefour-config',
@@ -753,8 +754,34 @@ async function init() {
 
     // Start Zapret service if it was enabled on last run
     if (store.get('bypassMode') === 'zapret') {
-        zapretService.start();
+        const savedPreset = store.get('zapretPreset', 'general') as string;
+        zapretService.start(savedPreset);
     }
+
+    // Zapret IPC Handlers
+    ipcMain.handle('zapret-get-presets', async () => {
+        return await zapretService.getPresets();
+    });
+
+    ipcMain.handle('zapret-set-preset', async (_event, presetName: string) => {
+        store.set('zapretPreset', presetName);
+        const bypassMode = store.get('bypassMode');
+
+        if (bypassMode === 'zapret') {
+            log(`[Main] User changed preset to ${presetName} while in Zapret mode. Restarting...`);
+            await zapretService.start(presetName);
+        } else {
+            zapretService.setPreset(presetName);
+        }
+        return true;
+    });
+
+    ipcMain.handle('zapret-status', () => {
+        return {
+            isRunning: zapretService.isRunning(),
+            currentPreset: store.get('zapretPreset', 'general'),
+        };
+    });
 
     if (platform() === 'win32') thumbarService = new ThumbarService(translationService);
 
@@ -1088,17 +1115,19 @@ async function init() {
             const oldMode = store.get('bypassMode') as string;
             const newMode = data.value as string;
 
+            // Only act if mode actually changed or if starting zapret
             if (oldMode === 'zapret' && newMode !== 'zapret') {
                 zapretService.stop();
             }
 
             if (newMode === 'zapret') {
-                zapretService.start();
+                const savedPreset = store.get('zapretPreset', 'general') as string;
+                zapretService.start(savedPreset);
             }
 
             store.set('bypassMode', newMode);
 
-            if (newMode === 'dns' || oldMode === 'dns') {
+            if (newMode === 'dns' || (oldMode === 'dns' && newMode !== 'dns')) {
                 queueToastNotification('DNS settings changed. Please restart the app.');
             }
         } else if (key === 'dnsAddress') {

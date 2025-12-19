@@ -62,5 +62,6 @@
     "bypassNone": "Disabled",
     "bypassDns": "DNS",
     "bypassZapret": "Zapret (DPI)",
-    "zapretDescription": "Advanced DPI bypass. May require administrator rights. Changes are applied instantly."
+    "zapretDescription": "Advanced DPI bypass. May require administrator rights. Changes are applied instantly.",
+    "zapretPreset": "Zapret Preset"
 }

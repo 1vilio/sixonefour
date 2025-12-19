@@ -43,5 +43,21 @@
     "pressF1ToOpenSettings": "Presiona 'F1' o haz clic en el icono de ajustes en el encabezado para abrir la configuración",
     "closeSettings": "Cerrar configuración",
     "noActivityToShow": "No hay actividad para mostrar",
-    "richPresencePreviewTitle": "Vista Previa de Rich Presence"
+    "richPresencePreviewTitle": "Vista Previa de Rich Presence",
+    "dns": "DNS",
+    "enableDns": "Activar DNS personalizado",
+    "dnsAddress": "Dirección DNS",
+    "dnsPreset": "Ajuste preestablecido DNS",
+    "dnsPresetNone": "Ninguno (Por defecto)",
+    "dnsPresetCloudflare": "Cloudflare (1.1.1.1)",
+    "dnsPresetGoogle": "Google (8.8.8.8)",
+    "dnsPresetCustom": "Personalizado",
+    "dnsChangesRestart": "Los cambios en el DNS requieren un reinicio de la aplicación para surtir efecto.",
+    "bypass": "Bypass",
+    "bypassMode": "Modo Bypass",
+    "bypassNone": "Desactivado",
+    "bypassDns": "DNS",
+    "bypassZapret": "Zapret (DPI)",
+    "zapretDescription": "Bypass DPI avanzado. Puede requerir derechos de administrador. Los cambios se aplican al instante.",
+    "zapretPreset": "Ajuste Zapret"
 }

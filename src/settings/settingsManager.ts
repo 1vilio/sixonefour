@@ -917,9 +917,15 @@ export class SettingsManager {
                     <div class="description" data-i18n="dnsChangesRestart" style="margin-top: 10px;">${this.translationService.translate('dnsChangesRestart')}</div>
                 </div>
 
-                <!-- Zapret Description -->
+                <!-- Zapret Settings -->
                 <div id="zapretDescription" style="display: none; margin-top: 10px;">
-                     <div class="description" data-i18n="zapretDescription">${this.translationService.translate('zapretDescription')}</div>
+                     <div class="setting-item">
+                        <span data-i18n="zapretPreset">Preset</span>
+                        <select id="zapretPresetSelector" class="theme-selector">
+                            <option value="general">general</option>
+                        </select>
+                    </div>
+                    <div class="description" data-i18n="zapretDescription">${this.translationService.translate('zapretDescription')}</div>
                 </div>
             </div>
 
@@ -1426,6 +1432,9 @@ export class SettingsManager {
                 const mode = bypassModeSelector.value;
                 dnsSettings.style.display = mode === 'dns' ? 'block' : 'none';
                 zapretDescription.style.display = mode === 'zapret' ? 'block' : 'none';
+                if (mode === 'zapret') {
+                    loadZapretPresets();
+                }
             }
 
             function setDnsUIState() {
@@ -1456,6 +1465,11 @@ export class SettingsManager {
                     dnsPresetSelect.value = '';
                 }
                 setDnsUIState();
+
+                // Load Zapret status
+                if (initialMode === 'zapret') {
+                    loadZapretPresets();
+                }
 
                 // Load hotkeys
                 const hotkeys = await ipcRenderer.invoke('get-store-value', 'hotkeys') || {};
@@ -2336,6 +2350,36 @@ export class SettingsManager {
                     telegramExportProgress.style.display = 'none';
                 }, 5000);
             });
+
+            // Zapret Helper Functions
+            async function loadZapretPresets() {
+                try {
+                    const presets = await ipcRenderer.invoke('zapret-get-presets');
+                    const status = await ipcRenderer.invoke('zapret-status');
+                    const selector = document.getElementById('zapretPresetSelector');
+                    
+                    if (selector) {
+                        selector.innerHTML = '';
+                        presets.forEach(preset => {
+                            const option = document.createElement('option');
+                            option.value = preset.name;
+                            option.textContent = preset.name;
+                            selector.appendChild(option);
+                        });
+                        selector.value = status.currentPreset || 'general';
+                    }
+                } catch (error) {
+                    console.error('Failed to load Zapret presets:', error);
+                }
+            }
+
+            const zapretPresetSelector = document.getElementById('zapretPresetSelector');
+            if (zapretPresetSelector) {
+                zapretPresetSelector.addEventListener('change', async () => {
+                    const presetName = zapretPresetSelector.value;
+                    await ipcRenderer.invoke('zapret-set-preset', presetName);
+                });
+            }
         `;
     }
 

@@ -4,106 +4,225 @@ import { promises as fs } from 'fs';
 import { spawn, ChildProcess } from 'child_process';
 import { log } from '../utils/logger';
 
+export interface ZapretPreset {
+    name: string;
+    description: string;
+    filePath: string;
+}
+
 export class ZapretService {
     private zapretProcess: ChildProcess | null = null;
-    private zapretPath: string;
-    private configPath: string;
+    private vendorPath: string;
+    private binPath: string;
+    private currentPreset: string | null = null;
 
     constructor() {
         const devVendorPath = path.join(__dirname, '..', '..', 'src', 'vendor', 'zapret');
 
-        const vendorPath = app.isPackaged
+        this.vendorPath = app.isPackaged
             ? path.join(process.resourcesPath, 'vendor', 'zapret')
             : devVendorPath;
-            
-        this.zapretPath = path.join(vendorPath, 'winws.exe');
-        this.configPath = path.join(vendorPath, 'config.txt');
+
+        this.binPath = path.join(this.vendorPath, 'bin');
     }
 
     public isRunning(): boolean {
         return this.zapretProcess !== null && !this.zapretProcess.killed;
     }
 
-    public async start(): Promise<void> {
-        if (this.isRunning()) {
-            log('[ZapretService] Zapret is already running.');
+    public async getPresets(): Promise<ZapretPreset[]> {
+        try {
+            const files = await fs.readdir(this.vendorPath);
+            const batFiles = files.filter(f => f.startsWith('general') && f.endsWith('.bat'));
+
+            return batFiles.map(f => ({
+                name: f.replace('.bat', ''),
+                description: f,
+                filePath: path.join(this.vendorPath, f)
+            }));
+        } catch (error) {
+            log('[ERROR] [ZapretService] Failed to list presets:', error);
+            return [];
+        }
+    }
+
+    public setPreset(presetName: string): void {
+        this.currentPreset = presetName;
+    }
+
+    public async start(presetName?: string): Promise<void> {
+        // Always attempt to stop any existing process before starting
+        await this.stop();
+
+        const presetToUse = presetName || this.currentPreset || 'general';
+        const presets = await this.getPresets();
+        let preset = presets.find(p => p.name === presetToUse);
+
+        if (!preset) {
+            log(`[ZapretService] Preset ${presetToUse} not found, falling back to general`);
+            preset = presets.find(p => p.name === 'general');
+        }
+
+        if (!preset) {
+            log('[ERROR] [ZapretService] No presets found.');
             return;
         }
 
         try {
-            await fs.access(this.zapretPath);
-            const configArgs = await this.readConfigArguments();
-            
-            log(`[ZapretService] Starting winws.exe with args: ${configArgs.join(' ')}`);
+            const winwsPath = path.join(this.binPath, 'winws.exe');
+            await fs.access(winwsPath);
 
-            this.zapretProcess = spawn(this.zapretPath, configArgs, {
+            const args = await this.parseBatForArgs(preset.filePath);
+
+            if (args.length === 0) {
+                log(`[ERROR] [ZapretService] Could not extract arguments from ${preset.filePath}`);
+                return;
+            }
+
+            log(`[ZapretService] Starting winws.exe with preset: ${preset.name}`);
+            log(`[ZapretService] Args Array: ${JSON.stringify(args)}`);
+
+            this.zapretProcess = spawn(winwsPath, args, {
                 detached: true,
-                stdio: 'ignore',
+                stdio: ['ignore', 'ignore', 'pipe'], // Capture stderr only
                 windowsHide: true,
-                cwd: path.dirname(this.zapretPath),
+                cwd: this.binPath,
             });
 
-            this.zapretProcess.on('error', (err) => {
+            if (this.zapretProcess.stderr) {
+                this.zapretProcess.stderr.on('data', (data) => {
+                    const message = data.toString().trim();
+                    if (message) {
+                        log(`[ERROR] [ZapretService] [stderr]: ${message}`);
+                    }
+                });
+            }
+
+            this.zapretProcess.on('error', (err: Error) => {
                 log('[ERROR] [ZapretService] Failed to start Zapret process:', err);
                 this.zapretProcess = null;
             });
 
-            this.zapretProcess.on('exit', (code) => {
+            this.zapretProcess.on('exit', (code: number | null) => {
                 log(`[ZapretService] Zapret process exited with code ${code}`);
                 this.zapretProcess = null;
             });
 
-            // Unreference the child process to allow the parent to exit independently
             if (this.zapretProcess.pid) {
                 this.zapretProcess.unref();
                 log(`[ZapretService] Zapret process started with PID: ${this.zapretProcess.pid}`);
             }
 
         } catch (error) {
-            log(`[ERROR] [ZapretService] Could not find winws.exe at ${this.zapretPath}. Please ensure it exists.`);
+            log(`[ERROR] [ZapretService] Failed to start Zapret: ${error}`);
         }
     }
 
-    public stop(): void {
-        if (!this.isRunning() || !this.zapretProcess?.pid) {
-            log('[ZapretService] Zapret is not running.');
-            return;
+    public async stop(): Promise<void> {
+        log('[ZapretService] Stopping Zapret service...');
+
+        // 1. Kill tracked process
+        if (this.zapretProcess?.pid) {
+            const pid = this.zapretProcess.pid;
+            try {
+                await new Promise<void>((resolve) => {
+                    const kill = spawn('taskkill', ['/F', '/T', '/PID', pid.toString()]);
+                    kill.on('exit', () => resolve());
+                });
+            } catch (e) {
+                log(`[ZapretService] Error killing PID ${pid}: ${e}`);
+            }
         }
 
-        log(`[ZapretService] Stopping Zapret process with PID: ${this.zapretProcess.pid}`);
-        
-        // Use taskkill on Windows to forcefully terminate the process tree
-        const pid = this.zapretProcess.pid;
-        spawn('taskkill', ['/F', '/T', '/PID', pid.toString()]);
-        
+        // 2. Kill any winws.exe process as fallback to ensure clean state
+        try {
+            await new Promise<void>((resolve) => {
+                const kill = spawn('taskkill', ['/F', '/T', '/IM', 'winws.exe']);
+                kill.on('exit', () => resolve());
+            });
+        } catch (e) {
+            // Ignore error if process not found
+        }
+
         this.zapretProcess = null;
     }
 
-    private async readConfigArguments(): Promise<string[]> {
+    private async parseBatForArgs(batPath: string): Promise<string[]> {
         try {
-            const configFile = await fs.readFile(this.configPath, 'utf-8');
-            const vendorPath = path.dirname(this.configPath);
+            const content = await fs.readFile(batPath, 'utf-8');
+            const lines = content.split(/\r?\n/);
+            let winwsLine = '';
+            let capturing = false;
 
-            const replacements = {
-                '{hosts}': path.join(vendorPath, 'autohosts.txt'),
-                '{ignore}': path.join(vendorPath, 'ignore.txt'),
-                '{youtube}': path.join(vendorPath, 'youtube.txt'),
-                '{quicgoogle}': path.join(vendorPath, 'quic_initial_www_google_com.bin'),
-                '{tlsgoogle}': path.join(vendorPath, 'tls_clienthello_www_google_com.bin'),
-            };
+            for (let line of lines) {
+                line = line.trim();
+                let hasContinuation = line.endsWith('^');
 
-            const lines = configFile.split(/\r?\n/).filter(line => line && !line.startsWith('#'));
-            
-            let processedArgs = lines.join(' ');
+                // If this line has continuation, remove it before merging
+                if (hasContinuation) {
+                    line = line.substring(0, line.length - 1).trim();
+                }
 
-            for (const placeholder in replacements) {
-                processedArgs = processedArgs.replace(new RegExp(placeholder, 'g'), replacements[placeholder as keyof typeof replacements]);
+                if (line.includes('winws.exe')) {
+                    winwsLine = line.split('winws.exe')[1];
+                    capturing = true;
+                } else if (capturing) {
+                    // Add a space to avoid sticking arguments together
+                    winwsLine += ' ' + line;
+                }
+
+                if (capturing && !hasContinuation) {
+                    break;
+                }
             }
 
-            // Split the processed string into an array of arguments
-            return processedArgs.split(' ').filter(arg => arg);
+            if (!winwsLine) return [];
+
+            const listsPath = path.join(this.vendorPath, 'lists', path.sep);
+
+            // IMPORTANT: If the .bat file had "%BIN%winws.exe" --args, 
+            // the split might leave a trailing " at the beginning of winwsLine.
+            // We must identify and remove it before further processing.
+            winwsLine = winwsLine.trim();
+            if (winwsLine.startsWith('"')) {
+                winwsLine = winwsLine.substring(1).trim();
+            }
+
+            let processed = winwsLine
+                // Replace escapes. In batch, ^ escapes the next character. 
+                // Common cases are ^! becoming ! or ^^ becoming ^. 
+                // We'll replace it with empty to just keep the escaped character.
+                .replace(/\^/g, '')
+                .replace(/%BIN%/g, this.binPath + path.sep)
+                .replace(/%LISTS%/g, listsPath)
+                .replace(/%GameFilter%/g, '12')
+                .trim();
+
+            // Clean up double quotes and relative path leftovers
+            processed = processed.replace(/\.\.\/lists\//g, listsPath);
+
+            const args: string[] = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < processed.length; i++) {
+                const char = processed[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ' ' && !inQuotes) {
+                    if (current) {
+                        args.push(current);
+                        current = '';
+                    }
+                } else {
+                    current += char;
+                }
+            }
+            if (current) args.push(current);
+
+            return args.filter(arg => arg && !arg.startsWith('/min') && !arg.startsWith('zapret:'));
         } catch (error) {
-            log(`[ERROR] [ZapretService] Could not read or process config.txt at ${this.configPath}.`);
+            log(`[ERROR] [ZapretService] Failed to parse ${batPath}:`, error);
             return [];
         }
     }
