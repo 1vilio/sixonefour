@@ -34,6 +34,7 @@ import { listeningStatsService, StatsTrackInfo } from './services/listeningStats
 import { databaseService } from './services/databaseService';
 import { performanceService } from './services/performanceService';
 import { log, logFilePath } from './utils/logger';
+import { OnlineUsersService } from './services/onlineUsersService';
 import path = require('path');
 
 import { platform } from 'os';
@@ -83,6 +84,9 @@ const store = new Store({
         telegramLastWeeklyStatsDate: 0,
         telegramLastStatsColor: 'white',
         zapretPreset: 'general',
+        onlineStatusEnabled: true,
+        ablyApiKey: '94BbSg.cBa_zw:jr2jfPThIy_Vz8kXZr7Vd4R3n0N9Rykb2YjMNGVyFXc',
+        performanceMonitorEnabled: true,
     },
     clearInvalidConfig: true,
     encryptionKey: 'sixonefour-config',
@@ -113,6 +117,7 @@ let scraperView: BrowserView;
 let liveFeedInterval: NodeJS.Timeout | null = null;
 let tray: Tray | null = null;
 let isQuitting = false;
+let onlineUsersService: OnlineUsersService;
 const devMode = process.argv.includes('--dev');
 // Header height for header BrowserView
 const HEADER_HEIGHT = 32;
@@ -602,6 +607,8 @@ async function init() {
     shortcutService.setWindow(mainWindow);
     zapretService = new ZapretService();
     fansBoostingService = new FansBoostingService(contentView);
+    onlineUsersService = new OnlineUsersService(store);
+    onlineUsersService.initialize(mainWindow, headerView);
 
     // Initialize Telegram Service
     telegramService = new TelegramService();
@@ -1129,6 +1136,17 @@ async function init() {
         } else if (key === 'navigationControlsEnabled') {
             if (headerView && headerView.webContents) {
                 headerView.webContents.send('navigation-controls-toggle', data.value);
+            }
+        } else if (key === 'performanceMonitorEnabled') {
+            if (headerView && headerView.webContents) {
+                headerView.webContents.send('performance-monitor-toggle', data.value);
+            }
+        } else if (key === 'onlineStatusEnabled') {
+            if (onlineUsersService) {
+                onlineUsersService.setEnabled(data.value);
+            }
+            if (headerView && headerView.webContents) {
+                headerView.webContents.send('online-status-toggle', data.value);
             }
         } else if (key === 'autoUpdaterEnabled') {
             if (data.value) {

@@ -802,6 +802,20 @@ export class SettingsManager {
                     </label>
                 </div>
                 <div class="setting-item">
+                    <span>Show Online Users Count</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="onlineStatusEnabled" ${this.store.get('onlineStatusEnabled', true) ? 'checked' : ''}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span>Show Performance Monitor</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="performanceMonitorEnabled" ${this.store.get('performanceMonitorEnabled', true) ? 'checked' : ''}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
                     <span data-i18n="openAtLogin">${this.translationService.translate('openAtLogin')}</span>
                     <label class="toggle">
                         <input type="checkbox" id="openAtLogin" ${this.store.get('openAtLogin', false) ? 'checked' : ''}>
@@ -1568,6 +1582,14 @@ export class SettingsManager {
 
             document.getElementById('startInTray').addEventListener('change', (e) => {
                 ipcRenderer.send('setting-changed', { key: 'startInTray', value: e.target.checked });
+            });
+
+            document.getElementById('onlineStatusEnabled').addEventListener('change', (e) => {
+                ipcRenderer.send('setting-changed', { key: 'onlineStatusEnabled', value: e.target.checked });
+            });
+
+            document.getElementById('performanceMonitorEnabled').addEventListener('change', (e) => {
+                ipcRenderer.send('setting-changed', { key: 'performanceMonitorEnabled', value: e.target.checked });
             });
 
             document.getElementById('navigationControlsEnabled').addEventListener('change', (e) => {

@@ -297,12 +297,51 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Online Users Logic
+    const onlineUsersContainer = document.getElementById('online-users-count');
+    const onlineCountVal = document.getElementById('online-count-val');
+
+    if (onlineUsersContainer && onlineCountVal) {
+        ipcRenderer.on('online-users-count', (_, count) => {
+            onlineCountVal.textContent = count;
+            // Only show if the setting is enabled (though service should handle it)
+            ipcRenderer.invoke('get-store-value', 'onlineStatusEnabled').then((ready) => {
+                if (ready !== false) {
+                    onlineUsersContainer.style.display = 'flex';
+                }
+            });
+        });
+
+        // Request initial online status state
+        ipcRenderer.invoke('get-store-value', 'onlineStatusEnabled').then((enabled) => {
+            if (enabled === false) {
+                onlineUsersContainer.style.display = 'none';
+            }
+        });
+
+        ipcRenderer.on('online-status-toggle', (_, enabled) => {
+            onlineUsersContainer.style.display = enabled ? 'flex' : 'none';
+        });
+    }
+
     // Performance Monitor Logic
+    const perfMonitor = document.getElementById('perf-monitor');
     const fpsVal = document.getElementById('fps-val');
     const cpuVal = document.getElementById('cpu-val');
     const ramVal = document.getElementById('ram-val');
 
-    if (fpsVal && cpuVal && ramVal) {
+    if (perfMonitor && fpsVal && cpuVal && ramVal) {
+        ipcRenderer.on('performance-monitor-toggle', (_, enabled) => {
+            perfMonitor.style.display = enabled ? 'flex' : 'none';
+        });
+
+        // Request initial performance monitor state
+        ipcRenderer.invoke('get-store-value', 'performanceMonitorEnabled').then((enabled) => {
+            if (enabled === false) {
+                perfMonitor.style.display = 'none';
+            }
+        });
+
         let frameCount = 0;
         let lastTime = performance.now();
 
