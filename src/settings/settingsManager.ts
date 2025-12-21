@@ -1296,6 +1296,19 @@ export class SettingsManager {
 
                 <div style="margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px;">
                     <div class="setting-item">
+                        <span>Weekly Statistics (PNG Report)</span>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <button id="telegramWeeklyStatsDebug" class="theme-button" style="width: auto; padding: 4px 10px; font-size: 12px;">Send Now (Debug)</button>
+                            <label class="toggle">
+                                <input type="checkbox" id="telegramWeeklyStats">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px;">
+                    <div class="setting-item">
                         <span>Mass Export (All Liked Tracks)</span>
                         <button id="telegramMassExport" class="theme-button" style="width: auto;">Start Export</button>
                     </div>
@@ -2277,6 +2290,8 @@ export class SettingsManager {
             // Telegram Integration Logic
             const telegramSave = document.getElementById('telegramSave');
             const telegramLiveFeed = document.getElementById('telegramLiveFeed');
+            const telegramWeeklyStats = document.getElementById('telegramWeeklyStats');
+            const telegramWeeklyStatsDebug = document.getElementById('telegramWeeklyStatsDebug');
             const telegramMassExport = document.getElementById('telegramMassExport');
             const telegramExportProgress = document.getElementById('telegramExportProgress');
             const telegramExportStatus = document.getElementById('telegramExportStatus');
@@ -2293,6 +2308,11 @@ export class SettingsManager {
             // Load live feed state
             ipcRenderer.invoke('get-store-value', 'telegramLiveFeedEnabled').then(enabled => {
                 telegramLiveFeed.checked = enabled;
+            });
+
+            // Load weekly stats state
+            ipcRenderer.invoke('get-store-value', 'telegramWeeklyStatsEnabled').then(enabled => {
+                telegramWeeklyStats.checked = enabled;
             });
 
             telegramSave.addEventListener('click', async () => {
@@ -2320,6 +2340,20 @@ export class SettingsManager {
 
             telegramLiveFeed.addEventListener('change', (e) => {
                 ipcRenderer.send('telegram-live-feed-toggle', e.target.checked);
+            });
+
+            telegramWeeklyStats.addEventListener('change', (e) => {
+                ipcRenderer.send('telegram-weekly-stats-toggle', e.target.checked);
+            });
+
+            telegramWeeklyStatsDebug.addEventListener('click', () => {
+                ipcRenderer.send('telegram-weekly-stats-debug');
+                telegramWeeklyStatsDebug.disabled = true;
+                telegramWeeklyStatsDebug.textContent = 'Sending...';
+                setTimeout(() => {
+                    telegramWeeklyStatsDebug.disabled = false;
+                    telegramWeeklyStatsDebug.textContent = 'Send Now (Debug)';
+                }, 5000);
             });
 
             telegramMassExport.addEventListener('click', () => {

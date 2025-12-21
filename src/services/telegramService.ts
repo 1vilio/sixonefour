@@ -72,30 +72,50 @@ export class TelegramService {
         }
     }
 
-    public async sendPhoto(photoUrl: string, caption?: string): Promise<boolean> {
+    public async sendPhoto(photoSource: string, caption?: string): Promise<boolean> {
         if (!this.hasCredentials()) return false;
 
         log(`[TelegramService] Sending photo to Chat ID: '${this.targetChatId}'`);
 
         try {
-            const response = await fetch(`${this.baseUrl}/sendPhoto`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: this.targetChatId,
-                    photo: photoUrl,
-                    caption: caption,
-                    parse_mode: 'HTML'
-                })
-            });
+            let response;
+
+            // Check if it's a local file
+            if (fs.existsSync(photoSource)) {
+                const form = new FormData();
+                form.append('chat_id', this.targetChatId);
+                form.append('photo', fs.createReadStream(photoSource));
+                if (caption) form.append('caption', caption);
+                form.append('parse_mode', 'HTML');
+
+                response = await fetch(`${this.baseUrl}/sendPhoto`, {
+                    method: 'POST',
+                    body: form as any,
+                    headers: form.getHeaders()
+                });
+            } else {
+                // Assume it's a URL
+                response = await fetch(`${this.baseUrl}/sendPhoto`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: this.targetChatId,
+                        photo: photoSource,
+                        caption: caption,
+                        parse_mode: 'HTML'
+                    })
+                });
+            }
 
             const data = await response.json();
             if (!data.ok) {
                 log(`[TelegramService] Send photo failed: ${data.description}`);
+                console.error(`[TelegramService] Send photo failed: ${data.description}`);
             }
             return data.ok;
         } catch (error) {
             log(`[TelegramService] Error sending photo: ${error}`);
+            console.error(`[TelegramService] Error sending photo: ${error}`);
             return false;
         }
     }

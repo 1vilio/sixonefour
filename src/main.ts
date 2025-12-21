@@ -27,6 +27,7 @@ import { ZapretService } from './services/zapretService';
 import { UrlInterceptorService } from './services/urlInterceptorService';
 import { audioMonitorScript } from './services/audioMonitorService';
 import { TelegramService } from './services/telegramService';
+import { TelegramStatsImageService } from './services/telegramStatsImageService';
 import { LikesScraperService, ScrapedTrack } from './services/likesScraperService';
 import type { TrackInfo, TrackUpdateMessage } from './types';
 import { listeningStatsService, StatsTrackInfo } from './services/listeningStatsService';
@@ -78,6 +79,9 @@ const store = new Store({
         telegramBotToken: '',
         telegramChannelId: '',
         telegramLiveFeedEnabled: false,
+        telegramWeeklyStatsEnabled: false,
+        telegramLastWeeklyStatsDate: 0,
+        telegramLastStatsColor: 'white',
         zapretPreset: 'general',
     },
     clearInvalidConfig: true,
@@ -606,6 +610,13 @@ async function init() {
         store.get('telegramChannelId', '') as string
     );
 
+    // Schedule Weekly Statistics check
+    setTimeout(() => {
+        checkWeeklyStats();
+        // Check every 6 hours for precision
+        setInterval(checkWeeklyStats, 6 * 60 * 60 * 1000);
+    }, 45000); // 45s delay to not overload startup
+
     // Initialize Scraper View and Service
     scraperView = new BrowserView({
         webPreferences: {
@@ -647,6 +658,20 @@ async function init() {
 
     ipcMain.handle('telegram-validate-token', async (_event, token) => {
         return await telegramService.validateToken(token);
+    });
+
+    ipcMain.on('telegram-weekly-stats-toggle', (_event, enabled) => {
+        store.set('telegramWeeklyStatsEnabled', enabled);
+        log(`[Telegram] Weekly Statistics toggle: ${enabled}`);
+        if (enabled) {
+            // Check immediately when enabled, but with a small delay
+            setTimeout(checkWeeklyStats, 5000);
+        }
+    });
+
+    ipcMain.on('telegram-weekly-stats-debug', async () => {
+        log('[Telegram] Manual Weekly Statistics trigger (Debug)');
+        await sendWeeklyStats();
     });
 
     ipcMain.on('telegram-mass-export-start', async () => {
@@ -1969,6 +1994,60 @@ function stopLiveFeed() {
         liveFeedInterval = null;
     }
     log('[Telegram] Live Feed stopped.');
+}
+
+async function checkWeeklyStats() {
+    if (!store.get('telegramWeeklyStatsEnabled', false)) return;
+    if (!telegramService.hasCredentials()) return;
+
+    const lastSend = store.get('telegramLastWeeklyStatsDate', 0);
+    const now = Date.now();
+    const oneWeek = 7 * 24 * 60 * 60 * 1000;
+
+    if (now - lastSend >= oneWeek) {
+        log('[Telegram] It is time for Weekly Statistics!');
+        await sendWeeklyStats();
+    }
+}
+
+async function sendWeeklyStats() {
+    try {
+        log('[Telegram] Generating Weekly Statistics image...');
+        const stats = await listeningStatsService.getStats('weekly');
+
+        // Skip if no tracks played to avoid empty images
+        if (stats.totalTracksPlayed === 0) {
+            log('[Telegram] Weekly Stats: No tracks played, skipping.');
+            store.set('telegramLastWeeklyStatsDate', Date.now()); // Mark as "checked" anyway
+            return;
+        }
+
+        const lastColor = store.get('telegramLastStatsColor', 'white');
+        const nextColor = lastColor === 'white' ? 'black' : 'white';
+
+        const imageBuffer = await TelegramStatsImageService.generateStatsImage(stats, nextColor);
+        const tempPath = path.join(app.getPath('temp'), `weekly_stats_${Date.now()}.png`);
+        fs.writeFileSync(tempPath, imageBuffer);
+
+        log(`[Telegram] Sending Weekly Statistics image (${nextColor} theme)...`);
+        const sent = await telegramService.sendPhoto(tempPath, '<b>Weekly Listening Statistics</b>\n\nGenerated via <a href="https://github.com/1vilio/sixonefour">sixonefour</a>');
+
+        if (sent) {
+            log('[Telegram] Weekly Statistics sent successfully.');
+            store.set('telegramLastWeeklyStatsDate', Date.now());
+            store.set('telegramLastStatsColor', nextColor);
+        } else {
+            log('[Telegram] Failed to send Weekly Statistics image.');
+        }
+
+        // Cleanup
+        if (fs.existsSync(tempPath)) {
+            fs.unlinkSync(tempPath);
+        }
+    } catch (err: any) {
+        log(`[Telegram] Error sending Weekly Stats: ${err.message}`);
+        console.error(`[Telegram] Error sending Weekly Stats:`, err);
+    }
 }
 
 function sanitizeFilename(name: string): string {
