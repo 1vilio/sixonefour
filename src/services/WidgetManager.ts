@@ -6,6 +6,7 @@ import type { ThemeColors } from '../utils/colorExtractor';
 export class WidgetManager {
     private window: BrowserWindow | null = null;
     private isVisible = false;
+    private isPinned = true; // Default to true as set in create()
 
     constructor() {
         // We will initialize the window when requested
@@ -24,9 +25,10 @@ export class WidgetManager {
             y: 100,
             frame: false,
             transparent: true,
-            alwaysOnTop: true,
+            alwaysOnTop: this.isPinned,
             resizable: false,
             skipTaskbar: true,
+            show: false, // Don't show immediately
             hasShadow: false,
             webPreferences: {
                 backgroundThrottling: false, // Keep video playing smoothly
@@ -36,11 +38,18 @@ export class WidgetManager {
             },
         });
 
-        // Open DevTools for debugging
-        // this.window.webContents.openDevTools({ mode: 'detach' });
+        // Use 'screen-saver' or 'pop-up-menu' for more reliable always-on-top on Windows
+        if (this.isPinned) {
+            this.window.setAlwaysOnTop(true, 'screen-saver');
+        }
 
         const widgetPath = path.join(__dirname, '..', 'widget', 'widget.html');
         this.window.loadFile(widgetPath);
+
+        // Sync pin state when window is ready
+        this.window.webContents.on('did-finish-load', () => {
+            this.window?.webContents.send('widget-pin-state-changed', this.isPinned);
+        });
 
         this.window.on('closed', () => {
             this.window = null;
@@ -58,6 +67,11 @@ export class WidgetManager {
         }
         this.window?.show();
         this.isVisible = true;
+
+        // Ensure state is synced when shown
+        if (this.window) {
+            this.window.webContents.send('widget-pin-state-changed', this.isPinned);
+        }
     }
 
     public hide(): void {
@@ -80,8 +94,10 @@ export class WidgetManager {
     public togglePin(): void {
         if (!this.window) return;
 
-        const newState = !this.window.isAlwaysOnTop();
-        this.window.setAlwaysOnTop(newState);
-        this.window.webContents.send('widget-pin-state-changed', newState);
+        this.isPinned = !this.isPinned;
+
+        // On Windows, 'screen-saver' or 'floating' level helps stay above other windows
+        this.window.setAlwaysOnTop(this.isPinned, this.isPinned ? 'screen-saver' : 'normal');
+        this.window.webContents.send('widget-pin-state-changed', this.isPinned);
     }
 }
