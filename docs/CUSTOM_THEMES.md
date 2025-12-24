@@ -1,124 +1,92 @@
-# Custom Themes
+# Theme Development Guide
 
-sixonefour now supports custom themes, You can customize the appearance of the SoundCloud UI by creating and loading
-CSS theme files.
+sixonefour uses a folder-based theme system. Each theme is contained within its own directory and defined by a `theme.json` manifest file.
 
-## How to Use Custom Themes
+## Theme Structure
 
-1. **Open the Settings Panel**: Press `F1` or click the settings button in the application
-2. **Navigate to Custom Themes**: Find the "Custom Themes" section in the settings
-3. **Open Themes Folder**: Click the "Open Themes Folder" button to open your themes directory
-4. **Add Theme Files**: Place your `.css` theme files in the opened folder
-5. **Refresh Themes**: Click "Refresh Themes" in the settings to load new theme files
-6. **Select Theme**: Choose your desired theme from the dropdown menu
-7. **Apply Changes**: The theme will be applied immediately
+A typical theme folder looks like this:
 
-## Creating Custom Themes
+```text
+themes/
+  MyCustomTheme/
+    theme.json      # Theme metadata (required)
+    styles.css      # CSS styles (required)
+    logo.png        # Custom logo (optional)
+    background.mp4  # Video background (optional)
+```
 
-Custom themes are standard CSS files that can modify the appearance of SoundCloud. Here are some tips for creating your
-own themes:
+## The manifest (`theme.json`)
 
-### Basic Structure
+The `theme.json` file defines your theme's properties and maps its assets.
+
+```json
+{
+  "name": "My Custom Theme",
+  "description": "A beautiful dark theme with a video background",
+  "version": "1.0.0",
+  "author": "YourName",
+  "style": "styles.css",
+  "assets": {
+    "logo": "logo.png",
+    "videoBackground": "background.mp4"
+  }
+}
+```
+
+### Manifest Fields
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `name` | string | The display name of your theme. |
+| `description` | string | A short summary shown in the settings. |
+| `version` | string | Semantic versioning (e.g., 1.0.0). |
+| `author` | string | Your name or handle. |
+| `style` | string | Path to the main CSS file relative to the theme folder. |
+| `assets` | object | Optional assets like `logo` and `videoBackground`. |
+
+## CSS Development
+
+Your CSS file modifies the SoundCloud interface. Use `!important` to ensure your styles take precedence.
 
 ```css
-/* Your Custom Theme Name */
-/* Description of what your theme does */
-
-/* Target SoundCloud elements */
+/* Example: Changing the main background */
 body {
-    background-color: #your-color !important;
+    background-color: #0d0d0d !important;
 }
 
+/* Example: Styling the header */
 .header {
-    background: linear-gradient(135deg, #color1 0%, #color2 100%) !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: blur(10px);
 }
 ```
 
-### Important Notes
+> [!TIP]
+> For a full list of available CSS selectors, see [SELECTORS_LIST.md](./SELECTORS_LIST.md).
 
-- Use `!important` declarations to ensure your styles override SoundCloud's default styles
-- SoundCloud's class names may change, so themes might need updates occasionally
-- Test your themes thoroughly to ensure they work across different pages
+## Working with Assets
 
-### Common Elements to Customize
+### Custom Logo
+You can replace the default SoundCloud logo in the header.
+1. Add your image (PNG/SVG recommended) to the theme folder.
+2. Link it in `theme.json` under `assets.logo`.
 
-- `body` - Main background
-- `.header` - Top navigation bar
-- `.sidebar` - Left sidebar
-- `.soundList__item`, `.trackItem` - Track cards
-- `.playButton`, `.sc-button-play` - Play buttons
-- `.progressBar`, `.playbackTimeline` - Progress bars
-- `::-webkit-scrollbar` - Scrollbars
+### Video Backgrounds
+You can add a custom video background that plays behind the UI.
+1. Add your video (MP4 recommended) to the theme folder.
+2. Link it in `theme.json` under `assets.videoBackground`.
 
-## Theme Locations
+## Installation & Usage
 
-Themes are stored in your user data directory:
+1. **Access Themes Folder**:
+   - Open Settings (`F1`).
+   - Click **Open Themes Folder**.
+2. **Install**: Place your theme folder into the opened directory.
+3. **Usage**:
+   - Click **Refresh Themes** in settings.
+   - Select your theme from the dropdown.
 
-- **Windows**: `%APPDATA%\sixonefour\themes\`
-- **macOS**: `~/Library/Application Support/sixonefour/themes/`
-- **Linux**: `~/.config/sixonefour/themes/`
+---
 
-## Troubleshooting
-
-### Theme Not Loading
-
-1. Ensure the file has a `.css` extension
-2. Check that the CSS syntax is valid
-3. Try refreshing themes in the settings
-4. Restart the application if necessary
-
-### Theme Not Working
-
-1. Verify you're using `!important` declarations
-2. Check browser developer tools for CSS conflicts
-3. SoundCloud may have updated their class names
-
-### Reverting to Default
-
-Select "No Theme" from the dropdown to remove all custom styling.
-
-## Advanced Features
-
-### CSS Variables
-
-Some themes may use CSS custom properties:
-
-```css
-:root {
-    --primary-color: #ff6b35;
-    --secondary-color: #ff4500;
-}
-```
-
-### Animations
-
-Add custom animations:
-
-```css
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.my-element {
-    animation: fadeIn 0.3s ease-in;
-}
-```
-
-## Contributing Themes
-
-Feel free to share themes you've created — if you'd like your theme included in the project, open a pull request adding
-your `.css` file under the `themes/` folder (or send it in an issue/attachment). I'll review submissions and merge
-themes that are well-made and follow the guidelines above.
-
-Guidelines for contribution:
-
-- Include a short header comment at the top of your `.css` with the theme name and a one-line description.
-- Keep changes scoped to styling only (no scripts or binary files).
-- Prefer reasonably named CSS selectors and document any assumptions in the comment block.
-
-If your theme is accepted I'll add it to the repository so other users can enjoy it. Thanks for contributing!
+## Contributing
+If you've created a great theme, feel free to open a Pull Request! Please ensure your theme follows the folder structure and includes a valid `theme.json`.

@@ -1,7 +1,21 @@
 {
     "name": "sixonefour",
     "version": "0.1.4",
-    "description": "🎵 A Soundcloud client with Discord Rich Presence support",
+    "description": "A feature-rich SoundCloud desktop client with Discord Rich Presence, customizable themes, a floating media widget, global hotkeys, a download manager, Telegram integration, network tools, and high-precision listening statistics.",
+    "keywords": [
+        "soundcloud",
+        "electron",
+        "desktop-client",
+        "discord-rpc",
+        "music-player",
+        "themes",
+        "widget",
+        "zapret",
+        "media-hotkeys",
+        "download-manager",
+        "telegram-integration",
+        "listening-statistics"
+    ],
     "author": {
         "name": "Frolov Dmitriy",
         "email": "mittz1337@gmail.com"
