@@ -778,6 +778,15 @@ export class SettingsManager {
                 padding: 24px 16px;
                 font-style: italic;
             }
+            .debug-only {
+                display: none !important;
+            }
+            body.debug-enabled .debug-only {
+                display: flex !important;
+            }
+            body.debug-enabled button.debug-only {
+                display: block !important;
+            }
         </style>
         <button class="close-btn" id="close-settings" title="${this.translationService.translate('closeSettings')}" data-i18n-title="closeSettings">
             <svg viewBox="0 0 24 24">
@@ -1243,6 +1252,13 @@ export class SettingsManager {
                     <span>View Application Logs</span>
                     <button id="openLogFile" class="theme-button">Open Log</button>
                 </div>
+                <div class="setting-item">
+                    <span>Debug Mode</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="debugMode" ${this.store.get('debugMode', false) ? 'checked' : ''}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
                 <div class="description">If you encounter an issue, please include this log file in your bug report.</div>
             </div>
 
@@ -1303,6 +1319,7 @@ export class SettingsManager {
                     <div class="setting-item">
                         <span>Live Feed (Post new likes)</span>
                         <div style="display: flex; gap: 10px; align-items: center;">
+                            <button id="telegramLiveFeedDebug" class="theme-button debug-only" style="width: auto; padding: 4px 10px; font-size: 12px;">Send Now (Debug)</button>
                             <label class="toggle">
                                 <input type="checkbox" id="telegramLiveFeed">
                                 <span class="slider"></span>
@@ -1315,7 +1332,7 @@ export class SettingsManager {
                     <div class="setting-item">
                         <span>Weekly Statistics (PNG Report)</span>
                         <div style="display: flex; gap: 10px; align-items: center;">
-                            <button id="telegramWeeklyStatsDebug" class="theme-button" style="width: auto; padding: 4px 10px; font-size: 12px;">Send Now (Debug)</button>
+                            <button id="telegramWeeklyStatsDebug" class="theme-button debug-only" style="width: auto; padding: 4px 10px; font-size: 12px;">Send Now (Debug)</button>
                             <label class="toggle">
                                 <input type="checkbox" id="telegramWeeklyStats">
                                 <span class="slider"></span>
@@ -1347,9 +1364,15 @@ export class SettingsManager {
         </script>
         <script>
             // Animation handling
-            document.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener('DOMContentLoaded', async () => {
                 // Ensure initial state is set
                 document.body.classList.remove('visible');
+                
+                // Set initial debug state
+                const isDebugEnabled = await ipcRenderer.invoke('get-store-value', 'debugMode');
+                if (isDebugEnabled) {
+                    document.body.classList.add('debug-enabled');
+                }
             });
 
             // Handle close button animation
@@ -2317,6 +2340,7 @@ export class SettingsManager {
             const telegramLiveFeed = document.getElementById('telegramLiveFeed');
             const telegramWeeklyStats = document.getElementById('telegramWeeklyStats');
             const telegramWeeklyStatsDebug = document.getElementById('telegramWeeklyStatsDebug');
+            const telegramLiveFeedDebug = document.getElementById('telegramLiveFeedDebug');
             const telegramMassExport = document.getElementById('telegramMassExport');
             const telegramExportProgress = document.getElementById('telegramExportProgress');
             const telegramExportStatus = document.getElementById('telegramExportStatus');
@@ -2325,7 +2349,6 @@ export class SettingsManager {
             // Load initial settings
             ipcRenderer.invoke('telegram-get-settings').then(settings => {
                 if (settings.token) telegramBotToken.value = settings.token;
-                if (settings.channelId) telegramChannelId.value = settings.channelId;
                 if (settings.channelId) telegramChannelId.value = settings.channelId;
                 if (settings.username) document.getElementById('telegramUsername').value = settings.username;
             });
@@ -2371,6 +2394,12 @@ export class SettingsManager {
                 ipcRenderer.send('telegram-weekly-stats-toggle', e.target.checked);
             });
 
+            document.getElementById('debugMode').addEventListener('change', (e) => {
+                const enabled = e.target.checked;
+                ipcRenderer.send('setting-changed', { key: 'debugMode', value: enabled });
+                document.body.classList.toggle('debug-enabled', enabled);
+            });
+
             telegramWeeklyStatsDebug.addEventListener('click', () => {
                 ipcRenderer.send('telegram-weekly-stats-debug');
                 telegramWeeklyStatsDebug.disabled = true;
@@ -2378,6 +2407,16 @@ export class SettingsManager {
                 setTimeout(() => {
                     telegramWeeklyStatsDebug.disabled = false;
                     telegramWeeklyStatsDebug.textContent = 'Send Now (Debug)';
+                }, 5000);
+            });
+
+            telegramLiveFeedDebug.addEventListener('click', () => {
+                ipcRenderer.send('telegram-live-feed-debug');
+                telegramLiveFeedDebug.disabled = true;
+                telegramLiveFeedDebug.textContent = 'Checking...';
+                setTimeout(() => {
+                    telegramLiveFeedDebug.disabled = false;
+                    telegramLiveFeedDebug.textContent = 'Send Now (Debug)';
                 }, 5000);
             });
 

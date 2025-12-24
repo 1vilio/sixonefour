@@ -87,6 +87,7 @@ const store = new Store({
         onlineStatusEnabled: true,
         ablyApiKey: '94BbSg.cBa_zw:jr2jfPThIy_Vz8kXZr7Vd4R3n0N9Rykb2YjMNGVyFXc',
         performanceMonitorEnabled: true,
+        debugMode: false,
     },
     clearInvalidConfig: true,
     encryptionKey: 'sixonefour-config',
@@ -743,6 +744,11 @@ async function init() {
         } else {
             stopLiveFeed();
         }
+    });
+
+    ipcMain.on('telegram-live-feed-debug', async () => {
+        log('[Telegram] Manual Live Feed check trigger (Debug)');
+        await checkLiveFeed();
     });
 
     // Start Live Feed if enabled
