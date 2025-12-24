@@ -1253,6 +1253,9 @@ export class SettingsManager {
                     </svg>
                     Telegram Integration
                 </h2>
+                <div class="description" style="margin-bottom: 12px; color: var(--accent); font-weight: 500; line-height: 1.4;">
+                    To enable the bot to send tracks and statistics to your channel, you must invite the bot to the channel and grant it administrator rights. Without these permissions, the integration will not function.
+                </div>
                 
                 <div class="setting-item">
                     <div class="input-group" style="width: 100%;">
@@ -1268,7 +1271,7 @@ export class SettingsManager {
 
                 <div class="setting-item">
                     <div class="input-group" style="width: 100%;">
-                        <span style="margin-bottom: 5px;">Channel ID (Optional)</span>
+                        <span style="margin-bottom: 5px;">Channel ID</span>
                         <div style="position: relative;">
                             <input type="text" id="telegramChannelId" class="textInput" placeholder="-1001234567890" style="padding-right: 30px;">
                             <button class="close-btn" style="position: absolute; right: 0; top: 0; height: 100%; width: 30px; opacity: 0.6;" onclick="document.getElementById('telegramChannelId').value = ''">
