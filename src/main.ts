@@ -2068,7 +2068,7 @@ async function processTrackForTelegram(track: ScrapedTrack, isLiveFeed: boolean 
             }
         }
         if (artworkPath && fs.existsSync(artworkPath)) {
-            fs.unlink(artworkPath, () => { });
+            fs.unlink(artworkPath, () => {});
         }
     }
 }
