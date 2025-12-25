@@ -22,19 +22,17 @@ jobs:
             - name: Install Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version: 24
+                  node-version: 22
                   cache: 'pnpm'
 
             - name: Install dependencies
               run: pnpm install
 
             - name: Inject Ably API Key
-              if: env.ABLY_API_KEY != ''
+              if: ${{ secrets.ABLY_API_KEY != '' }}
               shell: bash
               run: |
-                  sed -i "s/REPLACE_WITH_ABLY_API_KEY/${{ secrets.ABLY_API_KEY }}/g" src/services/onlineUsersService.ts
-              env:
-                  ABLY_API_KEY: ${{ secrets.ABLY_API_KEY }}
+                  sed -i "s|REPLACE_WITH_ABLY_API_KEY|${{ secrets.ABLY_API_KEY }}|g" src/services/onlineUsersService.ts
 
             - name: Check code formatting with Prettier
               run: pnpm prettier --check .
