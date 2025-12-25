@@ -123,7 +123,7 @@ Built-in solutions to maintain connection stability and bypass regional restrict
 - **Zapret Service:** Integrated DPI bypass for unrestricted track streaming.
 - **Custom DNS Mapping:** Hard-coded host-resolver rules for SoundCloud domains.
 - **Proxy Engine:** Full support for custom proxy configurations.
-    </details>
+      </details>
 
 <details>
 <summary><strong>📈 Fans Boosting (Behavior Simulation)</strong></summary>
