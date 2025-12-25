@@ -90,6 +90,7 @@ const store = new Store({
         zapretPreset: 'general',
         onlineStatusEnabled: true,
         performanceMonitorEnabled: true,
+        splashEnabled: true,
         debugMode: false,
     },
     clearInvalidConfig: true,
@@ -120,6 +121,7 @@ let likesScraperService: LikesScraperService;
 let scraperView: BrowserView;
 let liveFeedInterval: NodeJS.Timeout | null = null;
 let tray: Tray | null = null;
+let splashWindow: BrowserWindow | null = null;
 let isQuitting = false;
 let onlineUsersService: OnlineUsersService;
 const devMode = process.argv.includes('--dev');
@@ -285,7 +287,7 @@ function createBrowserWindow(windowState: any): BrowserWindow {
         frame: process.platform === 'darwin',
         titleBarStyle: process.platform === 'darwin' ? 'hidden' : undefined,
         trafficLightPosition: process.platform === 'darwin' ? { x: 10, y: 10 } : undefined,
-        show: !store.get('startInTray', false),
+        show: false, // Always hide initially to show splash screen
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
@@ -330,6 +332,31 @@ function createBrowserWindow(windowState: any): BrowserWindow {
     });
 
     return window;
+}
+
+function createSplashWindow(): BrowserWindow {
+    const splash = new BrowserWindow({
+        width: 600,
+        height: 400,
+        frame: false,
+        transparent: true,
+        alwaysOnTop: true,
+        show: false,
+        webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            devTools: false,
+        },
+        backgroundColor: '#00000000', // Completely transparent
+    });
+
+    splash.loadFile(path.join(__dirname, 'splash', 'splash.html'));
+
+    splash.once('ready-to-show', () => {
+        splash.show();
+    });
+
+    return splash;
 }
 
 // Track info polling
@@ -494,9 +521,21 @@ async function init() {
     else Menu.setApplicationMenu(null);
 
     const windowState = windowStateManager({ defaultWidth: 800, defaultHeight: 800 });
+
+    // Show splash screen if enabled and not starting in tray
+    const splashEnabled = store.get('splashEnabled', true);
+    const startInTray = store.get('startInTray', false);
+
+    if (splashEnabled) {
+        splashWindow = createSplashWindow();
+    }
+
     mainWindow = createBrowserWindow(windowState);
 
+    // Skip windowState.manage(mainWindow) or ensure it doesn't show the window
+    // mainWindow.show() should only be called through our timeout
     windowState.manage(mainWindow);
+    mainWindow.hide(); // Re-hide just in case windowState.manage showed it
 
     // Explicitly hide the window if startInTray is enabled
     if (store.get('startInTray', false)) {
@@ -597,6 +636,30 @@ async function init() {
     downloadService = new DownloadService(notificationManager, store);
     settingsManager = new SettingsManager(mainWindow, store, translationService);
     statisticsManager = new StatisticsManager(mainWindow);
+
+    // Fade out splash and show main window
+    if (splashWindow) {
+        setTimeout(() => {
+            if (splashWindow) {
+                splashWindow.close();
+                splashWindow = null;
+            }
+
+            // Only show main window now if NOT starting in tray
+            if (!startInTray) {
+                mainWindow.show();
+                mainWindow.focus();
+            } else {
+                console.log('[Main] Start in Tray enabled - keeping main window hidden after splash.');
+            }
+        }, 5500); // 5.5s total duration for a very smooth fade-out and transition
+    } else {
+        // If splash is disabled, show main window immediately (if not starting in tray)
+        if (!startInTray) {
+            mainWindow.show();
+            mainWindow.focus();
+        }
+    }
 
     listeningStatsService.events.on('stats-updated', () => {
         if (statisticsManager) {
@@ -2005,7 +2068,7 @@ async function processTrackForTelegram(track: ScrapedTrack, isLiveFeed: boolean 
             }
         }
         if (artworkPath && fs.existsSync(artworkPath)) {
-            fs.unlink(artworkPath, () => {});
+            fs.unlink(artworkPath, () => { });
         }
     }
 }

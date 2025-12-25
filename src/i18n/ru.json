@@ -135,5 +135,6 @@
     "minimize": "Свернуть",
     "maximize": "Развернуть",
     "restore": "Восстановить",
-    "close": "Закрыть"
+    "close": "Закрыть",
+    "enableSplash": "Включить Splash анимацию"
 }

@@ -1,0 +1,109 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+body {
+    background: transparent !important;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.splash-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: transparent !important;
+}
+
+.logo-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent !important;
+    will-change: transform, opacity;
+    transform: translateZ(0);
+
+    /* Animation Timeline: 
+       0.0s - 1.2s: Entrance
+       1.2s - 4.0s: Breathing
+       4.0s - 5.0s: Smooth Fade Out
+    */
+    animation:
+        entrance 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+        breathing 4s ease-in-out infinite 1.2s,
+        fade-out 1.5s ease-in-out forwards 4.0s;
+}
+
+.splash-logo {
+    max-width: 600px;
+    height: auto;
+    background: transparent !important;
+    will-change: filter;
+    filter: drop-shadow(0 0 10px rgba(180, 0, 0, 0.3));
+    animation: glow-pulse 4s ease-in-out infinite 1.2s;
+}
+
+/* Keyframes */
+
+@keyframes entrance {
+    0% {
+        opacity: 0;
+        transform: scale(0.9) translateZ(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateZ(0);
+    }
+}
+
+@keyframes breathing {
+
+    0%,
+    100% {
+        transform: scale(1) translateZ(0);
+    }
+
+    50% {
+        transform: scale(1.005) translateZ(0);
+    }
+}
+
+@keyframes glow-pulse {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 10px rgba(180, 0, 0, 0.3));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 25px rgba(255, 0, 0, 0.6));
+    }
+}
+
+@keyframes fade-out {
+    0% {
+        opacity: 1;
+        transform: scale(1) translateZ(0);
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.02) translateZ(0);
+        /* Subtle expansion during fade out */
+        filter: blur(10px);
+    }
+}
