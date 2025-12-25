@@ -3,6 +3,9 @@ import { log } from '../utils/logger';
 import type { BrowserWindow } from 'electron';
 import type ElectronStore from 'electron-store';
 
+// This placeholder will be replaced during GitHub Actions build process
+const PROD_ABLY_KEY_PLACEHOLDER = 'REPLACE_WITH_ABLY_API_KEY';
+
 export class OnlineUsersService {
     private client: Ably.Realtime | null = null;
     private channel: Ably.RealtimeChannel | null = null;
@@ -20,7 +23,10 @@ export class OnlineUsersService {
         this.mainWindow = mainWindow;
         this.headerView = headerView;
 
-        const apiKey = process.env.ABLY_API_KEY || this.store.get('ablyApiKey') as string;
+        // Order of priority: 1. Environment Variable, 2. Compiled Placeholder, 3. User Store
+        const apiKey = process.env.ABLY_API_KEY ||
+            (PROD_ABLY_KEY_PLACEHOLDER !== 'REPLACE_WITH_ABLY_API_KEY' ? PROD_ABLY_KEY_PLACEHOLDER : null) ||
+            this.store.get('ablyApiKey') as string;
         const enabled = this.store.get('onlineStatusEnabled', true) as boolean;
 
         if (!enabled || !apiKey) {
