@@ -961,12 +961,15 @@ export class SettingsManager {
                         <span class="slider"></span>
                     </label>
                 </div>
-                <div class="input-group" id="proxyFields" style="display: ${this.store.get('proxyEnabled') ? 'block' : 'none'
-            }">
-                    <input type="text" class="textInput" id="proxyHost" placeholder="${this.translationService.translate('proxyHost')}" data-i18n-placeholder="proxyHost" value="${this.store.get('proxyHost') || ''
-            }">
-                    <input type="text" class="textInput" id="proxyPort" placeholder="${this.translationService.translate('proxyPort')}" data-i18n-placeholder="proxyPort" value="${this.store.get('proxyPort') || ''
-            }">
+                <div class="input-group" id="proxyFields" style="display: ${
+                    this.store.get('proxyEnabled') ? 'block' : 'none'
+                }">
+                    <input type="text" class="textInput" id="proxyHost" placeholder="${this.translationService.translate('proxyHost')}" data-i18n-placeholder="proxyHost" value="${
+                        this.store.get('proxyHost') || ''
+                    }">
+                    <input type="text" class="textInput" id="proxyPort" placeholder="${this.translationService.translate('proxyPort')}" data-i18n-placeholder="proxyPort" value="${
+                        this.store.get('proxyPort') || ''
+                    }">
                 </div>
             </div>
 
@@ -984,15 +987,18 @@ export class SettingsManager {
                         <span class="slider"></span>
                     </label>
                 </div>
-                <div class="input-group" id="webhookFields" style="display: ${this.store.get('webhookEnabled') ? 'block' : 'none'
-            }">
-                    <input type="url" class="textInput" id="webhookUrl" placeholder="${this.translationService.translate('webhookUrl')}" data-i18n-placeholder="webhookUrl" value="${this.store.get('webhookUrl') || ''
-            }">
+                <div class="input-group" id="webhookFields" style="display: ${
+                    this.store.get('webhookEnabled') ? 'block' : 'none'
+                }">
+                    <input type="url" class="textInput" id="webhookUrl" placeholder="${this.translationService.translate('webhookUrl')}" data-i18n-placeholder="webhookUrl" value="${
+                        this.store.get('webhookUrl') || ''
+                    }">
                     <div class="setting-item">
                         <span data-i18n="webhookTrigger">${this.translationService.translate('webhookTrigger')}</span>
                         <div class="input-with-unit">
-                            <input type="number" id="webhookTriggerPercentage" class="textInput" style="width: 80px;" min="0" max="100" step="1" value="${this.store.get('webhookTriggerPercentage') || 50
-            }">
+                            <input type="number" id="webhookTriggerPercentage" class="textInput" style="width: 80px;" min="0" max="100" step="1" value="${
+                                this.store.get('webhookTriggerPercentage') || 50
+                            }">
                             <span class="unit-symbol">%</span>
                         </div>
                     </div>
@@ -1000,8 +1006,9 @@ export class SettingsManager {
                 <div class="description" data-i18n="webhookDescription">
                     ${this.translationService.translate('webhookDescription')}
                 </div>
-                <div class="webhook-example-container" id="webhookFields2" style="display: ${this.store.get('webhookEnabled') ? 'block' : 'none'
-            }">
+                <div class="webhook-example-container" id="webhookFields2" style="display: ${
+                    this.store.get('webhookEnabled') ? 'block' : 'none'
+                }">
                     <div class="example-toggle" id="webhookExampleToggle">
                         <span class="example-toggle-text" data-i18n="showWebhookExample">${this.translationService.translate('showWebhookExample')}</span>
                         <svg class="example-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -1031,24 +1038,27 @@ export class SettingsManager {
                 <div class="setting-item">
                     <span data-i18n="enableRichPresence">${this.translationService.translate('enableRichPresence')}</span>
                     <label class="toggle">
-                        <input type="checkbox" id="discordRichPresence" ${this.store.get('discordRichPresence') ? 'checked' : ''
-            }>
+                        <input type="checkbox" id="discordRichPresence" ${
+                            this.store.get('discordRichPresence') ? 'checked' : ''
+                        }>
                         <span class="slider"></span>
                     </label>
                 </div>
                 <div class="setting-item">
                     <span data-i18n="displayWhenPaused">${this.translationService.translate('displayWhenPaused')}</span>
                     <label class="toggle">
-                        <input type="checkbox" id="displayWhenIdling" ${this.store.get('displayWhenIdling') ? 'checked' : ''
-            }>
+                        <input type="checkbox" id="displayWhenIdling" ${
+                            this.store.get('displayWhenIdling') ? 'checked' : ''
+                        }>
                         <span class="slider"></span>
                     </label>
                 </div>
                 <div class="setting-item">
                     <span data-i18n="displaySmallIcon">${this.translationService.translate('displaySmallIcon')}</span>
                     <label class="toggle">
-                        <input type="checkbox" id="displaySCSmallIcon" ${this.store.get('displaySCSmallIcon') ? 'checked' : ''
-            }>
+                        <input type="checkbox" id="displaySCSmallIcon" ${
+                            this.store.get('displaySCSmallIcon') ? 'checked' : ''
+                        }>
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -1062,16 +1072,18 @@ export class SettingsManager {
                 <div class="setting-item">
                     <span data-i18n="enableRichPresencePreview">${this.translationService.translate('enableRichPresencePreview')}</span>
                     <label class="toggle">
-                        <input type="checkbox" id="richPresencePreviewEnabled" ${this.store.get('richPresencePreviewEnabled', false) ? 'checked' : ''
-            }>
+                        <input type="checkbox" id="richPresencePreviewEnabled" ${
+                            this.store.get('richPresencePreviewEnabled', false) ? 'checked' : ''
+                        }>
                         <span class="slider"></span>
                     </label>
                 </div>
                 <div class="description" data-i18n="richPresencePreviewDescription">${this.translationService.translate('richPresencePreviewDescription')}</div>
                 
                 <!-- Rich Presence Preview -->
-                <div class="preview-container" id="presencePreviewContainer" style="display: ${this.store.get('richPresencePreviewEnabled', false) ? 'block' : 'none'
-            }">
+                <div class="preview-container" id="presencePreviewContainer" style="display: ${
+                    this.store.get('richPresencePreviewEnabled', false) ? 'block' : 'none'
+                }">
                     <div class="preview-panel">
                         <div class="preview-header-inline">
                             <span class="preview-title-inline" data-i18n="richPresencePreviewTitle">${this.translationService.translate('richPresencePreviewTitle')}</span>

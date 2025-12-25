@@ -63,12 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Listen for theme updates
-        window.electronAPI.on('widget-theme-update', ({ video, blur }: { video: string, blur: number }) => {
+        window.electronAPI.on('widget-theme-update', ({ video, blur }: { video: string; blur: number }) => {
             if (video) {
                 videoBg.src = video;
                 if (blur) videoBg.style.filter = `blur(${blur}px)`;
                 videoBg.style.display = 'block';
-                videoBg.play().catch(e => console.error("Video play failed", e));
+                videoBg.play().catch((e) => console.error('Video play failed', e));
             } else {
                 videoBg.style.display = 'none';
                 videoBg.src = ''; // Stop loading video

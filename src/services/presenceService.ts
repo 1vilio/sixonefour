@@ -45,7 +45,7 @@ export class PresenceService {
             log('[DiscordRPC] Client has been disconnected.');
         });
 
-        this.info.rpc.login().catch(err => log('[ERROR] [DiscordRPC] Failed to login:', err));
+        this.info.rpc.login().catch((err) => log('[ERROR] [DiscordRPC] Failed to login:', err));
     }
 
     public async updatePresence(trackInfo: TrackInfo): Promise<void> {
@@ -100,7 +100,11 @@ export class PresenceService {
                 if (totalMilliseconds <= 0) return;
 
                 if (!this.info.rpc.isConnected) {
-                    if (await !this.info.rpc.login().catch(err => log('[ERROR] [DiscordRPC] Failed to login during update:', err))) {
+                    if (
+                        await !this.info.rpc
+                            .login()
+                            .catch((err) => log('[ERROR] [DiscordRPC] Failed to login during update:', err))
+                    ) {
                         return;
                     }
                 }
@@ -164,7 +168,7 @@ export class PresenceService {
     }
 
     public async reconnect(): Promise<void> {
-        await this.info.rpc.login().catch(err => log('[ERROR] [DiscordRPC] Failed to reconnect:', err));
+        await this.info.rpc.login().catch((err) => log('[ERROR] [DiscordRPC] Failed to reconnect:', err));
     }
 
     public isConnected(): boolean {

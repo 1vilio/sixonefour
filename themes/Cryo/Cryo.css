@@ -13,16 +13,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 :root {
-  --cryo-blue: #00FFFF;
-  --cryo-blue-dark: #008B8B;
-  --cryo-glow: rgba(0, 255, 255, 0.7);
-  --cryo-black: #01040a;
-  --surface: rgba(1, 4, 10, 0.8);
-  --text-bright: #FFFFFF;
-  --text-dim: #A0C0C0;
+    --cryo-blue: #00ffff;
+    --cryo-blue-dark: #008b8b;
+    --cryo-glow: rgba(0, 255, 255, 0.7);
+    --cryo-black: #01040a;
+    --surface: rgba(1, 4, 10, 0.8);
+    --text-bright: #ffffff;
+    --text-dim: #a0c0c0;
 
-  --font-display: 'Orbitron', sans-serif;
-  --font-main: 'Roboto', sans-serif;
+    --font-display: 'Orbitron', sans-serif;
+    --font-main: 'Roboto', sans-serif;
 }
 
 /* ========================================================================== 
@@ -30,48 +30,48 @@
    ========================================================================== */
 body,
 #app {
-  background: transparent !important;
-  font-family: var(--font-main) !important;
-  color: var(--text-dim) !important;
+    background: transparent !important;
+    font-family: var(--font-main) !important;
+    color: var(--text-dim) !important;
 }
 
 #app .l-container.l-content {
-  background-color: var(--surface) !important;
-  backdrop-filter: blur(10px);
+    background-color: var(--surface) !important;
+    backdrop-filter: blur(10px);
 }
 
 ::-webkit-scrollbar {
-  width: 6px !important;
-  background-color: var(--cryo-black);
+    width: 6px !important;
+    background-color: var(--cryo-black);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--cryo-blue-dark) !important;
+    background-color: var(--cryo-blue-dark) !important;
 }
 
 .header,
 .footer,
 .playControls {
-  background: var(--surface) !important;
-  border-color: rgba(0, 255, 255, 0.2) !important;
-  backdrop-filter: blur(15px);
+    background: var(--surface) !important;
+    border-color: rgba(0, 255, 255, 0.2) !important;
+    backdrop-filter: blur(15px);
 }
 
 .header__logo a.header__logoLink:first-of-type {
-  display: block !important;
-  width: 150px !important;
-  height: 46px !important;
-  text-indent: -9999px;
-  margin-left: 20px;
-  /* background-image: url('theme://CryoGenesisLogo.png') !important; */
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-size: contain !important;
-  transition: filter 0.3s ease;
+    display: block !important;
+    width: 150px !important;
+    height: 46px !important;
+    text-indent: -9999px;
+    margin-left: 20px;
+    /* background-image: url('theme://CryoGenesisLogo.png') !important; */
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: contain !important;
+    transition: filter 0.3s ease;
 }
 
 .header__logo a.header__logoLink:first-of-type:hover {
-  filter: drop-shadow(0 0 10px var(--cryo-blue));
+    filter: drop-shadow(0 0 10px var(--cryo-blue));
 }
 
 /* .header__logo a.header__logoLink > *, .header__logo a.header__logoLink:not(:first-of-type) { display: none !important; } */
@@ -80,70 +80,69 @@ body,
    3. ОБЛОЖКИ - "Кристаллический излом"
    ========================================================================== */
 .playableTile__artwork {
-  position: relative;
-  overflow: hidden;
-  border: none !important;
-  /* Форма ограненного кристалла */
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    position: relative;
+    overflow: hidden;
+    border: none !important;
+    /* Форма ограненного кристалла */
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
 
 /* Свет изнутри */
 .playableTile__artwork::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--cryo-blue);
-  filter: blur(25px);
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  z-index: 1;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--cryo-blue);
+    filter: blur(25px);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    z-index: 1;
 }
 
 /* Маска "трещин", которая появляется при наведении */
 .playableTile__artwork::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  /* SVG маска с трещинами */
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='white' d='M0 0 H100 V100 H0 Z M50 0 L48 48 L0 50 L48 52 L50 100 L52 52 L100 50 L52 48 Z'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='white' d='M0 0 H100 V100 H0 Z M50 0 L48 48 L0 50 L48 52 L50 100 L52 52 L100 50 L52 48 Z'/%3E%3C/svg%3E");
-  -webkit-mask-size: cover;
-  mask-size: cover;
-  opacity: 0;
-  transition: opacity 0.2s ease-in;
-  z-index: 3;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* SVG маска с трещинами */
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='white' d='M0 0 H100 V100 H0 Z M50 0 L48 48 L0 50 L48 52 L50 100 L52 52 L100 50 L52 48 Z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='white' d='M0 0 H100 V100 H0 Z M50 0 L48 48 L0 50 L48 52 L50 100 L52 52 L100 50 L52 48 Z'/%3E%3C/svg%3E");
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    opacity: 0;
+    transition: opacity 0.2s ease-in;
+    z-index: 3;
 }
 
 .playableTile .image {
-  display: block !important;
-  position: relative;
-  z-index: 2;
-  transition: transform 0.3s ease;
+    display: block !important;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.3s ease;
 }
 
 /* Эффекты при наведении */
 .playableTile:hover .playableTile__artwork::before {
-  opacity: 1;
-  transform: scale(1);
+    opacity: 1;
+    transform: scale(1);
 }
 
 .playableTile:hover .playableTile__artwork::after {
-  opacity: 1;
+    opacity: 1;
 }
 
 /* Эффект "удара" */
 .playableTile:hover .image {
-  transform: translate(2px, -1px);
+    transform: translate(2px, -1px);
 }
-
 
 /* ========================================================================== 
    4. ТИПОГРАФИКА
@@ -153,14 +152,14 @@ body,
 h1,
 h2,
 h3 {
-  font-family: var(--font-display) !important;
-  color: var(--text-bright) !important;
-  text-shadow: 0 0 8px var(--cryo-glow);
+    font-family: var(--font-display) !important;
+    color: var(--text-bright) !important;
+    text-shadow: 0 0 8px var(--cryo-glow);
 }
 
 .soundTitle__username,
 a.sc-link-dark:hover {
-  color: var(--cryo-blue) !important;
+    color: var(--cryo-blue) !important;
 }
 
 /* ========================================================================== 
@@ -171,24 +170,24 @@ a.sc-link-dark:hover {
 .sidebar,
 .collection,
 .userInfo {
-  background-color: var(--surface) !important;
-  backdrop-filter: blur(15px);
-  border: 1px solid var(--cryo-blue-dark);
-  border-radius: 0 !important;
+    background-color: var(--surface) !important;
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--cryo-blue-dark);
+    border-radius: 0 !important;
 }
 
 .g-tabs {
-  border-bottom: 1px solid var(--cryo-blue-dark) !important;
+    border-bottom: 1px solid var(--cryo-blue-dark) !important;
 }
 
 .g-tabs-link {
-  color: var(--text-dim) !important;
-  clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
+    color: var(--text-dim) !important;
+    clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
 }
 
 .g-tabs-link.active {
-  color: var(--cryo-blue) !important;
-  background: var(--cryo-blue-dark) !important;
+    color: var(--cryo-blue) !important;
+    background: var(--cryo-blue-dark) !important;
 }
 
 /* ========================================================================== 
@@ -196,66 +195,66 @@ a.sc-link-dark:hover {
    ========================================================================== */
 /* Кнопка Play (стабильная) */
 .playableTile__playButton {
-  background: transparent !important;
-  border: none !important;
-  transition: all 0.3s ease !important;
+    background: transparent !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
 }
 
 /* "Осколок" внутри кнопки */
 .playableTile__playButton::before {
-  content: '';
-  display: block;
-  width: 40%;
-  height: 40%;
-  background: var(--cryo-blue);
-  clip-path: polygon(0 0, 100% 50%, 0 100%);
-  transition: all 0.3s ease;
+    content: '';
+    display: block;
+    width: 40%;
+    height: 40%;
+    background: var(--cryo-blue);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+    transition: all 0.3s ease;
 }
 
 .playableTile__playButton:hover::before {
-  transform: scale(1.3);
-  box-shadow: 0 0 25px var(--cryo-glow);
+    transform: scale(1.3);
+    box-shadow: 0 0 25px var(--cryo-glow);
 }
 
 /* Прогресс-бар */
 .playbackTimeline__progressWrapper {
-  background-color: transparent !important;
-  border: 1px solid var(--cryo-blue-dark);
+    background-color: transparent !important;
+    border: 1px solid var(--cryo-blue-dark);
 }
 
 .playbackTimeline__progressBar {
-  background: var(--cryo-blue) !important;
-  /* "Осколочная" текстура */
-  -webkit-mask-image: repeating-linear-gradient(45deg, #000 0, #000 5px, transparent 5px, transparent 10px);
-  mask-image: repeating-linear-gradient(45deg, #000 0, #000 5px, transparent 5px, transparent 10px);
+    background: var(--cryo-blue) !important;
+    /* "Осколочная" текстура */
+    -webkit-mask-image: repeating-linear-gradient(45deg, #000 0, #000 5px, transparent 5px, transparent 10px);
+    mask-image: repeating-linear-gradient(45deg, #000 0, #000 5px, transparent 5px, transparent 10px);
 }
 
 .playbackTimeline__progressHandle {
-  background: var(--text-bright) !important;
-  box-shadow: 0 0 15px var(--cryo-glow);
-  border-radius: 0 !important;
+    background: var(--text-bright) !important;
+    box-shadow: 0 0 15px var(--cryo-glow);
+    border-radius: 0 !important;
 }
 
 .waveform,
 .sound__waveform {
-  filter: grayscale(1) contrast(100) brightness(3) sepia(1) saturate(10) hue-rotate(180deg) !important;
+    filter: grayscale(1) contrast(100) brightness(3) sepia(1) saturate(10) hue-rotate(180deg) !important;
 }
 
 /* Кнопки как осколки */
 .soundActions .sc-button {
-  background: transparent !important;
-  color: var(--text-dim) !important;
-  border: 1px solid var(--cryo-blue-dark) !important;
-  clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
-  border-radius: 0 !important;
+    background: transparent !important;
+    color: var(--text-dim) !important;
+    border: 1px solid var(--cryo-blue-dark) !important;
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+    border-radius: 0 !important;
 }
 
 .soundActions .sc-button:hover,
 .sc-button-selected {
-  background: var(--cryo-blue) !important;
-  color: var(--cryo-black) !important;
+    background: var(--cryo-blue) !important;
+    color: var(--cryo-black) !important;
 }
 
 .commentForm__input {
-  border-bottom: 1px solid var(--cryo-blue-dark) !important;
+    border-bottom: 1px solid var(--cryo-blue-dark) !important;
 }

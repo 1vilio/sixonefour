@@ -13,19 +13,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
 
 :root {
-  --dream-purple: #8B80F9;
-  --dream-purple-light: #A594F9;
-  --dream-red: #FF6B6B;
-  --dream-orange: #FFA500;
-  --dream-peach: #FFDAB9;
-  --dream-dark: #2D3047;
-  --dream-surface: rgba(45, 48, 71, 0.6);
-  --dream-glass: rgba(255, 255, 255, 0.1);
-  --dream-text-bright: #FFF5E4;
-  --dream-text-dim: #E6D6C5;
+    --dream-purple: #8b80f9;
+    --dream-purple-light: #a594f9;
+    --dream-red: #ff6b6b;
+    --dream-orange: #ffa500;
+    --dream-peach: #ffdab9;
+    --dream-dark: #2d3047;
+    --dream-surface: rgba(45, 48, 71, 0.6);
+    --dream-glass: rgba(255, 255, 255, 0.1);
+    --dream-text-bright: #fff5e4;
+    --dream-text-dim: #e6d6c5;
 
-  --font-display: 'Playfair Display', serif;
-  --font-ui: 'Quicksand', sans-serif;
+    --font-display: 'Playfair Display', serif;
+    --font-ui: 'Quicksand', sans-serif;
 }
 
 /* ==========================================================================
@@ -33,26 +33,26 @@
    ========================================================================== */
 body,
 #app {
-  background: transparent !important;
-  font-family: var(--font-ui) !important;
-  color: var(--dream-text-dim) !important;
-  font-weight: 500 !important;
+    background: transparent !important;
+    font-family: var(--font-ui) !important;
+    color: var(--dream-text-dim) !important;
+    font-weight: 500 !important;
 }
 
 #app .l-container.l-content {
-  background: transparent !important;
+    background: transparent !important;
 }
 
 /* Плавный скроллбар */
 ::-webkit-scrollbar {
-  width: 8px !important;
-  background-color: transparent !important;
+    width: 8px !important;
+    background-color: transparent !important;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(var(--dream-purple), var(--dream-red)) !important;
-  border-radius: 4px !important;
-  opacity: 0.6;
+    background: linear-gradient(var(--dream-purple), var(--dream-red)) !important;
+    border-radius: 4px !important;
+    opacity: 0.6;
 }
 
 /* ==========================================================================
@@ -60,29 +60,29 @@ body,
    ========================================================================== */
 .header,
 .footer {
-  background: var(--dream-surface) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  border: 1px solid var(--dream-glass) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    background: var(--dream-surface) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid var(--dream-glass) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Кастомный логотип */
 .header__logo a.header__logoLink:first-of-type {
-  display: block !important;
-  width: 170px !important;
-  height: 46px !important;
-  text-indent: -9999px;
-  margin-left: 20px;
-  position: relative;
+    display: block !important;
+    width: 170px !important;
+    height: 46px !important;
+    text-indent: -9999px;
+    margin-left: 20px;
+    position: relative;
 
-  /* background-image: url('theme://DreamscapeLogo.png') !important; */
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-size: contain !important;
+    /* background-image: url('theme://DreamscapeLogo.png') !important; */
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: contain !important;
 
-  opacity: 0.9;
-  transition: all 0.4s ease;
-  filter: drop-shadow(0 0 10px rgba(139, 128, 249, 0.3));
+    opacity: 0.9;
+    transition: all 0.4s ease;
+    filter: drop-shadow(0 0 10px rgba(139, 128, 249, 0.3));
 }
 
 .soundTitle__title,
@@ -91,100 +91,99 @@ body,
 h1,
 h2,
 h3 {
-  font-family: var(--font-display) !important;
-  font-weight: 400 !important;
-  color: var(--dream-text-bright) !important;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
+    font-family: var(--font-display) !important;
+    font-weight: 400 !important;
+    color: var(--dream-text-bright) !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
 }
 
 .soundTitle__username,
 a.sc-link-dark,
 .playableTile__username {
-  color: var(--dream-text-dim) !important;
-  font-weight: 500 !important;
-  transition: all 0.3s ease;
-  position: relative;
+    color: var(--dream-text-dim) !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
 .soundTitle__username:hover,
 a.sc-link-dark:hover,
 .playableTile__username:hover {
-  color: var(--dream-peach) !important;
-  text-shadow: 0 0 15px rgba(255, 218, 185, 0.4);
+    color: var(--dream-peach) !important;
+    text-shadow: 0 0 15px rgba(255, 218, 185, 0.4);
 }
 
 /* ==========================================================================
    5. Обложки с эффектом жидкого стекла и плавными узорами
    ========================================================================== */
 @keyframes gentle-float {
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
 
-  0%,
-  100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-
-  50% {
-    transform: translateY(-5px) rotate(0.5deg);
-  }
+    50% {
+        transform: translateY(-5px) rotate(0.5deg);
+    }
 }
 
 @keyframes liquid-wave {
-  0% {
-    background-position: 0% 50%;
-  }
+    0% {
+        background-position: 0% 50%;
+    }
 
-  50% {
-    background-position: 100% 50%;
-  }
+    50% {
+        background-position: 100% 50%;
+    }
 
-  100% {
-    background-position: 0% 50%;
-  }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .playableTile__artwork {
-  position: relative;
-  overflow: hidden;
-  border-radius: 12px !important;
-  background: transparent;
-  transition: all 0.4s ease;
-  animation: gentle-float 6s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px !important;
+    background: transparent;
+    transition: all 0.4s ease;
+    animation: gentle-float 6s ease-in-out infinite;
 }
 
 .playableTile__artwork::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  background: linear-gradient(45deg, var(--dream-purple), var(--dream-red), var(--dream-orange), var(--dream-peach));
-  background-size: 400% 400%;
-  z-index: -1;
-  animation: liquid-wave 8s ease infinite;
-  opacity: 0.3;
-  border-radius: 16px;
-  filter: blur(8px);
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: linear-gradient(45deg, var(--dream-purple), var(--dream-red), var(--dream-orange), var(--dream-peach));
+    background-size: 400% 400%;
+    z-index: -1;
+    animation: liquid-wave 8s ease infinite;
+    opacity: 0.3;
+    border-radius: 16px;
+    filter: blur(8px);
 }
 
 .playableTile .image {
-  position: relative;
-  z-index: 1;
-  border-radius: 8px !important;
-  display: block !important;
-  transition: all 0.4s ease;
-  backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 1;
+    border-radius: 8px !important;
+    display: block !important;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
 }
 
 .playableTile:hover .playableTile__artwork {
-  transform: scale(1.03);
-  animation-duration: 3s;
+    transform: scale(1.03);
+    animation-duration: 3s;
 }
 
 .playableTile:hover .playableTile__artwork::before {
-  opacity: 0.5;
-  filter: blur(12px);
+    opacity: 0.5;
+    filter: blur(12px);
 }
 
 /* ==========================================================================
@@ -195,99 +194,99 @@ a.sc-link-dark:hover,
 .sidebar,
 .collection,
 .userInfo {
-  background: var(--dream-surface) !important;
-  backdrop-filter: blur(15px) saturate(160%) !important;
-  border: 1px solid var(--dream-glass) !important;
-  border-radius: 12px !important;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+    background: var(--dream-surface) !important;
+    backdrop-filter: blur(15px) saturate(160%) !important;
+    border: 1px solid var(--dream-glass) !important;
+    border-radius: 12px !important;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
 .soundList__item:hover,
 .trackItem:hover,
 .sidebar:hover {
-  border-color: rgba(139, 128, 249, 0.3) !important;
-  box-shadow: 0 8px 30px rgba(139, 128, 249, 0.15);
+    border-color: rgba(139, 128, 249, 0.3) !important;
+    box-shadow: 0 8px 30px rgba(139, 128, 249, 0.15);
 }
 
 /* Навигационные табы */
 .collectionNav,
 .g-tabs {
-  background: transparent !important;
-  border-bottom: 1px solid var(--dream-glass) !important;
+    background: transparent !important;
+    border-bottom: 1px solid var(--dream-glass) !important;
 }
 
 .g-tabs-link {
-  font-family: var(--font-ui) !important;
-  font-weight: 500 !important;
-  color: var(--dream-text-dim) !important;
-  position: relative;
-  transition: all 0.3s ease;
-  background: transparent !important;
+    font-family: var(--font-ui) !important;
+    font-weight: 500 !important;
+    color: var(--dream-text-dim) !important;
+    position: relative;
+    transition: all 0.3s ease;
+    background: transparent !important;
 }
 
 .g-tabs-link::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--dream-purple), var(--dream-peach));
-  transition: all 0.3s ease;
-  transform: translateX(-50%);
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--dream-purple), var(--dream-peach));
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
 }
 
 .g-tabs-link:hover::before,
 .g-tabs-link.active::before {
-  width: 80%;
+    width: 80%;
 }
 
 .g-tabs-link.active {
-  color: var(--dream-text-bright) !important;
+    color: var(--dream-text-bright) !important;
 }
 
 /* ==========================================================================
    7. Плеер и прогресс-бар с градиентными эффектами
    ========================================================================== */
 .playControls {
-  background: var(--dream-surface) !important;
-  backdrop-filter: blur(25px) saturate(180%) !important;
-  border-top: 1px solid var(--dream-glass) !important;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1) !important;
+    background: var(--dream-surface) !important;
+    backdrop-filter: blur(25px) saturate(180%) !important;
+    border-top: 1px solid var(--dream-glass) !important;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1) !important;
 }
 
 .playbackTimeline__progressWrapper {
-  background: rgba(255, 255, 255, 0.1) !important;
-  height: 6px !important;
-  border-radius: 3px !important;
-  border: none !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    height: 6px !important;
+    border-radius: 3px !important;
+    border: none !important;
 }
 
 .playbackTimeline__progressBar {
-  background: linear-gradient(90deg, var(--dream-purple), var(--dream-red), var(--dream-orange)) !important;
-  border-radius: 3px !important;
-  box-shadow: 0 0 10px rgba(139, 128, 249, 0.3);
+    background: linear-gradient(90deg, var(--dream-purple), var(--dream-red), var(--dream-orange)) !important;
+    border-radius: 3px !important;
+    box-shadow: 0 0 10px rgba(139, 128, 249, 0.3);
 }
 
 .playbackTimeline__progressHandle {
-  background: transparent !important;
-  border: none !important;
-  width: 16px !important;
-  height: 16px !important;
+    background: transparent !important;
+    border: none !important;
+    width: 16px !important;
+    height: 16px !important;
 }
 
 .playbackTimeline__progressHandle::before {
-  content: '●';
-  font-family: var(--font-ui);
-  color: var(--dream-peach);
-  font-size: 16px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-shadow: 0 0 10px rgba(255, 218, 185, 0.5);
+    content: '●';
+    font-family: var(--font-ui);
+    color: var(--dream-peach);
+    font-size: 16px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-shadow: 0 0 10px rgba(255, 218, 185, 0.5);
 }
 
 /* ==========================================================================
@@ -295,25 +294,25 @@ a.sc-link-dark:hover,
    ========================================================================== */
 .sc-button,
 .sc-button-medium {
-  background: var(--dream-glass) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: var(--dream-text-dim) !important;
-  border-radius: 8px !important;
-  transition: all 0.3s ease !important;
-  backdrop-filter: blur(10px);
+    background: var(--dream-glass) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: var(--dream-text-dim) !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(10px);
 }
 
 .sc-button:hover,
 .sc-button-medium:hover {
-  background: rgba(139, 128, 249, 0.2) !important;
-  border-color: var(--dream-purple-light) !important;
-  color: var(--dream-text-bright) !important;
-  transform: translateY(-1px);
+    background: rgba(139, 128, 249, 0.2) !important;
+    border-color: var(--dream-purple-light) !important;
+    color: var(--dream-text-bright) !important;
+    transform: translateY(-1px);
 }
 
 .sc-button-like.sc-button-active {
-  color: var(--dream-red) !important;
-  text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+    color: var(--dream-red) !important;
+    text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
 }
 
 /* ==========================================================================
@@ -323,90 +322,90 @@ a.sc-link-dark:hover,
 .skipControl,
 .shuffleControl,
 .repeatControl {
-  color: var(--dream-text-dim) !important;
-  transition: all 0.3s ease;
-  filter: none !important;
+    color: var(--dream-text-dim) !important;
+    transition: all 0.3s ease;
+    filter: none !important;
 }
 
 .playControl:hover,
 .skipControl:hover {
-  color: var(--dream-peach) !important;
-  transform: scale(1.1);
+    color: var(--dream-peach) !important;
+    transform: scale(1.1);
 }
 
 .shuffleControl.active,
 .repeatControl.active {
-  color: var(--dream-purple-light) !important;
-  text-shadow: 0 0 10px rgba(139, 128, 249, 0.4);
+    color: var(--dream-purple-light) !important;
+    text-shadow: 0 0 10px rgba(139, 128, 249, 0.4);
 }
 
 /* Кнопка воспроизведения на обложках */
 .playableTile__playButton {
-  background: var(--dream-glass) !important;
-  backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  border-radius: 50% !important;
-  color: var(--dream-text-bright) !important;
-  transition: all 0.3s ease;
-  opacity: 0;
+    background: var(--dream-glass) !important;
+    backdrop-filter: blur(15px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 50% !important;
+    color: var(--dream-text-bright) !important;
+    transition: all 0.3s ease;
+    opacity: 0;
 }
 
 .playableTile:hover .playableTile__playButton {
-  opacity: 1;
-  transform: scale(1.1);
+    opacity: 1;
+    transform: scale(1.1);
 }
 
 .playableTile__playButton:hover {
-  background: rgba(139, 128, 249, 0.3) !important;
-  border-color: var(--dream-purple-light) !important;
-  transform: scale(1.2);
+    background: rgba(139, 128, 249, 0.3) !important;
+    border-color: var(--dream-purple-light) !important;
+    transform: scale(1.2);
 }
 
 /* ==========================================================================
    10. Дополнительные элементы и завершающие штрихи
    ========================================================================== */
 .waveform {
-  filter: hue-rotate(-10deg) saturate(0.8) brightness(1.1) !important;
-  opacity: 0.7;
+    filter: hue-rotate(-10deg) saturate(0.8) brightness(1.1) !important;
+    opacity: 0.7;
 }
 
 .commentForm__input {
-  background: var(--dream-glass) !important;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 8px !important;
-  color: var(--dream-text-bright) !important;
-  transition: all 0.3s ease;
+    background: var(--dream-glass) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 8px !important;
+    color: var(--dream-text-bright) !important;
+    transition: all 0.3s ease;
 }
 
 .commentForm__input:focus {
-  border-color: var(--dream-purple-light) !important;
-  box-shadow: 0 0 15px rgba(139, 128, 249, 0.2);
-  background: rgba(139, 128, 249, 0.1) !important;
+    border-color: var(--dream-purple-light) !important;
+    box-shadow: 0 0 15px rgba(139, 128, 249, 0.2);
+    background: rgba(139, 128, 249, 0.1) !important;
 }
 
 /* Аватарки пользователей */
 .userBadgeListItem__artwork {
-  border-radius: 50% !important;
-  border: 2px solid transparent !important;
-  transition: all 0.3s ease;
+    border-radius: 50% !important;
+    border: 2px solid transparent !important;
+    transition: all 0.3s ease;
 }
 
 .userBadgeListItem__artwork:hover {
-  border-color: var(--dream-purple) !important;
-  box-shadow: 0 0 15px rgba(139, 128, 249, 0.3);
+    border-color: var(--dream-purple) !important;
+    box-shadow: 0 0 15px rgba(139, 128, 249, 0.3);
 }
 
 /* Область загрузки */
 .uploadMain__chooserContainer {
-  background: var(--dream-glass) !important;
-  backdrop-filter: blur(15px);
-  border: 2px dashed var(--dream-purple-light) !important;
-  border-radius: 12px !important;
-  transition: all 0.3s ease;
+    background: var(--dream-glass) !important;
+    backdrop-filter: blur(15px);
+    border: 2px dashed var(--dream-purple-light) !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease;
 }
 
 .uploadMain__chooserContainer:hover {
-  border-color: var(--dream-peach) !important;
-  background: rgba(139, 128, 249, 0.1) !important;
+    border-color: var(--dream-peach) !important;
+    background: rgba(139, 128, 249, 0.1) !important;
 }

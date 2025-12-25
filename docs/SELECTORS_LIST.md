@@ -1,6 +1,7 @@
 # SoundCloud Theme Customization Guide
 
-This file contains a comprehensive list of CSS selectors for SoundCloud, including both high-level components and specific, granular elements used for detailed theme creation.
+This file contains a comprehensive list of CSS selectors for SoundCloud, including both high-level components and
+specific, granular elements used for detailed theme creation.
 
 ## General & Global
 

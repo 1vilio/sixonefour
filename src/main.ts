@@ -581,10 +581,13 @@ async function init() {
 
     // Register custom theme protocol
     const themesPath = themeService.getThemesPath();
-    protocol.registerFileProtocol('theme', (request: Electron.ProtocolRequest, callback: (response: string | Electron.ProtocolResponse) => void) => {
-        const url = request.url.substr('theme://'.length);
-        callback({ path: path.join(themesPath, url) });
-    });
+    protocol.registerFileProtocol(
+        'theme',
+        (request: Electron.ProtocolRequest, callback: (response: string | Electron.ProtocolResponse) => void) => {
+            const url = request.url.substr('theme://'.length);
+            callback({ path: path.join(themesPath, url) });
+        },
+    );
 
     // Hot-reload custom theme CSS when files change
     themeService.onCustomThemeUpdated(() => {
@@ -618,7 +621,7 @@ async function init() {
     telegramService = new TelegramService();
     telegramService.setCredentials(
         store.get('telegramBotToken', '') as string,
-        store.get('telegramChannelId', '') as string
+        store.get('telegramChannelId', '') as string,
     );
 
     // Schedule Weekly Statistics check
@@ -634,7 +637,7 @@ async function init() {
             nodeIntegration: false,
             contextIsolation: true,
             // Share session with main window (default session)
-        }
+        },
     });
 
     // Attach scraper view but keep it behind content
@@ -661,11 +664,9 @@ async function init() {
         return {
             token: store.get('telegramBotToken', ''),
             channelId: store.get('telegramChannelId', ''),
-            username: store.get('telegramUsername', '')
+            username: store.get('telegramUsername', ''),
         };
     });
-
-
 
     ipcMain.handle('telegram-validate-token', async (_event, token) => {
         return await telegramService.validateToken(token);
@@ -716,19 +717,19 @@ async function init() {
                     await processTrackForTelegram(track, false);
 
                     // Rate limiting: 2 seconds between tracks
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    await new Promise((resolve) => setTimeout(resolve, 2000));
 
                     // Pause every 20 tracks for 60 seconds
                     if ((index + 1) % 20 === 0) {
                         console.log('[Telegram] Pausing for 60s to avoid spam filter...');
-                        await new Promise(resolve => setTimeout(resolve, 60000));
+                        await new Promise((resolve) => setTimeout(resolve, 60000));
                     }
                 }
             },
             () => {
                 if (!isExporting) console.log('[Telegram] Stop signal detected in scraper loop.');
                 return !isExporting;
-            }
+            },
         );
 
         isExporting = false;
@@ -782,7 +783,7 @@ async function init() {
                 if (settingsManager) {
                     settingsManager.getView().webContents.send('fans-boost-info', info);
                 }
-            }
+            },
         );
         fansBoostingService.start(url, count, fingerprintOptions, schedulingOptions);
     });
@@ -790,8 +791,6 @@ async function init() {
     ipcMain.on('fans-boost-stop', () => {
         fansBoostingService.stop();
     });
-
-
 
     // Start Zapret service if it was enabled on last run
     if (store.get('bypassMode') === 'zapret') {
@@ -832,7 +831,7 @@ async function init() {
     });
 
     ipcMain.on('open-log-file', () => {
-        shell.openPath(logFilePath).catch(err => log('[ERROR] Failed to open log file:', err));
+        shell.openPath(logFilePath).catch((err) => log('[ERROR] Failed to open log file:', err));
     });
 
     // Add statistics toggle handler
@@ -874,7 +873,7 @@ async function init() {
     const playerActions: { [key in WidgetAction]: string } = {
         playPause: 'document.querySelector(".playControls__play").click()',
         nextTrack: 'document.querySelector(".playControls__next").click()',
-        prevTrack: 'document.querySelector(".playControls__prev").click()'
+        prevTrack: 'document.querySelector(".playControls__prev").click()',
     };
 
     ipcMain.on('widget-action', (_, action: WidgetAction) => {
@@ -882,7 +881,9 @@ async function init() {
         const code = playerActions[action];
 
         if (code) {
-            contentView.webContents.executeJavaScript(code).catch(err => log('[ERROR] Failed to execute widget action JS:', err));
+            contentView.webContents
+                .executeJavaScript(code)
+                .catch((err) => log('[ERROR] Failed to execute widget action JS:', err));
         }
     });
 
@@ -1242,19 +1243,40 @@ function registerGlobalShortcuts() {
 
     const hotkeys = store.get('hotkeys', {});
     if (hotkeys.playPause) {
-        shortcutService.register('playPause', hotkeys.playPause, 'Play/Pause', () => {
-            contentView.webContents.executeJavaScript('document.querySelector(".playControls__play").click()');
-        }, true, true);
+        shortcutService.register(
+            'playPause',
+            hotkeys.playPause,
+            'Play/Pause',
+            () => {
+                contentView.webContents.executeJavaScript('document.querySelector(".playControls__play").click()');
+            },
+            true,
+            true,
+        );
     }
     if (hotkeys.next) {
-        shortcutService.register('next', hotkeys.next, 'Next', () => {
-            contentView.webContents.executeJavaScript('document.querySelector(".playControls__next").click()');
-        }, true, true);
+        shortcutService.register(
+            'next',
+            hotkeys.next,
+            'Next',
+            () => {
+                contentView.webContents.executeJavaScript('document.querySelector(".playControls__next").click()');
+            },
+            true,
+            true,
+        );
     }
     if (hotkeys.previous) {
-        shortcutService.register('previous', hotkeys.previous, 'Previous', () => {
-            contentView.webContents.executeJavaScript('document.querySelector(".playControls__prev").click()');
-        }, true, true);
+        shortcutService.register(
+            'previous',
+            hotkeys.previous,
+            'Previous',
+            () => {
+                contentView.webContents.executeJavaScript('document.querySelector(".playControls__prev").click()');
+            },
+            true,
+            true,
+        );
     }
     shortcutService.setup();
 }
@@ -1455,7 +1477,9 @@ function applyThemeToContent(isDark: boolean) {
         })();
     `;
 
-    contentView.webContents.executeJavaScript(themeScript).catch(err => log('[ERROR] [Themes] Failed to execute content view theme script:', err));
+    contentView.webContents
+        .executeJavaScript(themeScript)
+        .catch((err) => log('[ERROR] [Themes] Failed to execute content view theme script:', err));
 
     // Also inject into header and settings views using their specific sections
     const headerCSS = sections.all + (sections.all && sections.header ? '\n' : '') + sections.header || '';
@@ -1476,7 +1500,9 @@ function applyThemeToContent(isDark: boolean) {
                 } catch(e){ log('[ERROR] [Themes] Header theme inject error:', e); }
             })();
         `;
-        headerView.webContents.executeJavaScript(headerScript).catch(err => log('[ERROR] [Themes] Failed to execute header theme script:', err));
+        headerView.webContents
+            .executeJavaScript(headerScript)
+            .catch((err) => log('[ERROR] [Themes] Failed to execute header theme script:', err));
     }
 
     if (settingsManager) {
@@ -1497,7 +1523,10 @@ function applyThemeToContent(isDark: boolean) {
                 } catch(e){ log('[ERROR] [Themes] Settings theme inject error:', e); }
             })();
         `;
-        settingsManager.getView().webContents.executeJavaScript(settingsScript).catch(err => log('[ERROR] [Themes] Failed to execute settings theme script:', err));
+        settingsManager
+            .getView()
+            .webContents.executeJavaScript(settingsScript)
+            .catch((err) => log('[ERROR] [Themes] Failed to execute settings theme script:', err));
     }
 }
 
@@ -1705,7 +1734,8 @@ function parseTimeToSeconds(timeString: string): number {
 // Setup audio event handler for track updates
 function setupAudioHandler() {
     ipcMain.on('soundcloud:track-update', async (_event, { data: result, reason }: TrackUpdateMessage) => {
-        if (reason !== 'playback-progress') { // Avoid spamming logs
+        if (reason !== 'playback-progress') {
+            // Avoid spamming logs
             log(`[DEBUG] Track update received: ${reason}`);
         }
 
@@ -1745,19 +1775,20 @@ function setupAudioHandler() {
                         title: result.title,
                         artist: result.author,
                         duration: parsedDuration,
-                        artwork: result.artwork
-                    }
+                        artwork: result.artwork,
+                    },
                 };
                 console.log(`[Stats] New track session: ${result.title}`);
             } else {
                 // Same track, update time
                 const delta = (now - currentTrackState.lastTimestamp) / 1000;
-                if (delta > 0 && delta < 10) { // Sanity check: ignore huge jumps
+                if (delta > 0 && delta < 10) {
+                    // Sanity check: ignore huge jumps
                     currentTrackState.accumulatedTime += delta;
                     currentTrackState.totalListened += delta;
 
                     // Check 50% rule
-                    if (!currentTrackState.loggedPlay && currentTrackState.totalListened >= (parsedDuration * 0.5)) {
+                    if (!currentTrackState.loggedPlay && currentTrackState.totalListened >= parsedDuration * 0.5) {
                         listeningStatsService.logPlay(currentTrackState.trackInfo);
                         currentTrackState.loggedPlay = true;
                     }
@@ -1786,7 +1817,7 @@ function setupAudioHandler() {
                     artwork: result.artwork,
                     elapsed: result.elapsed,
                 }),
-                presenceService.updatePresence(result)
+                presenceService.updatePresence(result),
             ]);
         } else {
             await presenceService.updatePresence(result);
@@ -1834,7 +1865,10 @@ async function processTrackForTelegram(track: ScrapedTrack, isLiveFeed: boolean 
     }
 
     const filename = sanitizeFilename(`${track.artist} - ${track.title} (sixonefour).mp3`);
-    const downloadPath = path.join(store.get('downloadPath') as string || app.getPath('downloads'), 'Vilio_Telegram_Export');
+    const downloadPath = path.join(
+        (store.get('downloadPath') as string) || app.getPath('downloads'),
+        'Vilio_Telegram_Export',
+    );
     if (!fs.existsSync(downloadPath)) fs.mkdirSync(downloadPath, { recursive: true });
 
     let filePath = path.join(downloadPath, filename);
@@ -1848,21 +1882,30 @@ async function processTrackForTelegram(track: ScrapedTrack, isLiveFeed: boolean 
         artwork: track.artwork,
         duration: '',
         elapsed: '0:00',
-        isPlaying: false
+        isPlaying: false,
     };
 
     // Helper for retrying async operations
-    async function retryOperation<T>(operation: () => Promise<T>, retries: number = 3, delayMs: number = 2000): Promise<T> {
+    async function retryOperation<T>(
+        operation: () => Promise<T>,
+        retries: number = 3,
+        delayMs: number = 2000,
+    ): Promise<T> {
         for (let i = 0; i < retries; i++) {
             try {
                 return await operation();
             } catch (error: any) {
-                const isTimeout = error.code === 'ETIMEDOUT' || error.message?.includes('ETIMEDOUT') || error.message?.includes('network timeout');
+                const isTimeout =
+                    error.code === 'ETIMEDOUT' ||
+                    error.message?.includes('ETIMEDOUT') ||
+                    error.message?.includes('network timeout');
                 const isFetchError = error.name === 'FetchError' || error.message?.includes('fetch failed');
 
                 if ((isTimeout || isFetchError) && i < retries - 1) {
-                    log(`[Telegram] Error (attempt ${i + 1}/${retries}): ${error.message}. Retrying in ${delayMs}ms...`);
-                    await new Promise(resolve => setTimeout(resolve, delayMs));
+                    log(
+                        `[Telegram] Error (attempt ${i + 1}/${retries}): ${error.message}. Retrying in ${delayMs}ms...`,
+                    );
+                    await new Promise((resolve) => setTimeout(resolve, delayMs));
                 } else {
                     throw error;
                 }
@@ -1882,7 +1925,9 @@ async function processTrackForTelegram(track: ScrapedTrack, isLiveFeed: boolean 
         try {
             downloadedFilePath = await Promise.race([
                 downloadService.downloadTrack(trackInfo),
-                new Promise<string | null>((_, reject) => setTimeout(() => reject(new Error('Download timed out after 30s')), 30000))
+                new Promise<string | null>((_, reject) =>
+                    setTimeout(() => reject(new Error('Download timed out after 30s')), 30000),
+                ),
             ]);
         } catch (downloadError: any) {
             throw new Error(downloadError.message || 'Download timed out or failed');
@@ -1903,16 +1948,15 @@ async function processTrackForTelegram(track: ScrapedTrack, isLiveFeed: boolean 
 
         // 3. Send to Telegram
         const telegramUsername = store.get('telegramUsername', '').replace('@', '');
-        const sourceLine = telegramUsername
-            ? `👤 Source: @${telegramUsername} (SoundCloud)`
-            : `👤 Source: SoundCloud`;
+        const sourceLine = telegramUsername ? `👤 Source: @${telegramUsername} (SoundCloud)` : `👤 Source: SoundCloud`;
 
         let captionPrefix = '';
         if (isLiveFeed) {
             captionPrefix = `<b>New track in library</b>\n\n`;
         }
 
-        const caption = `${captionPrefix}<b>${track.artist} - ${track.title}</b>\n` +
+        const caption =
+            `${captionPrefix}<b>${track.artist} - ${track.title}</b>\n` +
             `\n` +
             `🔗 SoundCloud: <a href="${track.url}">Link</a>\n` +
             `${sourceLine}\n` +
@@ -1925,7 +1969,13 @@ async function processTrackForTelegram(track: ScrapedTrack, isLiveFeed: boolean 
             `\n` +
             `<a href="https://github.com/1vilio/sixonefour">sixonefour</a> does <b>all of it.</b>`;
 
-        const sent = await telegramService.sendAudio(downloadedFilePath, caption, track.artist, track.title, artworkPath);
+        const sent = await telegramService.sendAudio(
+            downloadedFilePath,
+            caption,
+            track.artist,
+            track.title,
+            artworkPath,
+        );
 
         if (sent) {
             log(`[Telegram] Sent track to Telegram: ${track.title}`);
@@ -1939,7 +1989,6 @@ async function processTrackForTelegram(track: ScrapedTrack, isLiveFeed: boolean 
 
         // Assign final path for cleanup
         if (downloadedFilePath) filePath = downloadedFilePath;
-
     } catch (err: any) {
         log(`[Telegram] Error processing track ${track.title}: ${err.message}`);
         console.error(`[Telegram] Error processing track ${track.title}: ${err.message}`);
@@ -1947,7 +1996,7 @@ async function processTrackForTelegram(track: ScrapedTrack, isLiveFeed: boolean 
         await telegramService.sendMessage(message, { parse_mode: 'HTML' });
     } finally {
         if (filePath && fs.existsSync(filePath)) {
-            // Only strictly delete if in temp folder? The user path is usually Downloads. 
+            // Only strictly delete if in temp folder? The user path is usually Downloads.
             // The original code was using a temp folder 'Vilio_Telegram_Export'
             if (filePath.includes('Vilio_Telegram_Export')) {
                 fs.unlink(filePath, (err) => {
@@ -1956,7 +2005,7 @@ async function processTrackForTelegram(track: ScrapedTrack, isLiveFeed: boolean 
             }
         }
         if (artworkPath && fs.existsSync(artworkPath)) {
-            fs.unlink(artworkPath, () => { });
+            fs.unlink(artworkPath, () => {});
         }
     }
 }
@@ -1971,9 +2020,12 @@ function startLiveFeed() {
     checkLiveFeed();
 
     // Check every 15 minutes
-    liveFeedInterval = setInterval(async () => {
-        await checkLiveFeed();
-    }, 15 * 60 * 1000);
+    liveFeedInterval = setInterval(
+        async () => {
+            await checkLiveFeed();
+        },
+        15 * 60 * 1000,
+    );
 }
 
 async function checkLiveFeed() {
@@ -2008,7 +2060,6 @@ async function checkLiveFeed() {
         } else {
             console.log('[Telegram] Live Feed: No new tracks since last check.');
         }
-
     } catch (error) {
         log(`[Telegram] Live Feed error: ${error}`);
         console.error(`[Telegram] Live Feed error: ${error}`);
@@ -2057,7 +2108,10 @@ async function sendWeeklyStats() {
         fs.writeFileSync(tempPath, imageBuffer);
 
         log(`[Telegram] Sending Weekly Statistics image (${nextColor} theme)...`);
-        const sent = await telegramService.sendPhoto(tempPath, '<b>Weekly Listening Statistics</b>\n\nGenerated via <a href="https://github.com/1vilio/sixonefour">sixonefour</a>');
+        const sent = await telegramService.sendPhoto(
+            tempPath,
+            '<b>Weekly Listening Statistics</b>\n\nGenerated via <a href="https://github.com/1vilio/sixonefour">sixonefour</a>',
+        );
 
         if (sent) {
             log('[Telegram] Weekly Statistics sent successfully.');

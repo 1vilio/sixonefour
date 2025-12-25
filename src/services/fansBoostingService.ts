@@ -1,4 +1,3 @@
-
 import { BrowserView } from 'electron';
 import { log as fileLog } from '../utils/logger';
 import { generateFingerprint, FingerprintFilter } from '../utils/fingerprintGenerator';
@@ -32,9 +31,9 @@ export class FansBoostingService {
 
     constructor(contentView: BrowserView) {
         this.contentView = contentView;
-        this.logCallback = () => { };
-        this.progressCallback = () => { };
-        this.trackInfoCallback = () => { };
+        this.logCallback = () => {};
+        this.progressCallback = () => {};
+        this.trackInfoCallback = () => {};
     }
 
     public get isActive(): boolean {
@@ -44,7 +43,7 @@ export class FansBoostingService {
     public setCallbacks(
         onLog: (msg: string) => void,
         onProgress: (current: number, total: number) => void,
-        onTrackInfo: (info: any) => void
+        onTrackInfo: (info: any) => void,
     ) {
         this.logCallback = onLog;
         this.progressCallback = onProgress;
@@ -55,7 +54,7 @@ export class FansBoostingService {
         url: string,
         count: number,
         fingerprintOptions: FingerprintOptions,
-        schedulingOptions: SchedulingOptions
+        schedulingOptions: SchedulingOptions,
     ) {
         if (this.isRunning) return;
         this.isRunning = true;
@@ -101,7 +100,6 @@ export class FansBoostingService {
             }
 
             this.log(this.stopRequested ? 'Boosting stopped by user.' : 'Boosting completed!');
-
         } catch (error) {
             this.log(`Error: ${error}`);
         } finally {
@@ -143,9 +141,10 @@ export class FansBoostingService {
         if (!this.fingerprintOptions.enabled) return;
 
         // Force Desktop for Auto mode to avoid mobile UI issues
-        const filter = this.fingerprintOptions.mode === 'auto'
-            ? { deviceType: 'desktop' } as FingerprintFilter
-            : this.fingerprintOptions.filter;
+        const filter =
+            this.fingerprintOptions.mode === 'auto'
+                ? ({ deviceType: 'desktop' } as FingerprintFilter)
+                : this.fingerprintOptions.filter;
 
         const fingerprint = generateFingerprint(filter);
 
@@ -170,8 +169,9 @@ export class FansBoostingService {
             // Note: setUserAgent handles the HTTP header, but navigator.platform needs injection
             // We'll do a simple injection for now, but CDP is better for full spoofing
 
-            this.log(`Applied Fingerprint: ${fingerprint.platform} (${fingerprint.viewport.width}x${fingerprint.viewport.height})`);
-
+            this.log(
+                `Applied Fingerprint: ${fingerprint.platform} (${fingerprint.viewport.width}x${fingerprint.viewport.height})`,
+            );
         } catch (e) {
             this.log(`Fingerprint Error: ${e}`);
         }
@@ -184,12 +184,12 @@ export class FansBoostingService {
             try {
                 // Rotate fingerprint for every NEW session (if we reload)
                 // But here we are in a loop. If we want to rotate fingerprint, we MUST reload page.
-                // Current logic tries to stay on page. 
+                // Current logic tries to stay on page.
                 // For "Smart Random" rotation, we should probably reload every X plays or every play?
-                // For now, let's keep the same session to avoid detection by constant reloads, 
+                // For now, let's keep the same session to avoid detection by constant reloads,
                 // OR if the user wants high security, maybe we should reload?
-                // Let's stick to session persistence for now, as it's faster. 
-                // Fingerprint is applied at start. 
+                // Let's stick to session persistence for now, as it's faster.
+                // Fingerprint is applied at start.
 
                 // TODO: Future improvement - "Session Rotation" option to reload page with new FP every N plays.
 
@@ -233,7 +233,9 @@ export class FansBoostingService {
                         // Full listen (80-100%)
                         const percentage = Math.random() * (1.0 - 0.8) + 0.8;
                         listenTimeMs = durationSec * percentage * 1000;
-                        this.log(`Mode: Full Listen (${Math.round(percentage * 100)}% - ${Math.round(listenTimeMs / 1000)}s)`);
+                        this.log(
+                            `Mode: Full Listen (${Math.round(percentage * 100)}% - ${Math.round(listenTimeMs / 1000)}s)`,
+                        );
                     }
 
                     if (listenTimeMs > durationSec * 1000) {
@@ -248,7 +250,11 @@ export class FansBoostingService {
 
                 // 5. Scheduling Delay
                 // If we need to distribute plays over time, we might need to wait LONGER than the listen time.
-                if (this.schedulingOptions.enabled && this.schedulingOptions.mode === 'distribute' && this.schedulingOptions.hours) {
+                if (
+                    this.schedulingOptions.enabled &&
+                    this.schedulingOptions.mode === 'distribute' &&
+                    this.schedulingOptions.hours
+                ) {
                     const totalTimeMs = this.schedulingOptions.hours * 60 * 60 * 1000;
                     const playsRemaining = this.targetCount - this.currentCount;
 
@@ -266,7 +272,7 @@ export class FansBoostingService {
 
                             this.log(`Scheduling: Waiting extra ${Math.round(finalWait / 1000)}s to distribute plays`);
                             await this.wait(listenTimeMs); // Listen
-                            await this.wait(finalWait);    // Wait rest of the time
+                            await this.wait(finalWait); // Wait rest of the time
                             resolve();
                             return;
                         }
@@ -275,7 +281,6 @@ export class FansBoostingService {
 
                 await this.wait(listenTimeMs);
                 resolve();
-
             } catch (error) {
                 this.log(`Cycle error: ${error}. Retrying...`);
                 await this.wait(3000);
@@ -315,7 +320,7 @@ export class FansBoostingService {
         this.log('Warning: Could not fetch track info.');
     }
 
-    private async getTrackInfo(): Promise<{ title: string, artist: string, artwork: string } | null> {
+    private async getTrackInfo(): Promise<{ title: string; artist: string; artwork: string } | null> {
         try {
             return await this.contentView.webContents.executeJavaScript(`
                 (function() {
@@ -388,7 +393,7 @@ export class FansBoostingService {
     }
 
     private wait(ms: number): Promise<void> {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             if (ms <= 0) return resolve();
             let resolved = false;
             const interval = setInterval(() => {
@@ -415,11 +420,16 @@ export class FansBoostingService {
             const check = async () => {
                 if (this.stopRequested) return resolve();
                 try {
-                    const exists = await this.contentView.webContents.executeJavaScript(`!!document.querySelector('${selector}')`);
+                    const exists = await this.contentView.webContents.executeJavaScript(
+                        `!!document.querySelector('${selector}')`,
+                    );
                     if (exists) resolve();
-                    else if (Date.now() - start > timeout) resolve(); // Timeout but resolve anyway to try
+                    else if (Date.now() - start > timeout)
+                        resolve(); // Timeout but resolve anyway to try
                     else setTimeout(check, 500);
-                } catch (e) { setTimeout(check, 500); }
+                } catch (e) {
+                    setTimeout(check, 500);
+                }
             };
             check();
         });

@@ -13,11 +13,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
 :root {
-    --vilio-red: #FF0000;
-    --vilio-red-dark: #8B0000;
+    --vilio-red: #ff0000;
+    --vilio-red-dark: #8b0000;
     --vilio-black: #050505;
     --vilio-surface: rgba(10, 10, 10, 0.95);
-    --vilio-text-bright: #FFFFFF;
+    --vilio-text-bright: #ffffff;
     --vilio-text-dim: #999999;
 
     --font-display: 'Bodoni Moda SC', serif;
@@ -141,7 +141,12 @@ a.sc-link-dark:hover,
     left: -15px;
     right: -15px;
     bottom: -15px;
-    background: conic-gradient(var(--vilio-black) 30%, var(--vilio-red) 45%, var(--vilio-red-dark) 55%, var(--vilio-black) 70%);
+    background: conic-gradient(
+        var(--vilio-black) 30%,
+        var(--vilio-red) 45%,
+        var(--vilio-red-dark) 55%,
+        var(--vilio-black) 70%
+    );
     z-index: -1;
     animation: rotate-blood-slow 8s linear infinite;
     opacity: 0.95;
@@ -168,7 +173,6 @@ a.sc-link-dark:hover,
 }
 
 @keyframes v-flip-slow {
-
     0%,
     100% {
         transform: rotateY(0deg);
@@ -190,16 +194,27 @@ a.sc-link-dark:hover,
     line-height: 1;
     color: #000000;
     opacity: 0.5;
-    text-shadow: -1px -1px 0 var(--vilio-red-dark), 1px -1px 0 var(--vilio-red-dark), -1px 1px 0 var(--vilio-red-dark), 1px 1px 0 var(--vilio-red-dark);
+    text-shadow:
+        -1px -1px 0 var(--vilio-red-dark),
+        1px -1px 0 var(--vilio-red-dark),
+        -1px 1px 0 var(--vilio-red-dark),
+        1px 1px 0 var(--vilio-red-dark);
     z-index: 2;
     pointer-events: none;
     animation: v-flip-slow 6s ease-in-out infinite;
-    transition: opacity 0.3s ease, text-shadow 0.3s ease;
+    transition:
+        opacity 0.3s ease,
+        text-shadow 0.3s ease;
 }
 
 .playableTile:hover .playableTile__artwork::after {
     opacity: 0.9;
-    text-shadow: -1px -1px 0 var(--vilio-red), 1px -1px 0 var(--vilio-red), -1px 1px 0 var(--vilio-red), 1px 1px 0 var(--vilio-red), 0 0 10px var(--vilio-red);
+    text-shadow:
+        -1px -1px 0 var(--vilio-red),
+        1px -1px 0 var(--vilio-red),
+        -1px 1px 0 var(--vilio-red),
+        1px 1px 0 var(--vilio-red),
+        0 0 10px var(--vilio-red);
 }
 
 /* ==========================================================================
@@ -270,7 +285,7 @@ a.sc-link-dark:hover,
 }
 
 .userBadgeListItem__artwork::before {
-    content: "";
+    content: '';
     position: absolute;
     top: -3px;
     left: -3px;
@@ -326,7 +341,7 @@ a.sc-link-dark:hover,
     border: 1px solid var(--vilio-red) !important;
     border-radius: 50% !important;
     transform: translate(-50%, -50%) scale(1);
-    transition: all .3s ease;
+    transition: all 0.3s ease;
 }
 
 .playableTile__playButton:hover {
@@ -344,7 +359,7 @@ a.sc-link-dark:hover,
     left: 50%;
     transform: translate(-50%, -50%);
     opacity: 0;
-    transition: opacity .2s;
+    transition: opacity 0.2s;
     box-shadow: 0 0 5px var(--vilio-red);
 }
 
@@ -360,7 +375,7 @@ a.sc-link-dark:hover,
 
 .playableTile:hover .playableTile__playButton::before,
 .playableTile:hover .playableTile__playButton::after {
-    animation: crosshair-reveal .3s forwards;
+    animation: crosshair-reveal 0.3s forwards;
 }
 
 .playbackTimeline__progressWrapper {
@@ -387,7 +402,9 @@ a.sc-link-dark:hover,
     font-family: var(--font-display);
     font-size: 16px;
     color: #fff;
-    text-shadow: 0 0 5px #fff, 0 0 10px var(--vilio-red);
+    text-shadow:
+        0 0 5px #fff,
+        0 0 10px var(--vilio-red);
     position: absolute;
     top: 50%;
     left: 50%;

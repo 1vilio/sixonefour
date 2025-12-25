@@ -17,7 +17,7 @@
     --dried-blood: #4a2020; /* Темно-бордовый */
     --faded-gold: #9c8c68; /* Выцветшее золото */
     --scratch-white: #f5f0f2;
-    
+
     --font-goth: 'UnifrakturMaguntia', cursive;
     --font-hand: 'Rock Salt', cursive;
     --font-type: 'Courier Prime', monospace;
@@ -34,8 +34,12 @@ body {
 
 /* Эффект шума/зерна поверх всего сайта */
 body::before {
-    content: "";
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image: repeating-radial-gradient(#000 0 0.0001%, #fff 0 0.0002%);
     opacity: 0.07;
     pointer-events: none;
@@ -48,9 +52,13 @@ body::before {
 }
 
 /* Скроллбар - грубый черный блок */
-::-webkit-scrollbar { width: 14px !important; background: var(--paper-bg); border-left: 2px solid var(--ink-black); }
-::-webkit-scrollbar-thumb { 
-    background: var(--ink-black) !important; 
+::-webkit-scrollbar {
+    width: 14px !important;
+    background: var(--paper-bg);
+    border-left: 2px solid var(--ink-black);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--ink-black) !important;
     border: 2px solid var(--paper-bg);
 }
 
@@ -69,15 +77,19 @@ body::before {
 .header__logo a.header__logoLink {
     background: #000 !important;
     border-radius: 0 !important;
-    width: 30px !important; height: 30px !important;
+    width: 30px !important;
+    height: 30px !important;
     position: relative;
     top: 5px;
 }
 /* Крест вместо логотипа */
 .header__logo a.header__logoLink::after {
     content: '†';
-    color: #fff; font-size: 30px; 
-    position: absolute; top: -12px; left: 5px;
+    color: #fff;
+    font-size: 30px;
+    position: absolute;
+    top: -12px;
+    left: 5px;
     font-family: var(--font-goth);
 }
 
@@ -90,7 +102,11 @@ body::before {
 /* ==========================================================================
 4. ТИПОГРАФИКА - "Плакатный стиль"
 ========================================================================== */
-h1, h2, h3, .soundTitle__title, .playableTile__title {
+h1,
+h2,
+h3,
+.soundTitle__title,
+.playableTile__title {
     font-family: var(--font-goth) !important;
     letter-spacing: 1px;
     color: var(--ink-black) !important;
@@ -98,7 +114,8 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
 }
 
 /* Имя артиста - как штамп */
-.soundTitle__username, .playableTile__username {
+.soundTitle__username,
+.playableTile__username {
     font-family: var(--font-type) !important;
     font-weight: bold;
     background: var(--ink-black);
@@ -128,7 +145,8 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
 .playableTile__artwork::after {
     content: '✟';
     position: absolute;
-    bottom: 5px; right: 5px;
+    bottom: 5px;
+    right: 5px;
     color: var(--scratch-white);
     font-size: 40px;
     text-shadow: 2px 2px 0 #000;
@@ -139,7 +157,8 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
 /* ==========================================================================
 6. СПИСКИ ТРЕКОВ - "Коллаж"
 ========================================================================== */
-.soundList__item, .trackItem {
+.soundList__item,
+.trackItem {
     background: transparent !important;
     border-bottom: 2px dashed var(--ink-black) !important;
     padding: 15px 0 !important;
@@ -149,14 +168,18 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
 /* Эффект, будто трек подчеркнут маркером */
 .soundList__item::before {
     content: '';
-    position: absolute; bottom: 5px; left: 0; width: 100%; height: 10px;
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    height: 10px;
     background: rgba(74, 32, 32, 0.1);
     transform: rotate(0.5deg);
     pointer-events: none;
 }
 
 .sidebar {
-    background: rgba(255,255,255,0.4) !important;
+    background: rgba(255, 255, 255, 0.4) !important;
     border: 1px solid var(--ink-black);
     padding: 15px;
 }
@@ -185,14 +208,18 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
 }
 
 /* Кнопки управления - инверсия */
-.playControl, .skipControl, .shuffleControl, .repeatControl {
+.playControl,
+.skipControl,
+.shuffleControl,
+.repeatControl {
     filter: invert(1) !important;
 }
 
 .playControl {
     border: 2px solid #fff !important;
     border-radius: 0 !important; /* Квадратная кнопка */
-    width: 40px !important; height: 40px !important;
+    width: 40px !important;
+    height: 40px !important;
 }
 
 /* Прогресс бар - "Царапина" */
@@ -205,7 +232,16 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
 .playbackTimeline__progressBar {
     background: var(--dried-blood) !important;
     /* Полосатая текстура */
-    background-image: linear-gradient(45deg, #000 25%, transparent 25%, transparent 50%, #000 50%, #000 75%, transparent 75%, transparent);
+    background-image: linear-gradient(
+        45deg,
+        #000 25%,
+        transparent 25%,
+        transparent 50%,
+        #000 50%,
+        #000 75%,
+        transparent 75%,
+        transparent
+    );
     background-size: 10px 10px;
 }
 
@@ -213,7 +249,8 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
     background: var(--faded-gold) !important;
     border: 2px solid #fff !important;
     border-radius: 0 !important; /* Квадрат */
-    width: 15px !important; height: 15px !important;
+    width: 15px !important;
+    height: 15px !important;
     top: -3px !important;
 }
 
@@ -227,7 +264,7 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
 }
 /* Фон под волной - будто закрашено корректором */
 .sound__waveform {
-    background: rgba(255,255,255,0.5);
+    background: rgba(255, 255, 255, 0.5);
 }
 
 /* ==========================================================================
@@ -239,7 +276,7 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
     color: var(--ink-black) !important;
     font-family: var(--font-type) !important;
     border-radius: 0 !important;
-    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
 .sc-button:hover {
@@ -247,7 +284,7 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
     color: var(--scratch-white) !important;
 }
 
-.sc-button-like[aria-pressed="true"] {
+.sc-button-like[aria-pressed='true'] {
     background: var(--dried-blood) !important;
     color: #fff !important;
     border-color: var(--dried-blood) !important;

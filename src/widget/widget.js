@@ -27,37 +27,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listen for track updates from main process
     window.electronAPI.on('widget-track-update', (trackInfo) => {
         if (!trackInfo || !trackInfo.title) {
-            if(titleEl) titleEl.textContent = 'No track playing';
-            if(authorEl) authorEl.textContent = '...';
-            if(artworkEl) artworkEl.src = '';
-            if(playBtn) playBtn.innerHTML = '&#9654;';
-            if(progressFill) progressFill.style.width = '0%';
-            if(timeElapsedEl) timeElapsedEl.textContent = '0:00';
-            if(timeDurationEl) timeDurationEl.textContent = '0:00';
+            if (titleEl) titleEl.textContent = 'No track playing';
+            if (authorEl) authorEl.textContent = '...';
+            if (artworkEl) artworkEl.src = '';
+            if (playBtn) playBtn.innerHTML = '&#9654;';
+            if (progressFill) progressFill.style.width = '0%';
+            if (timeElapsedEl) timeElapsedEl.textContent = '0:00';
+            if (timeDurationEl) timeDurationEl.textContent = '0:00';
             return;
         }
 
         if (trackInfo.isPlaying) {
-            if(playBtn) playBtn.innerHTML = '&#10074;&#10074;'; // Pause icon
+            if (playBtn) playBtn.innerHTML = '&#10074;&#10074;'; // Pause icon
         } else {
-            if(playBtn) playBtn.innerHTML = '&#9654;'; // Play icon
+            if (playBtn) playBtn.innerHTML = '&#9654;'; // Play icon
         }
 
-        if(titleEl) titleEl.textContent = trackInfo.title;
-        if(authorEl) authorEl.textContent = trackInfo.author;
-        if(artworkEl) artworkEl.src = trackInfo.artwork || '';
+        if (titleEl) titleEl.textContent = trackInfo.title;
+        if (authorEl) authorEl.textContent = trackInfo.author;
+        if (artworkEl) artworkEl.src = trackInfo.artwork || '';
 
-        if(timeElapsedEl) timeElapsedEl.textContent = trackInfo.elapsed || '0:00';
-        if(timeDurationEl) timeDurationEl.textContent = trackInfo.duration || '0:00';
+        if (timeElapsedEl) timeElapsedEl.textContent = trackInfo.elapsed || '0:00';
+        if (timeDurationEl) timeDurationEl.textContent = trackInfo.duration || '0:00';
 
         // Calculate progress
         const elapsedMs = parseTimeToMs(trackInfo.elapsed);
         const durationMs = parseTimeToMs(trackInfo.duration);
         if (durationMs > 0) {
             const progressPercent = (elapsedMs / durationMs) * 100;
-            if(progressFill) progressFill.style.width = `${progressPercent}%`;
+            if (progressFill) progressFill.style.width = `${progressPercent}%`;
         } else {
-            if(progressFill) progressFill.style.width = '0%';
+            if (progressFill) progressFill.style.width = '0%';
         }
     });
 
@@ -65,9 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.electronAPI.on('widget-theme-update', ({ video, blur }) => {
         if (video) {
             videoBg.src = video;
-            if(blur) videoBg.style.filter = `blur(${blur}px)`;
+            if (blur) videoBg.style.filter = `blur(${blur}px)`;
             videoBg.style.display = 'block';
-            videoBg.play().catch(e => console.error("Video play failed", e));
+            videoBg.play().catch((e) => console.error('Video play failed', e));
         } else {
             videoBg.style.display = 'none';
             videoBg.src = ''; // Stop loading video
@@ -93,6 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Listen for pin state changes from main process
     window.electronAPI.on('widget-pin-state-changed', (isPinned) => {
-        if(pinBtn) pinBtn.style.opacity = isPinned ? '1' : '0.5';
+        if (pinBtn) pinBtn.style.opacity = isPinned ? '1' : '0.5';
     });
 });

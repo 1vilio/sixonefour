@@ -24,9 +24,10 @@ export class OnlineUsersService {
         this.headerView = headerView;
 
         // Order of priority: 1. Environment Variable, 2. Compiled Placeholder, 3. User Store
-        const apiKey = process.env.ABLY_API_KEY ||
+        const apiKey =
+            process.env.ABLY_API_KEY ||
             (PROD_ABLY_KEY_PLACEHOLDER !== 'REPLACE_WITH_ABLY_API_KEY' ? PROD_ABLY_KEY_PLACEHOLDER : null) ||
-            this.store.get('ablyApiKey') as string;
+            (this.store.get('ablyApiKey') as string);
         const enabled = this.store.get('onlineStatusEnabled', true) as boolean;
 
         if (!enabled || !apiKey) {
@@ -35,7 +36,10 @@ export class OnlineUsersService {
         }
 
         try {
-            this.client = new Ably.Realtime({ key: apiKey, clientId: `user-${Math.random().toString(36).substr(2, 9)}` });
+            this.client = new Ably.Realtime({
+                key: apiKey,
+                clientId: `user-${Math.random().toString(36).substr(2, 9)}`,
+            });
             this.channel = this.client.channels.get('app-presence');
 
             this.channel.presence.subscribe('enter', () => this.updatePresenceCount());

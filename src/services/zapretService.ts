@@ -19,9 +19,7 @@ export class ZapretService {
     constructor() {
         const devVendorPath = path.join(__dirname, '..', '..', 'src', 'vendor', 'zapret');
 
-        this.vendorPath = app.isPackaged
-            ? path.join(process.resourcesPath, 'vendor', 'zapret')
-            : devVendorPath;
+        this.vendorPath = app.isPackaged ? path.join(process.resourcesPath, 'vendor', 'zapret') : devVendorPath;
 
         this.binPath = path.join(this.vendorPath, 'bin');
     }
@@ -33,12 +31,12 @@ export class ZapretService {
     public async getPresets(): Promise<ZapretPreset[]> {
         try {
             const files = await fs.readdir(this.vendorPath);
-            const batFiles = files.filter(f => f.startsWith('general') && f.endsWith('.bat'));
+            const batFiles = files.filter((f) => f.startsWith('general') && f.endsWith('.bat'));
 
-            return batFiles.map(f => ({
+            return batFiles.map((f) => ({
                 name: f.replace('.bat', ''),
                 description: f,
-                filePath: path.join(this.vendorPath, f)
+                filePath: path.join(this.vendorPath, f),
             }));
         } catch (error) {
             log('[ERROR] [ZapretService] Failed to list presets:', error);
@@ -56,11 +54,11 @@ export class ZapretService {
 
         const presetToUse = presetName || this.currentPreset || 'general';
         const presets = await this.getPresets();
-        let preset = presets.find(p => p.name === presetToUse);
+        let preset = presets.find((p) => p.name === presetToUse);
 
         if (!preset) {
             log(`[ZapretService] Preset ${presetToUse} not found, falling back to general`);
-            preset = presets.find(p => p.name === 'general');
+            preset = presets.find((p) => p.name === 'general');
         }
 
         if (!preset) {
@@ -112,7 +110,6 @@ export class ZapretService {
                 this.zapretProcess.unref();
                 log(`[ZapretService] Zapret process started with PID: ${this.zapretProcess.pid}`);
             }
-
         } catch (error) {
             log(`[ERROR] [ZapretService] Failed to start Zapret: ${error}`);
         }
@@ -180,7 +177,7 @@ export class ZapretService {
 
             const listsPath = path.join(this.vendorPath, 'lists', path.sep);
 
-            // IMPORTANT: If the .bat file had "%BIN%winws.exe" --args, 
+            // IMPORTANT: If the .bat file had "%BIN%winws.exe" --args,
             // the split might leave a trailing " at the beginning of winwsLine.
             // We must identify and remove it before further processing.
             winwsLine = winwsLine.trim();
@@ -189,8 +186,8 @@ export class ZapretService {
             }
 
             let processed = winwsLine
-                // Replace escapes. In batch, ^ escapes the next character. 
-                // Common cases are ^! becoming ! or ^^ becoming ^. 
+                // Replace escapes. In batch, ^ escapes the next character.
+                // Common cases are ^! becoming ! or ^^ becoming ^.
                 // We'll replace it with empty to just keep the escaped character.
                 .replace(/\^/g, '')
                 .replace(/%BIN%/g, this.binPath + path.sep)
@@ -220,7 +217,7 @@ export class ZapretService {
             }
             if (current) args.push(current);
 
-            return args.filter(arg => arg && !arg.startsWith('/min') && !arg.startsWith('zapret:'));
+            return args.filter((arg) => arg && !arg.startsWith('/min') && !arg.startsWith('zapret:'));
         } catch (error) {
             log(`[ERROR] [ZapretService] Failed to parse ${batPath}:`, error);
             return [];

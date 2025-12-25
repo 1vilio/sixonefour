@@ -52,12 +52,13 @@ export class TelegramStatsImageService {
         const top5Tracks = stats.topTracks.slice(0, 5);
         const top5Artists = stats.topArtists.slice(0, 5);
 
-        const images = await Promise.all(top5Tracks.map(t => this.getBase64Image(t.artwork)));
-        const artistImages = await Promise.all(top5Artists.map(a => this.getBase64Image(a.artwork)));
+        const images = await Promise.all(top5Tracks.map((t) => this.getBase64Image(t.artwork)));
+        const artistImages = await Promise.all(top5Artists.map((a) => this.getBase64Image(a.artwork)));
         const mostPlayedImage = stats.mostPlayedTrack ? await this.getBase64Image(stats.mostPlayedTrack.artwork) : '';
 
         // App Logo
-        const logoPath = 'C:/Users/Vilio/.gemini/antigravity/brain/0229e1fe-47ea-45fd-9a50-c6446227fd3b/uploaded_image_1_1766329846128.png';
+        const logoPath =
+            'C:/Users/Vilio/.gemini/antigravity/brain/0229e1fe-47ea-45fd-9a50-c6446227fd3b/uploaded_image_1_1766329846128.png';
         const logoBase64 = this.getLocalBase64(logoPath);
 
         const html = `
@@ -263,7 +264,9 @@ export class TelegramStatsImageService {
 
                     <div class="featured-section">
                         <span class="section-label">Most Played This Week</span>
-                        ${stats.mostPlayedTrack ? `
+                        ${
+                            stats.mostPlayedTrack
+                                ? `
                         <div class="most-played-card">
                             <img class="most-played-artwork" src="${mostPlayedImage || ''}">
                             <div class="most-played-info">
@@ -271,13 +274,17 @@ export class TelegramStatsImageService {
                                 <div class="most-played-artist">${stats.mostPlayedTrack.artist}</div>
                             </div>
                         </div>
-                        ` : ''}
+                        `
+                                : ''
+                        }
                     </div>
 
                     <div class="lists-grid">
                         <div>
                             <span class="section-label">Top Tracks</span>
-                            ${top5Tracks.map((t, i) => `
+                            ${top5Tracks
+                                .map(
+                                    (t, i) => `
                             <div class="list-item">
                                 <span class="list-rank">${i + 1}</span>
                                 <img class="list-artwork" src="${images[i]}">
@@ -286,11 +293,15 @@ export class TelegramStatsImageService {
                                     <div class="list-subtitle">${t.artist}</div>
                                 </div>
                             </div>
-                            `).join('')}
+                            `,
+                                )
+                                .join('')}
                         </div>
                         <div>
                             <span class="section-label">Top Artists</span>
-                            ${top5Artists.map((a, i) => `
+                            ${top5Artists
+                                .map(
+                                    (a, i) => `
                             <div class="list-item">
                                 <span class="list-rank">${i + 1}</span>
                                 <img class="list-artwork artist" src="${artistImages[i]}">
@@ -299,7 +310,9 @@ export class TelegramStatsImageService {
                                     <div class="list-subtitle">${a.playCount} plays</div>
                                 </div>
                             </div>
-                            `).join('')}
+                            `,
+                                )
+                                .join('')}
                         </div>
                     </div>
 
@@ -320,8 +333,8 @@ export class TelegramStatsImageService {
                 webPreferences: {
                     offscreen: true,
                     nodeIntegration: false,
-                    contextIsolation: true
-                }
+                    contextIsolation: true,
+                },
             });
 
             // Force size again
@@ -332,12 +345,12 @@ export class TelegramStatsImageService {
             win.webContents.on('did-finish-load', async () => {
                 try {
                     // Wait a bit longer for images to render
-                    await new Promise(r => setTimeout(r, 2000));
+                    await new Promise((r) => setTimeout(r, 2000));
                     const image = await win.webContents.capturePage({
                         x: 0,
                         y: 0,
                         width: 800,
-                        height: 1600
+                        height: 1600,
                     });
                     win.close();
                     resolve(image.toPNG());

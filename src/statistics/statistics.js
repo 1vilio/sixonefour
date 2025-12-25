@@ -94,8 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function formatChange(change) {
         if (change === undefined || change === null) return '';
-        const color = change > 0 ? '#1db954' : (change < 0 ? '#e91429' : '#b3b3b3');
-        const arrow = change > 0 ? '&#9650;' : (change < 0 ? '&#9660;' : '');
+        const color = change > 0 ? '#1db954' : change < 0 ? '#e91429' : '#b3b3b3';
+        const arrow = change > 0 ? '&#9650;' : change < 0 ? '&#9660;' : '';
         return `<span style="color: ${color}; font-size: 0.8em; margin-left: 5px;">${arrow} ${Math.abs(change)}%</span>`;
     }
 
@@ -110,7 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderStats(stats) {
         try {
-            const placeholder = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="gray"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
+            const placeholder =
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="gray"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
 
             statsContent.innerHTML = `
                 <div class="stat-item">
@@ -123,7 +124,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="stat-item">
                     <span class="stat-label">Most Played Track:</span>
                     <span class="stat-value" style="display: flex; align-items: center; justify-content: flex-end;">
-                        ${stats.mostPlayedTrack ? `
+                        ${
+                            stats.mostPlayedTrack
+                                ? `
                             <a href="${stats.mostPlayedTrack.url}">
                                 <img src="${stats.mostPlayedTrack.artwork || placeholder}" class="stat-artwork" style="width: 30px; height: 30px; margin-right: 8px;" alt="Artwork">
                             </a>
@@ -131,7 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <a href="${stats.mostPlayedTrack.url}">${stats.mostPlayedTrack.title}</a>&nbsp;by&nbsp;<a href="${stats.mostPlayedTrack.artistUrl || '#'}">${stats.mostPlayedTrack.artist}</a> (${stats.mostPlayedTrack.playCount} plays)
                                 ${formatChange(stats.mostPlayedTrack.change)}
                             </div>
-                        ` : 'N/A'}
+                        `
+                                : 'N/A'
+                        }
                     </span>
                 </div>
                 <div class="stat-item">
@@ -144,13 +149,19 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
             // Render Advanced Metrics
-            if (document.getElementById('variety-score')) document.getElementById('variety-score').textContent = stats.varietyScore || 0;
-            if (document.getElementById('obsession-rate')) document.getElementById('obsession-rate').textContent = `${stats.obsessionRate || 0}%`;
+            if (document.getElementById('variety-score'))
+                document.getElementById('variety-score').textContent = stats.varietyScore || 0;
+            if (document.getElementById('obsession-rate'))
+                document.getElementById('obsession-rate').textContent = `${stats.obsessionRate || 0}%`;
 
             // Max Tracks Day
             if (document.getElementById('max-tracks-day')) {
-                document.getElementById('max-tracks-day').textContent = stats.maxTracksInDay ? stats.maxTracksInDay.count : 0;
-                document.getElementById('max-tracks-date').textContent = stats.maxTracksInDay ? `${stats.maxTracksInDay.date} (${formatDuration(stats.maxTracksInDay.duration || 0)})` : '-';
+                document.getElementById('max-tracks-day').textContent = stats.maxTracksInDay
+                    ? stats.maxTracksInDay.count
+                    : 0;
+                document.getElementById('max-tracks-date').textContent = stats.maxTracksInDay
+                    ? `${stats.maxTracksInDay.date} (${formatDuration(stats.maxTracksInDay.duration || 0)})`
+                    : '-';
             }
 
             if (stats.maxRepeats) {
@@ -165,20 +176,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // New Metrics
-            if (document.getElementById('avg-track-length')) document.getElementById('avg-track-length').textContent = formatDuration(stats.averageTrackLength || 0);
-            if (document.getElementById('avg-daily-listening')) document.getElementById('avg-daily-listening').textContent = formatDuration(stats.averageDailyListening || 0);
-            if (document.getElementById('consistency-score')) document.getElementById('consistency-score').textContent = `${stats.consistencyScore || 0}%`;
+            if (document.getElementById('avg-track-length'))
+                document.getElementById('avg-track-length').textContent = formatDuration(stats.averageTrackLength || 0);
+            if (document.getElementById('avg-daily-listening'))
+                document.getElementById('avg-daily-listening').textContent = formatDuration(
+                    stats.averageDailyListening || 0,
+                );
+            if (document.getElementById('consistency-score'))
+                document.getElementById('consistency-score').textContent = `${stats.consistencyScore || 0}%`;
 
             // Render Top Tracks (with Show More/Less)
             if (stats.topTracks && stats.topTracks.length > 0) {
                 document.getElementById('top-tracks-section').style.display = 'block';
-                renderListWithShowMore(topTracksList, stats.topTracks, (track) => `
+                renderListWithShowMore(
+                    topTracksList,
+                    stats.topTracks,
+                    (track) => `
                     <a href="${track.url}">
                         <img src="${track.artwork || placeholder}" class="stat-artwork" alt="Track Artwork">
                     </a>
                     <a href="${track.url}">${track.title}</a>&nbsp;by&nbsp;<a href="${track.artistUrl || '#'}">${track.artist}</a> (${track.playCount} plays)
                     ${formatChange(track.change)}
-                `);
+                `,
+                );
             } else {
                 document.getElementById('top-tracks-section').style.display = 'none';
             }
@@ -186,13 +206,17 @@ document.addEventListener('DOMContentLoaded', () => {
             // Render Top Artists (with Show More/Less)
             if (stats.topArtists && stats.topArtists.length > 0) {
                 document.getElementById('top-artists-section').style.display = 'block';
-                renderListWithShowMore(topArtistsList, stats.topArtists, (artist) => `
+                renderListWithShowMore(
+                    topArtistsList,
+                    stats.topArtists,
+                    (artist) => `
                     <a href="${artist.url}">
                         <img src="${artist.artwork || placeholder}" class="stat-artwork" alt="Artist Artwork">
                     </a>
                     <a href="${artist.url}">${artist.name}</a> (${artist.playCount} plays)
                     ${formatChange(artist.change)}
-                `);
+                `,
+                );
             } else {
                 document.getElementById('top-artists-section').style.display = 'none';
             }
@@ -203,11 +227,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rediscoveriesSection) {
                 if (stats.rediscoveries && stats.rediscoveries.length > 0) {
                     rediscoveriesSection.style.display = 'block';
-                    rediscoveriesList.innerHTML = stats.rediscoveries.map(track => `
+                    rediscoveriesList.innerHTML = stats.rediscoveries
+                        .map(
+                            (track) => `
                         <li>
                             <a href="${track.url}">${track.title}</a>&nbsp;by&nbsp;<a href="${track.url.split('/').slice(0, 4).join('/')}">${track.artist}</a> (Used to play ${track.playCount} times)
                         </li>
-                    `).join('');
+                    `,
+                        )
+                        .join('');
                 } else {
                     rediscoveriesSection.style.display = 'none';
                 }
@@ -229,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('plays-per-hour-section').style.display = 'none';
             }
         } catch (err) {
-            console.error("Error in renderStats:", err);
+            console.error('Error in renderStats:', err);
             statsContent.innerHTML += `<p style="color:red">Error rendering stats: ${err.message}</p>`;
         }
     }
@@ -243,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
         container.style.maxHeight = 'none';
         container.style.overflowY = 'visible';
 
-        const renderItems = (itemList) => itemList.map(item => `<li>${itemRenderer(item)}</li>`).join('');
+        const renderItems = (itemList) => itemList.map((item) => `<li>${itemRenderer(item)}</li>`).join('');
 
         container.innerHTML = renderItems(initialItems);
 
@@ -252,7 +280,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const btn = document.createElement('button');
             btn.className = 'show-more-btn';
             btn.textContent = text;
-            btn.style.cssText = 'background: none; border: none; color: #1db954; cursor: pointer; padding: 10px 0; font-size: 0.9em; width: 100%; text-align: center;';
+            btn.style.cssText =
+                'background: none; border: none; color: #1db954; cursor: pointer; padding: 10px 0; font-size: 0.9em; width: 100%; text-align: center;';
             btn.addEventListener('click', onClick);
             return btn;
         };
@@ -298,14 +327,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Calculate start date (Sunday of 52 weeks ago)
         const endDate = today;
-        const startDate = new Date(endDate.getTime() - (daysToShow * oneDay));
+        const startDate = new Date(endDate.getTime() - daysToShow * oneDay);
 
-        // Adjust start date to be a Sunday for proper grid alignment if desired, 
+        // Adjust start date to be a Sunday for proper grid alignment if desired,
         // but usually GitHub starts from 1 year ago.
         // Let's just render 365 days.
 
         for (let i = 0; i < daysToShow; i++) {
-            const d = new Date(startDate.getTime() + (i * oneDay));
+            const d = new Date(startDate.getTime() + i * oneDay);
             const dateStr = d.toISOString().split('T')[0];
             const data = calendarData[dateStr] || { count: 0, artworks: [] };
 
@@ -346,14 +375,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Show up to 8 artworks in the panel
         const artworksToShow = data.artworks ? data.artworks.slice(0, 8) : [];
-        infoArtworks.innerHTML = artworksToShow.map(url =>
-            `<img src="${url.replace('large', 't500x500')}" class="info-artwork">`
-        ).join('');
+        infoArtworks.innerHTML = artworksToShow
+            .map((url) => `<img src="${url.replace('large', 't500x500')}" class="info-artwork">`)
+            .join('');
     }
 
     function showArtworksModal(dateStr, artworks) {
         modalDateTitle.textContent = `Tracks Played on ${dateStr}`;
-        modalArtworksGrid.innerHTML = artworks.map(url => `<img src="${url.replace('large', 't500x500')}" alt="Artwork">`).join('');
+        modalArtworksGrid.innerHTML = artworks
+            .map((url) => `<img src="${url.replace('large', 't500x500')}" alt="Artwork">`)
+            .join('');
         modal.style.display = 'block';
     }
 
@@ -383,17 +414,40 @@ document.addEventListener('DOMContentLoaded', () => {
             type: 'doughnut',
             data: {
                 labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
-                datasets: [{
-                    label: 'Plays',
-                    data: data,
-                    backgroundColor: [
-                        '#1DB954', '#1ED760', '#28E06F', '#32E97E', '#3CF28D', '#46FB9C', '#50FFAA', '#5AFEB9',
-                        '#64FDC8', '#6EFCD7', '#78FBE6', '#82FAF5', '#8CF9FF', '#96F8FF', '#A0F7FF', '#AAF6FF',
-                        '#B4F5FF', '#BEF4FF', '#C8F3FF', '#D2F2FF', '#DCF1FF', '#E6F0FF', '#F0EFFF', '#FAEFFF'
-                    ],
-                    borderColor: '#191414',
-                    borderWidth: 1
-                }]
+                datasets: [
+                    {
+                        label: 'Plays',
+                        data: data,
+                        backgroundColor: [
+                            '#1DB954',
+                            '#1ED760',
+                            '#28E06F',
+                            '#32E97E',
+                            '#3CF28D',
+                            '#46FB9C',
+                            '#50FFAA',
+                            '#5AFEB9',
+                            '#64FDC8',
+                            '#6EFCD7',
+                            '#78FBE6',
+                            '#82FAF5',
+                            '#8CF9FF',
+                            '#96F8FF',
+                            '#A0F7FF',
+                            '#AAF6FF',
+                            '#B4F5FF',
+                            '#BEF4FF',
+                            '#C8F3FF',
+                            '#D2F2FF',
+                            '#DCF1FF',
+                            '#E6F0FF',
+                            '#F0EFFF',
+                            '#FAEFFF',
+                        ],
+                        borderColor: '#191414',
+                        borderWidth: 1,
+                    },
+                ],
             },
             options: {
                 responsive: true,
@@ -401,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cutout: '70%',
                 plugins: {
                     legend: {
-                        display: false
+                        display: false,
                     },
                     tooltip: {
                         enabled: true,
@@ -419,45 +473,47 @@ document.addEventListener('DOMContentLoaded', () => {
                                 let hour = context.label || '';
                                 let plays = context.parsed;
                                 return `${hour}: ${plays} plays`;
-                            }
-                        }
+                            },
+                        },
                     },
                 },
                 elements: {
                     arc: {
                         borderRadius: 5,
-                    }
-                }
+                    },
+                },
             },
-            plugins: [{
-                id: 'centerText',
-                beforeDraw: function (chart) {
-                    const width = chart.width,
-                        height = chart.height,
-                        ctx = chart.ctx;
-                    ctx.restore();
-                    const fontSize = (height / 160).toFixed(2);
-                    ctx.font = `${fontSize}em sans-serif`;
-                    ctx.textBaseline = 'middle';
+            plugins: [
+                {
+                    id: 'centerText',
+                    beforeDraw: function (chart) {
+                        const width = chart.width,
+                            height = chart.height,
+                            ctx = chart.ctx;
+                        ctx.restore();
+                        const fontSize = (height / 160).toFixed(2);
+                        ctx.font = `${fontSize}em sans-serif`;
+                        ctx.textBaseline = 'middle';
 
-                    const text = `${totalPlays}`,
-                        textX = Math.round((width - ctx.measureText(text).width) / 2),
-                        textY = height / 2 - 15;
+                        const text = `${totalPlays}`,
+                            textX = Math.round((width - ctx.measureText(text).width) / 2),
+                            textY = height / 2 - 15;
 
-                    const text2 = 'Total Plays',
-                        text2X = Math.round((width - ctx.measureText(text2).width) / 2),
-                        text2Y = height / 2 + 15;
+                        const text2 = 'Total Plays',
+                            text2X = Math.round((width - ctx.measureText(text2).width) / 2),
+                            text2Y = height / 2 + 15;
 
-                    ctx.fillStyle = '#fff';
-                    ctx.fillText(text, textX, textY);
+                        ctx.fillStyle = '#fff';
+                        ctx.fillText(text, textX, textY);
 
-                    ctx.fillStyle = '#b3b3b3';
-                    ctx.font = `${(fontSize / 2).toFixed(2)}em sans-serif`;
-                    ctx.fillText(text2, text2X, text2Y);
+                        ctx.fillStyle = '#b3b3b3';
+                        ctx.font = `${(fontSize / 2).toFixed(2)}em sans-serif`;
+                        ctx.fillText(text2, text2X, text2Y);
 
-                    ctx.save();
-                }
-            }]
+                        ctx.save();
+                    },
+                },
+            ],
         });
     }
 

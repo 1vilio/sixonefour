@@ -1,4 +1,3 @@
-
 import fetch from 'cross-fetch';
 import fs from 'fs';
 import FormData from 'form-data';
@@ -14,12 +13,14 @@ export class TelegramService {
     private botToken: string = '';
     private channelId: string = '';
 
-    constructor() { }
+    constructor() {}
 
     public setCredentials(token: string, channelId: string = '') {
         this.botToken = token.trim();
         this.channelId = channelId.trim();
-        log(`[TelegramService] Credentials set. Bot Token length: ${this.botToken.length}, Channel ID: '${this.channelId}'`);
+        log(
+            `[TelegramService] Credentials set. Bot Token length: ${this.botToken.length}, Channel ID: '${this.channelId}'`,
+        );
     }
 
     private get targetChatId(): string {
@@ -45,7 +46,10 @@ export class TelegramService {
         }
     }
 
-    public async sendMessage(text: string, options: { parse_mode?: 'Markdown' | 'HTML', disable_web_page_preview?: boolean } = {}): Promise<boolean> {
+    public async sendMessage(
+        text: string,
+        options: { parse_mode?: 'Markdown' | 'HTML'; disable_web_page_preview?: boolean } = {},
+    ): Promise<boolean> {
         if (!this.hasCredentials()) return false;
 
         log(`[TelegramService] Sending message to Chat ID: '${this.targetChatId}'`);
@@ -57,8 +61,8 @@ export class TelegramService {
                 body: JSON.stringify({
                     chat_id: this.targetChatId,
                     text: text,
-                    ...options
-                })
+                    ...options,
+                }),
             });
 
             const data = await response.json();
@@ -91,7 +95,7 @@ export class TelegramService {
                 response = await fetch(`${this.baseUrl}/sendPhoto`, {
                     method: 'POST',
                     body: form as any,
-                    headers: form.getHeaders()
+                    headers: form.getHeaders(),
                 });
             } else {
                 // Assume it's a URL
@@ -102,8 +106,8 @@ export class TelegramService {
                         chat_id: this.targetChatId,
                         photo: photoSource,
                         caption: caption,
-                        parse_mode: 'HTML'
-                    })
+                        parse_mode: 'HTML',
+                    }),
                 });
             }
 
@@ -120,7 +124,13 @@ export class TelegramService {
         }
     }
 
-    public async sendAudio(filePath: string, caption?: string, performer?: string, title?: string, thumbPath?: string): Promise<boolean> {
+    public async sendAudio(
+        filePath: string,
+        caption?: string,
+        performer?: string,
+        title?: string,
+        thumbPath?: string,
+    ): Promise<boolean> {
         if (!this.hasCredentials()) return false;
 
         log(`[TelegramService] Sending audio to Chat ID: '${this.targetChatId}'`);
@@ -141,7 +151,7 @@ export class TelegramService {
             const response = await fetch(`${this.baseUrl}/sendAudio`, {
                 method: 'POST',
                 body: form as any,
-                headers: form.getHeaders() // Important for multipart/form-data
+                headers: form.getHeaders(), // Important for multipart/form-data
             });
 
             const data = await response.json();

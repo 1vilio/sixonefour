@@ -40,7 +40,10 @@ export class DownloadService {
         }
     }
 
-    public async downloadTrack(trackInfo: TrackInfo, onStateChange?: (status: 'downloading' | 'idle') => void): Promise<string | null> {
+    public async downloadTrack(
+        trackInfo: TrackInfo,
+        onStateChange?: (status: 'downloading' | 'idle') => void,
+    ): Promise<string | null> {
         // Ensure we are connected before trying to download
         await this.connect();
 
@@ -60,7 +63,7 @@ export class DownloadService {
         if (onStateChange) onStateChange('downloading');
 
         const filename = sanitize(`${trackInfo.author} - ${trackInfo.title} (sixonefour).mp3`);
-        const downloadPath = this.store.get('downloadPath') as string || app.getPath('downloads');
+        const downloadPath = (this.store.get('downloadPath') as string) || app.getPath('downloads');
         const filePath = path.join(downloadPath, filename);
 
         log(`[DownloadService] Starting download for: ${filename}`);
@@ -82,10 +85,12 @@ export class DownloadService {
                                 title: trackInfo.title,
                                 artist: trackInfo.author,
                                 album: 'SoundCloud',
-                                userDefinedText: [{
-                                    description: 'Downloaded via',
-                                    value: 'sixonefour'
-                                }]
+                                userDefinedText: [
+                                    {
+                                        description: 'Downloaded via',
+                                        value: 'sixonefour',
+                                    },
+                                ],
                             };
 
                             // Write tags to the file
@@ -93,7 +98,9 @@ export class DownloadService {
                             if (success) {
                                 log(`[DownloadService] Metadata embedded successfully for: ${filename}`);
                             } else {
-                                log(`[ERROR] [DownloadService] Failed to embed metadata for: ${filename}. NodeID3 returned false.`);
+                                log(
+                                    `[ERROR] [DownloadService] Failed to embed metadata for: ${filename}. NodeID3 returned false.`,
+                                );
                             }
                         } catch (metaError) {
                             log(`[ERROR] [DownloadService] Error embedding metadata: ${metaError}`);
@@ -111,11 +118,11 @@ export class DownloadService {
                     if (onStateChange) onStateChange('idle');
                     // Clean up partially downloaded file
                     fs.unlink(filePath, (unlinkErr) => {
-                        if (unlinkErr) log(`[ERROR] [DownloadService] Failed to delete partial file: ${unlinkErr.message}`);
+                        if (unlinkErr)
+                            log(`[ERROR] [DownloadService] Failed to delete partial file: ${unlinkErr.message}`);
                     });
                     resolve(null);
                 });
-
             } catch (error) {
                 let errorMessage = 'An unknown error occurred';
                 if (error instanceof Error) {
@@ -129,7 +136,7 @@ export class DownloadService {
         });
     }
 
-    private async fetchArtworkBuffer(trackInfo: TrackInfo): Promise<{ buffer: Buffer, mime: string } | null> {
+    private async fetchArtworkBuffer(trackInfo: TrackInfo): Promise<{ buffer: Buffer; mime: string } | null> {
         if (!trackInfo || !trackInfo.artwork) {
             return null;
         }
@@ -146,8 +153,8 @@ export class DownloadService {
                 { url: `${baseArtworkUrl}-original.png`, mime: 'image/png' },
                 { url: `${baseArtworkUrl}-original.jpg`, mime: 'image/jpeg' },
                 { url: `${baseArtworkUrl}-t500x500.jpg`, mime: 'image/jpeg' }, // High quality fallback
-                { url: `${baseArtworkUrl}-large.jpg`, mime: 'image/jpeg' },    // Standard quality
-                { url: trackInfo.artwork, mime: 'image/jpeg' }                  // Last resort (original input)
+                { url: `${baseArtworkUrl}-large.jpg`, mime: 'image/jpeg' }, // Standard quality
+                { url: trackInfo.artwork, mime: 'image/jpeg' }, // Last resort (original input)
             ];
 
             log(`[DownloadService] Fetching artwork for: ${trackInfo.title}`);
@@ -162,7 +169,9 @@ export class DownloadService {
                         const contentType = response.headers.get('content-type');
                         const finalMime = contentType || item.mime;
 
-                        log(`[DownloadService] Found artwork at: ${item.url} (Status: ${response.status}, Content-Type: ${finalMime})`);
+                        log(
+                            `[DownloadService] Found artwork at: ${item.url} (Status: ${response.status}, Content-Type: ${finalMime})`,
+                        );
 
                         const buffer = Buffer.from(await response.arrayBuffer());
                         return { buffer, mime: finalMime };
@@ -198,7 +207,7 @@ export class DownloadService {
                 throw new Error('Could not fetch artwork image.');
             }
 
-            const downloadPath = this.store.get('downloadPath') as string || app.getPath('downloads');
+            const downloadPath = (this.store.get('downloadPath') as string) || app.getPath('downloads');
             // Determine extension based on mime type
             const ext = artworkData.mime === 'image/png' ? 'png' : 'jpg';
             const artworkFilename = sanitize(`${trackInfo.author} - ${trackInfo.title} (sixonefour).${ext}`);
@@ -216,7 +225,6 @@ export class DownloadService {
                     this.notificationManager.show(`Artwork download complete: ${trackInfo.title}`);
                 }
             });
-
         } catch (artworkError) {
             let errorMessage = 'An unknown error occurred while downloading artwork';
             if (artworkError instanceof Error) {

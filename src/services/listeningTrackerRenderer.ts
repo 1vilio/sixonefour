@@ -59,7 +59,13 @@ function getTrackMetadata(): { trackId: string; title: string; artist: string; d
     return null;
 }
 
-function sendListeningRecord(record: { trackId: string, title: string, artist: string, timestamp: number, durationPlayed: number }) {
+function sendListeningRecord(record: {
+    trackId: string;
+    title: string;
+    artist: string;
+    timestamp: number;
+    durationPlayed: number;
+}) {
     if (window.electronAPI && window.electronAPI.send) {
         window.electronAPI.send(LISTENING_STAT_CHANNEL, record);
     } else {
@@ -170,10 +176,8 @@ function startTrackingInterval() {
                 currentTrackState.isPlaying = isPlaying;
             }
         }
-
     }, 1000); // Check every second
 }
-
 
 // Start tracking when the document is ready
 document.addEventListener('DOMContentLoaded', () => {

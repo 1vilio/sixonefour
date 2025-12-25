@@ -42,9 +42,7 @@ export class ThemeService {
 
     constructor(store: ElectronStore) {
         this.store = store;
-        const baseDir = app.isPackaged
-            ? dirname(app.getPath('exe'))
-            : process.cwd();
+        const baseDir = app.isPackaged ? dirname(app.getPath('exe')) : process.cwd();
         this.themesPath = join(baseDir, 'themes');
         this.ensureThemesDirectory();
         this.loadCustomThemes();
@@ -119,7 +117,7 @@ export class ThemeService {
                 filePath: manifestPath,
                 css: css,
                 isManifest: true,
-                rootPath: themeFolderPath
+                rootPath: themeFolderPath,
             };
 
             // Resolve assets relative to theme folder
@@ -137,12 +135,11 @@ export class ThemeService {
                 }
             }
 
-            // Future: Handle targetStyles by appending them to css with markers if needed, 
+            // Future: Handle targetStyles by appending them to css with markers if needed,
             // or storing them separately in CustomTheme. For now, we assume simple migration.
 
             this.customThemes.set(manifest.name, theme);
             log(`[Themes] Loaded manifest theme: ${manifest.name}`);
-
         } catch (error) {
             log(`[ERROR] [Themes] Failed to load manifest theme from ${themeFolderPath}:`, error);
         }
@@ -160,7 +157,7 @@ export class ThemeService {
                 name: themeName,
                 filePath,
                 css,
-                isManifest: false
+                isManifest: false,
             };
 
             if (metadata['video-background']) {
@@ -222,7 +219,7 @@ export class ThemeService {
             this.stopWatching = () => {
                 try {
                     watcher.close();
-                } catch { }
+                } catch {}
             };
         } catch (error) {
             log('[ERROR] [Themes] Failed to watch themes folder:', error);

@@ -5,7 +5,7 @@ export class PerformanceService {
     private headerView: BrowserView | null = null;
     private interval: NodeJS.Timeout | null = null;
 
-    constructor() { }
+    constructor() {}
 
     public setHeaderView(view: BrowserView) {
         this.headerView = view;
@@ -25,7 +25,7 @@ export class PerformanceService {
             let totalCPU = 0;
             let totalMemory = 0;
 
-            metrics.forEach(metric => {
+            metrics.forEach((metric) => {
                 totalCPU += metric.cpu.percentCPUUsage;
                 // In some Electron versions memory is a separate object
                 const memoryInfo = (metric as any).memory;
@@ -38,7 +38,7 @@ export class PerformanceService {
 
             const stats: PerformanceStats = {
                 cpu: Math.round(totalCPU),
-                memory: Math.round(totalMemory / 1024) // Convert to MB
+                memory: Math.round(totalMemory / 1024), // Convert to MB
             };
 
             this.headerView.webContents.send('performance-stats', stats);

@@ -12,14 +12,14 @@
 
 :root {
     /* Палитра Serum */
-    --serum-bg: #1c1d1f;       
-    --serum-panel: #2b2e33;    
-    --serum-dark: #121314;     
-    
-    --lfo-blue: #00e5ff;       /* Cyan */
-    --env-green: #24ff00;      /* Green */
-    --warn-yellow: #ffcc00;    
-    
+    --serum-bg: #1c1d1f;
+    --serum-panel: #2b2e33;
+    --serum-dark: #121314;
+
+    --lfo-blue: #00e5ff; /* Cyan */
+    --env-green: #24ff00; /* Green */
+    --warn-yellow: #ffcc00;
+
     --font-ui: 'Rajdhani', sans-serif;
     --font-lcd: 'Share+Tech+Mono', monospace;
 }
@@ -37,27 +37,55 @@ body {
 
 /* Сетка (Grid) */
 body::before {
-    content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-image: 
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
         linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px; background-position: center;
+    background-size: 40px 40px;
+    background-position: center;
     z-index: -2;
 }
 
 /* 3D Искажение внизу */
 body::after {
-    content: ''; position: fixed; bottom: 0; left: 0; width: 100%; height: 60%;
-    background: repeating-linear-gradient(180deg, rgba(0, 229, 255, 0) 0%, rgba(0, 229, 255, 0.02) 50%, rgba(0, 229, 255, 0) 100%);
+    content: '';
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    background: repeating-linear-gradient(
+        180deg,
+        rgba(0, 229, 255, 0) 0%,
+        rgba(0, 229, 255, 0.02) 50%,
+        rgba(0, 229, 255, 0) 100%
+    );
     background-size: 100% 20px;
     mask-image: linear-gradient(to top, black, transparent);
     -webkit-mask-image: linear-gradient(to top, black, transparent);
-    pointer-events: none; z-index: -1; opacity: 0.5;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.5;
 }
 
-#app .l-container.l-content { background: transparent !important; box-shadow: none !important; }
-::-webkit-scrollbar { width: 10px !important; background: var(--serum-dark); }
-::-webkit-scrollbar-thumb { background: var(--serum-panel); border: 1px solid var(--lfo-blue); border-radius: 2px; }
+#app .l-container.l-content {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+::-webkit-scrollbar {
+    width: 10px !important;
+    background: var(--serum-dark);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--serum-panel);
+    border: 1px solid var(--lfo-blue);
+    border-radius: 2px;
+}
 
 /* ==========================================================================
 3. ХЕДЕР И FIX КНОПОК
@@ -66,60 +94,108 @@ body::after {
     background: var(--serum-panel) !important;
     height: 60px !important;
     border-bottom: 2px solid #000 !important;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-    display: flex; align-items: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
 }
-.header::after { /* LFO Line */
-    content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px;
-    background: var(--lfo-blue); box-shadow: 0 0 10px var(--lfo-blue); z-index: 10;
+.header::after {
+    /* LFO Line */
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--lfo-blue);
+    box-shadow: 0 0 10px var(--lfo-blue);
+    z-index: 10;
 }
 
 /* Логотип */
-.header__logo { width: 120px !important; display: flex; align-items: center; }
-.header__logo a.header__logoLink {
-    background: transparent !important; width: 100% !important; text-indent: 0 !important;
-    display: flex; align-items: center; justify-content: center;
+.header__logo {
+    width: 120px !important;
+    display: flex;
+    align-items: center;
 }
-.header__logo a.header__logoLink > *, .header__logo a.header__logoLink::before { display: none !important; }
+.header__logo a.header__logoLink {
+    background: transparent !important;
+    width: 100% !important;
+    text-indent: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.header__logo a.header__logoLink > *,
+.header__logo a.header__logoLink::before {
+    display: none !important;
+}
 
 .header__logo a.header__logoLink::after {
-    content: 'SERUM'; font-family: var(--font-ui); font-weight: 900; font-size: 32px;
-    letter-spacing: 4px; color: #fff; text-shadow: 2px 2px 0 #000;
+    content: 'SERUM';
+    font-family: var(--font-ui);
+    font-weight: 900;
+    font-size: 32px;
+    letter-spacing: 4px;
+    color: #fff;
+    text-shadow: 2px 2px 0 #000;
 }
 
 /* Меню */
 .header__navMenu > li > a {
-    font-family: var(--font-ui) !important; font-weight: 700 !important; font-size: 18px !important;
-    text-transform: uppercase; color: #888 !important; border: 1px solid transparent;
-    padding: 5px 10px !important; margin: 0 5px;
+    font-family: var(--font-ui) !important;
+    font-weight: 700 !important;
+    font-size: 18px !important;
+    text-transform: uppercase;
+    color: #888 !important;
+    border: 1px solid transparent;
+    padding: 5px 10px !important;
+    margin: 0 5px;
 }
 .header__navMenu > li > a.selected {
-    color: var(--lfo-blue) !important; background: rgba(0,0,0,0.3);
-    border: 1px solid var(--lfo-blue) !important; border-radius: 4px; box-shadow: 0 0 5px var(--lfo-blue);
+    color: var(--lfo-blue) !important;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--lfo-blue) !important;
+    border-radius: 4px;
+    box-shadow: 0 0 5px var(--lfo-blue);
 }
 
 /* --- FIX: КНОПКИ СПРАВА --- */
 .header__right {
-    height: 100%; display: flex; align-items: center;
+    height: 100%;
+    display: flex;
+    align-items: center;
 }
 /* Принудительно задаем размер всем кнопкам справа */
-.header__right a, .header__right button, .header__right .header__link {
+.header__right a,
+.header__right button,
+.header__right .header__link {
     height: 30px !important; /* Фикс высоты */
     line-height: 28px !important;
     padding: 0 12px !important;
     margin: 0 5px !important;
-    font-family: var(--font-ui) !important; font-weight: 600 !important; font-size: 14px !important;
-    background: #111 !important; border: 1px solid #444 !important;
-    color: #ccc !important; text-transform: uppercase; border-radius: 3px !important;
+    font-family: var(--font-ui) !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    background: #111 !important;
+    border: 1px solid #444 !important;
+    color: #ccc !important;
+    text-transform: uppercase;
+    border-radius: 3px !important;
     box-shadow: inset 0 0 5px #000;
-    display: inline-flex !important; align-items: center; justify-content: center;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
     width: auto !important;
 }
-.header__right .g-button-cta { /* Upgrade */
-    color: var(--env-green) !important; border-color: var(--env-green) !important;
+.header__right .g-button-cta {
+    /* Upgrade */
+    color: var(--env-green) !important;
+    border-color: var(--env-green) !important;
 }
-.header__right a:hover, .header__right button:hover {
-    border-color: var(--lfo-blue) !important; color: #fff !important;
+.header__right a:hover,
+.header__right button:hover {
+    border-color: var(--lfo-blue) !important;
+    color: #fff !important;
 }
 
 /* ==========================================================================
@@ -136,23 +212,35 @@ body::after {
 
 /* Сетка поверх обложки (всегда видна, но еле-еле) */
 .playableTile__artwork::before {
-    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background-image: 
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
         linear-gradient(rgba(0, 229, 255, 0.4) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 229, 255, 0.4) 1px, transparent 1px);
     background-size: 20px 20px;
     opacity: 0; /* Скрыта по умолчанию */
-    z-index: 2; pointer-events: none;
+    z-index: 2;
+    pointer-events: none;
     transition: opacity 0.3s;
 }
 
 /* Сканирующий луч (Scanline) */
 .playableTile__artwork::after {
-    content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 50%;
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 50%;
     /* Градиент имитирует луч света */
     background: linear-gradient(to bottom, transparent, var(--lfo-blue), transparent);
     opacity: 0.6;
-    z-index: 3; pointer-events: none;
+    z-index: 3;
+    pointer-events: none;
 }
 
 /* Эффекты при наведении */
@@ -172,17 +260,26 @@ body::after {
 }
 
 @keyframes wt-scan {
-    0% { top: -100%; }
-    100% { top: 200%; }
+    0% {
+        top: -100%;
+    }
+    100% {
+        top: 200%;
+    }
 }
 
 /* Текст */
-.soundTitle__title, .playableTile__title {
-    font-family: var(--font-ui) !important; text-transform: uppercase;
-    color: #fff !important; font-weight: 700;
+.soundTitle__title,
+.playableTile__title {
+    font-family: var(--font-ui) !important;
+    text-transform: uppercase;
+    color: #fff !important;
+    font-weight: 700;
 }
-.soundTitle__username, .playableTile__username {
-    color: var(--lfo-blue) !important; font-family: var(--font-ui);
+.soundTitle__username,
+.playableTile__username {
+    color: var(--lfo-blue) !important;
+    font-family: var(--font-ui);
 }
 
 /* ==========================================================================
@@ -192,48 +289,88 @@ body::after {
     background: var(--serum-panel) !important;
     border-top: 4px solid #111 !important;
     height: 80px !important;
-    position: fixed !important; bottom: 0 !important; left: 0 !important; width: 100% !important;
-    box-shadow: 0 -10px 30px #000; z-index: 99999;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    box-shadow: 0 -10px 30px #000;
+    z-index: 99999;
 }
 
 .playControls__inner {
-    padding-top: 0 !important; height: 100% !important; display: flex; align-items: center;
+    padding-top: 0 !important;
+    height: 100% !important;
+    display: flex;
+    align-items: center;
     border-top: 1px solid #444;
 }
 
 /* MACRO KNOB (Play) */
 .playControl {
-    width: 56px !important; height: 56px !important;
-    background: #111 !important; border-radius: 50% !important; border: none !important;
-    margin: 0 20px !important; position: relative;
-    box-shadow: 0 5px 10px #000, inset 0 0 5px #000;
+    width: 56px !important;
+    height: 56px !important;
+    background: #111 !important;
+    border-radius: 50% !important;
+    border: none !important;
+    margin: 0 20px !important;
+    position: relative;
+    box-shadow:
+        0 5px 10px #000,
+        inset 0 0 5px #000;
 }
 /* Юбка ручки */
 .playControl::before {
-    content: ''; position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px;
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
     border-radius: 50%;
     background: conic-gradient(from 180deg, var(--lfo-blue) 0%, transparent 80%, transparent 100%);
-    z-index: -1; filter: blur(2px); opacity: 0.8;
+    z-index: -1;
+    filter: blur(2px);
+    opacity: 0.8;
 }
 /* Индикатор */
 .playControl::after {
-    content: ''; position: absolute; top: 5px; left: 50%; width: 4px; height: 15px;
-    background: var(--lfo-blue); transform: translateX(-50%);
-    box-shadow: 0 0 5px var(--lfo-blue); border-radius: 2px;
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    width: 4px;
+    height: 15px;
+    background: var(--lfo-blue);
+    transform: translateX(-50%);
+    box-shadow: 0 0 5px var(--lfo-blue);
+    border-radius: 2px;
 }
-.playControl > svg { display: none !important; }
+.playControl > svg {
+    display: none !important;
+}
 
 /* ENVELOPE GRAPH (Progress) */
 .playbackTimeline__progressWrapper {
-    background: #111 !important; height: 40px !important;
-    border: 2px solid #444; border-radius: 4px;
-    position: relative; top: 5px; overflow: hidden;
+    background: #111 !important;
+    height: 40px !important;
+    border: 2px solid #444;
+    border-radius: 4px;
+    position: relative;
+    top: 5px;
+    overflow: hidden;
 }
 /* Сетка графика */
 .playbackTimeline__progressWrapper::before {
-    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image: linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px);
-    background-size: 10px 10px; opacity: 0.5; pointer-events: none;
+    background-size: 10px 10px;
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 .playbackTimeline__progressBar {
@@ -242,55 +379,96 @@ body::after {
     box-shadow: 2px 0 15px var(--lfo-blue);
 }
 .playbackTimeline__progressHandle {
-    background: transparent !important; border: none !important;
-    width: 0 !important; height: 0 !important;
-    border-left: 6px solid transparent !important; border-right: 6px solid transparent !important;
+    background: transparent !important;
+    border: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    border-left: 6px solid transparent !important;
+    border-right: 6px solid transparent !important;
     border-top: 8px solid var(--lfo-blue) !important;
-    top: -8px !important; filter: drop-shadow(0 0 5px var(--lfo-blue));
+    top: -8px !important;
+    filter: drop-shadow(0 0 5px var(--lfo-blue));
 }
 
 /* Info */
 .playbackSoundBadge__title {
-    font-family: var(--font-lcd); color: var(--lfo-blue) !important;
-    font-size: 18px !important; letter-spacing: 1px;
+    font-family: var(--font-lcd);
+    color: var(--lfo-blue) !important;
+    font-size: 18px !important;
+    letter-spacing: 1px;
     text-shadow: 0 0 5px rgba(0, 229, 255, 0.5);
 }
-.playbackSoundBadge__lightLink { color: #888 !important; }
+.playbackSoundBadge__lightLink {
+    color: #888 !important;
+}
 
 /* Volume */
-.volume__sliderWrapper .volume__sliderProgress { background: var(--env-green) !important; }
-.volume__sliderHandle { background: #fff !important; border: none !important; }
+.volume__sliderWrapper .volume__sliderProgress {
+    background: var(--env-green) !important;
+}
+.volume__sliderHandle {
+    background: #fff !important;
+    border: none !important;
+}
 
 /* Controls */
-.skipControl, .shuffleControl, .repeatControl {
-    filter: invert(1) opacity(0.5); background: #222; border-radius: 4px; border: 1px solid #444;
-    width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+.skipControl,
+.shuffleControl,
+.repeatControl {
+    filter: invert(1) opacity(0.5);
+    background: #222;
+    border-radius: 4px;
+    border: 1px solid #444;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .skipControl:hover {
-    border-color: var(--lfo-blue); color: var(--lfo-blue);
-    box-shadow: 0 0 5px var(--lfo-blue); opacity: 1; filter: invert(0);
+    border-color: var(--lfo-blue);
+    color: var(--lfo-blue);
+    box-shadow: 0 0 5px var(--lfo-blue);
+    opacity: 1;
+    filter: invert(0);
 }
 
 /* ==========================================================================
 6. FIXES
 ========================================================================== */
-.hero, .fullListenHero, .listenBackground, .sound__body {
-    background: transparent !important; background-image: none !important; background-color: transparent !important;
+.hero,
+.fullListenHero,
+.listenBackground,
+.sound__body {
+    background: transparent !important;
+    background-image: none !important;
+    background-color: transparent !important;
 }
 .sound__content {
-    background: #1c1d1f !important; border: 1px solid #444; box-shadow: 0 10px 30px #000;
+    background: #1c1d1f !important;
+    border: 1px solid #444;
+    box-shadow: 0 10px 30px #000;
 }
-.soundList__item, .trackItem {
-    background: rgba(30, 30, 30, 0.6) !important; border-bottom: 1px solid #000 !important; border-left: 1px solid #444;
+.soundList__item,
+.trackItem {
+    background: rgba(30, 30, 30, 0.6) !important;
+    border-bottom: 1px solid #000 !important;
+    border-left: 1px solid #444;
 }
 .soundList__item:hover {
-    background: rgba(40, 40, 40, 0.8) !important; border-left-color: var(--env-green) !important;
+    background: rgba(40, 40, 40, 0.8) !important;
+    border-left-color: var(--env-green) !important;
 }
 .sc-button {
-    background: #222 !important; border: 1px solid #444 !important; color: #ccc !important;
-    font-family: var(--font-ui) !important; border-radius: 2px !important; font-weight: 600;
+    background: #222 !important;
+    border: 1px solid #444 !important;
+    color: #ccc !important;
+    font-family: var(--font-ui) !important;
+    border-radius: 2px !important;
+    font-weight: 600;
 }
-.sc-button-like[aria-pressed="true"] {
-    border-color: var(--env-green) !important; color: var(--env-green) !important;
+.sc-button-like[aria-pressed='true'] {
+    border-color: var(--env-green) !important;
+    color: var(--env-green) !important;
     box-shadow: 0 0 10px rgba(36, 255, 0, 0.3);
 }

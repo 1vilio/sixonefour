@@ -267,7 +267,6 @@ body.platform-darwin .navigation-controls {
     opacity: 0.3;
 }
 
-
 .window-controls {
     display: flex;
     -webkit-app-region: no-drag;

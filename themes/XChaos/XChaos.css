@@ -10,148 +10,156 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Metal+Mania&family=Nosifer&display=swap');
 
 :root {
-  /* Палитра Бездны */
-  --eclipse-red: #8a0b0b;
-  --blood-fresh: #ff0000;
-  --void-black: #050505;
-  --abyss-deep: #000000;
+    /* Палитра Бездны */
+    --eclipse-red: #8a0b0b;
+    --blood-fresh: #ff0000;
+    --void-black: #050505;
+    --abyss-deep: #000000;
 
-  /* Материалы */
-  --armor-steel: #1a1a1a;
-  --armor-highlight: #333;
-  --ink-white: #dcdcdc;
-  --rusted-border: #4a0404;
+    /* Материалы */
+    --armor-steel: #1a1a1a;
+    --armor-highlight: #333;
+    --ink-white: #dcdcdc;
+    --rusted-border: #4a0404;
 
-  /* Размеры и Вес */
-  --border-thick: 3px;
-  --panel-spacing: 20px;
+    /* Размеры и Вес */
+    --border-thick: 3px;
+    --panel-spacing: 20px;
 
-  /* Шрифты */
-  --font-headers: 'Cinzel', serif;
-  --font-action: 'Metal Mania', cursive;
-  --font-horror: 'Nosifer', cursive;
+    /* Шрифты */
+    --font-headers: 'Cinzel', serif;
+    --font-action: 'Metal Mania', cursive;
+    --font-horror: 'Nosifer', cursive;
 }
 
 /* ==========================================================================
    2. ГЛОБАЛЬНАЯ АТМОСФЕРА (WORLD LAYER)
    ========================================================================== */
 @keyframes darkness-crawl {
-  0% {
-    background-position: 0 0;
-  }
+    0% {
+        background-position: 0 0;
+    }
 
-  100% {
-    background-position: 100px 100px;
-  }
+    100% {
+        background-position: 100px 100px;
+    }
 }
 
 body {
-  background-color: var(--abyss-deep) !important;
-  color: var(--ink-white) !important;
-  font-family: var(--font-headers) !important;
-  letter-spacing: 0.5px;
+    background-color: var(--abyss-deep) !important;
+    color: var(--ink-white) !important;
+    font-family: var(--font-headers) !important;
+    letter-spacing: 0.5px;
 
-  /* Сложная текстура: Штриховка + Шум */
-  background-image:
-    repeating-linear-gradient(45deg, rgba(20, 0, 0, 0.1) 0px, rgba(0, 0, 0, 0.2) 2px, transparent 2px, transparent 6px),
-    repeating-linear-gradient(-45deg, #050505 0px, #050505 2px, #0a0a0a 2px, #0a0a0a 4px) !important;
-  background-size: 50px 50px;
-  animation: darkness-crawl 30s linear infinite;
-  overflow-x: hidden;
+    /* Сложная текстура: Штриховка + Шум */
+    background-image:
+        repeating-linear-gradient(
+            45deg,
+            rgba(20, 0, 0, 0.1) 0px,
+            rgba(0, 0, 0, 0.2) 2px,
+            transparent 2px,
+            transparent 6px
+        ),
+        repeating-linear-gradient(-45deg, #050505 0px, #050505 2px, #0a0a0a 2px, #0a0a0a 4px) !important;
+    background-size: 50px 50px;
+    animation: darkness-crawl 30s linear infinite;
+    overflow-x: hidden;
 }
 
 /* Виньетка (затемнение по краям экрана) для эффекта "сна" или "воспоминания" */
 body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.8) 100%);
-  pointer-events: none;
-  z-index: 9999;
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.8) 100%);
+    pointer-events: none;
+    z-index: 9999;
 }
 
 #app .l-container.l-content {
-  background: rgba(10, 10, 10, 0.98) !important;
-  border-left: var(--border-thick) solid var(--armor-highlight);
-  border-right: var(--border-thick) solid var(--armor-highlight);
-  box-shadow: 0 0 100px #000;
-  padding: 20px !important;
-  /* Больше воздуха внутри контейнера */
+    background: rgba(10, 10, 10, 0.98) !important;
+    border-left: var(--border-thick) solid var(--armor-highlight);
+    border-right: var(--border-thick) solid var(--armor-highlight);
+    box-shadow: 0 0 100px #000;
+    padding: 20px !important;
+    /* Больше воздуха внутри контейнера */
 }
 
 /* Скроллбар - Тяжелый механизм */
 ::-webkit-scrollbar {
-  width: 10px !important;
-  background-color: #000;
+    width: 10px !important;
+    background-color: #000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, var(--armor-steel), var(--eclipse-red));
-  border: 1px solid #000;
-  border-radius: 0;
+    background: linear-gradient(to bottom, var(--armor-steel), var(--eclipse-red));
+    border: 1px solid #000;
+    border-radius: 0;
 }
 
 /* ==========================================================================
    3. ХЕДЕР - ЧЕРНЫЙ МОНОЛИТ
    ========================================================================== */
 .header {
-  background: linear-gradient(to bottom, #111, #000) !important;
-  border-bottom: 4px solid var(--eclipse-red) !important;
-  height: 52px !important;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
+    background: linear-gradient(to bottom, #111, #000) !important;
+    border-bottom: 4px solid var(--eclipse-red) !important;
+    height: 52px !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
 }
 
 .header__inner {
-  max-width: 1240px !important;
+    max-width: 1240px !important;
 }
 
 /* Логотип (Кровавое облако - fix из прошлой версии) */
 .header__logo a.header__logoLink {
-  text-indent: -9999px;
-  background-image: url('https://a-v2.sndcdn.com/assets/images/header/cloud-e365a47.png');
-  background-size: 48px 24px;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: brightness(0.6) sepia(1) hue-rotate(-50deg) saturate(800%) drop-shadow(0 0 5px var(--blood-fresh));
+    text-indent: -9999px;
+    background-image: url('https://a-v2.sndcdn.com/assets/images/header/cloud-e365a47.png');
+    background-size: 48px 24px;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: brightness(0.6) sepia(1) hue-rotate(-50deg) saturate(800%) drop-shadow(0 0 5px var(--blood-fresh));
 }
 
 /* Навигация Хедера */
-.header__navMenu>li>a {
-  font-size: 14px !important;
-  text-transform: uppercase;
-  font-weight: 900 !important;
-  color: #666 !important;
-  transition: color 0.3s, text-shadow 0.3s;
+.header__navMenu > li > a {
+    font-size: 14px !important;
+    text-transform: uppercase;
+    font-weight: 900 !important;
+    color: #666 !important;
+    transition:
+        color 0.3s,
+        text-shadow 0.3s;
 }
 
-.header__navMenu>li>a.selected {
-  color: var(--ink-white) !important;
-  background: #000 !important;
-  border-bottom: 3px solid var(--blood-fresh) !important;
-  text-shadow: 0 0 10px var(--blood-fresh);
+.header__navMenu > li > a.selected {
+    color: var(--ink-white) !important;
+    background: #000 !important;
+    border-bottom: 3px solid var(--blood-fresh) !important;
+    text-shadow: 0 0 10px var(--blood-fresh);
 }
 
 /* Поиск - Прорезь в броне */
 .headerSearch__input {
-  background: #000 !important;
-  border: 2px solid #333 !important;
-  color: var(--ink-white) !important;
-  border-radius: 0 !important;
-  font-family: var(--font-headers) !important;
-  height: 30px !important;
+    background: #000 !important;
+    border: 2px solid #333 !important;
+    color: var(--ink-white) !important;
+    border-radius: 0 !important;
+    font-family: var(--font-headers) !important;
+    height: 30px !important;
 }
 
 .headerSearch__input:focus {
-  border-color: var(--eclipse-red) !important;
-  box-shadow: 0 0 15px rgba(138, 11, 11, 0.4);
+    border-color: var(--eclipse-red) !important;
+    box-shadow: 0 0 15px rgba(138, 11, 11, 0.4);
 }
 
 .headerSearch__submit {
-  filter: invert(1);
-  /* Делаем иконку лупы белой */
+    filter: invert(1);
+    /* Делаем иконку лупы белой */
 }
 
 /* ==========================================================================
@@ -160,263 +168,259 @@ body::before {
 /* Превращаем список в набор карточек */
 .soundList__item,
 .trackItem {
-  margin-bottom: 25px !important;
-  padding: 20px !important;
-  background: linear-gradient(180deg, rgba(20, 20, 20, 0.9), rgba(5, 5, 5, 0.95)) !important;
-  border: 2px solid #222 !important;
-  box-shadow: 5px 5px 0px #000;
-  /* Жесткая тень */
-  position: relative;
-  transition: transform 0.2s;
+    margin-bottom: 25px !important;
+    padding: 20px !important;
+    background: linear-gradient(180deg, rgba(20, 20, 20, 0.9), rgba(5, 5, 5, 0.95)) !important;
+    border: 2px solid #222 !important;
+    box-shadow: 5px 5px 0px #000;
+    /* Жесткая тень */
+    position: relative;
+    transition: transform 0.2s;
 }
 
 .soundList__item:hover {
-  border-color: var(--eclipse-red) !important;
-  transform: translate(-2px, -2px);
-  box-shadow: 7px 7px 0px var(--eclipse-red);
+    border-color: var(--eclipse-red) !important;
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0px var(--eclipse-red);
 }
 
 /* Заголовки треков */
 .soundTitle__title {
-  font-size: 1.4em !important;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 5px;
-  display: inline-block;
-  border-bottom: 1px solid transparent;
+    font-size: 1.4em !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    display: inline-block;
+    border-bottom: 1px solid transparent;
 }
 
 .soundTitle__title:hover {
-  color: var(--blood-fresh) !important;
-  border-bottom-color: var(--blood-fresh);
-  text-shadow: 2px 2px 0 #000;
+    color: var(--blood-fresh) !important;
+    border-bottom-color: var(--blood-fresh);
+    text-shadow: 2px 2px 0 #000;
 }
 
 /* Теги (жанры) */
 .sc-tag {
-  background: #000 !important;
-  border: 1px solid #333 !important;
-  color: #666 !important;
-  border-radius: 0 !important;
-  font-family: monospace;
+    background: #000 !important;
+    border: 1px solid #333 !important;
+    color: #666 !important;
+    border-radius: 0 !important;
+    font-family: monospace;
 }
 
 /* ==========================================================================
    5. ОБЛОЖКИ - DARK ARTS
    ========================================================================== */
 .playableTile__artwork {
-  border: 4px solid var(--ink-white) !important;
-  /* Жирная рамка */
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-  filter: grayscale(100%) contrast(130%) brightness(0.8);
+    border: 4px solid var(--ink-white) !important;
+    /* Жирная рамка */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+    filter: grayscale(100%) contrast(130%) brightness(0.8);
 }
 
 /* Эффект проклятой печати при наведении */
 .playableTile:hover .playableTile__artwork {
-  filter: grayscale(0%) sepia(100%) hue-rotate(-50deg) saturate(500%) contrast(150%);
-  border-color: var(--blood-fresh) !important;
+    filter: grayscale(0%) sepia(100%) hue-rotate(-50deg) saturate(500%) contrast(150%);
+    border-color: var(--blood-fresh) !important;
 }
 
 /* ==========================================================================
    6. САЙДБАР - СТЕНА ТРОФЕЕВ
    ========================================================================== */
 .sidebar {
-  background: repeating-linear-gradient(0deg,
-      #111,
-      #111 10px,
-      #0e0e0e 10px,
-      #0e0e0e 20px) !important;
-  border-left: 5px double #000 !important;
-  padding: 15px !important;
+    background: repeating-linear-gradient(0deg, #111, #111 10px, #0e0e0e 10px, #0e0e0e 20px) !important;
+    border-left: 5px double #000 !important;
+    padding: 15px !important;
 }
 
 /* Заголовки в сайдбаре */
 .sidebarHeader__title,
 h3 {
-  font-family: var(--font-horror) !important;
-  /* Жуткий шрифт для заголовков секций */
-  color: var(--rusted-border) !important;
-  font-size: 14px !important;
-  border-bottom: 1px dashed var(--rusted-border);
-  padding-bottom: 5px;
+    font-family: var(--font-horror) !important;
+    /* Жуткий шрифт для заголовков секций */
+    color: var(--rusted-border) !important;
+    font-size: 14px !important;
+    border-bottom: 1px dashed var(--rusted-border);
+    padding-bottom: 5px;
 }
 
 /* Карточки юзеров в сайдбаре */
 .userBadgeListItem {
-  border-bottom: 1px solid #222;
-  padding: 10px 0;
+    border-bottom: 1px solid #222;
+    padding: 10px 0;
 }
 
 .userBadgeListItem__title {
-  font-family: var(--font-headers) !important;
-  font-weight: bold;
-  letter-spacing: 0.5px;
+    font-family: var(--font-headers) !important;
+    font-weight: bold;
+    letter-spacing: 0.5px;
 }
 
 /* ==========================================================================
    7. КНОПКИ И ДЕЙСТВИЯ (IRON PLATES)
    ========================================================================== */
 .sc-button {
-  background: #000 !important;
-  border: 2px solid #444 !important;
-  color: #888 !important;
-  font-family: var(--font-headers) !important;
-  font-weight: 700 !important;
-  border-radius: 0 !important;
-  /* Острые углы */
-  text-transform: uppercase;
-  box-shadow: 2px 2px 0 #222;
-  height: 30px !important;
+    background: #000 !important;
+    border: 2px solid #444 !important;
+    color: #888 !important;
+    font-family: var(--font-headers) !important;
+    font-weight: 700 !important;
+    border-radius: 0 !important;
+    /* Острые углы */
+    text-transform: uppercase;
+    box-shadow: 2px 2px 0 #222;
+    height: 30px !important;
 }
 
 .sc-button:hover {
-  color: var(--ink-white) !important;
-  border-color: var(--ink-white) !important;
-  background: #222 !important;
-  box-shadow: 2px 2px 0 var(--ink-white);
+    color: var(--ink-white) !important;
+    border-color: var(--ink-white) !important;
+    background: #222 !important;
+    box-shadow: 2px 2px 0 var(--ink-white);
 }
 
 /* Активные кнопки (Liked) */
 .sc-button-like.sc-button-selected {
-  color: var(--blood-fresh) !important;
-  border-color: var(--blood-fresh) !important;
-  box-shadow: 2px 2px 0 var(--blood-fresh);
+    color: var(--blood-fresh) !important;
+    border-color: var(--blood-fresh) !important;
+    box-shadow: 2px 2px 0 var(--blood-fresh);
 }
 
 /* Кнопка "Follow" */
 .sc-button-follow {
-  border: 2px solid var(--rusted-border) !important;
-  color: var(--rusted-border) !important;
+    border: 2px solid var(--rusted-border) !important;
+    color: var(--rusted-border) !important;
 }
 
 .sc-button-follow.sc-button-selected {
-  background: var(--rusted-border) !important;
-  color: #000 !important;
+    background: var(--rusted-border) !important;
+    color: #000 !important;
 }
 
 /* ==========================================================================
    8. ПЛЕЕР - THE DRAGONSLAYER
    ========================================================================== */
 .playControls {
-  background: #050505 !important;
-  border-top: 5px solid #333 !important;
-  /* Толстое лезвие */
-  padding-bottom: 5px;
-  height: 60px !important;
-  /* Делаем плеер выше */
+    background: #050505 !important;
+    border-top: 5px solid #333 !important;
+    /* Толстое лезвие */
+    padding-bottom: 5px;
+    height: 60px !important;
+    /* Делаем плеер выше */
 }
 
 .playControls__inner {
-  height: 100% !important;
-  display: flex;
-  align-items: center;
+    height: 100% !important;
+    display: flex;
+    align-items: center;
 }
 
 /* Кнопки управления (Skip, Previous) */
 .skipControl {
-  filter: invert(1) drop-shadow(0 0 2px #fff);
-  transition: transform 0.1s;
+    filter: invert(1) drop-shadow(0 0 2px #fff);
+    transition: transform 0.1s;
 }
 
 .skipControl:active {
-  transform: scale(0.9);
+    transform: scale(0.9);
 }
 
 /* Play Button - Сердце тьмы */
 .playControl {
-  width: 48px !important;
-  height: 48px !important;
-  margin: 0 15px !important;
-  background: var(--eclipse-red) !important;
-  border: 3px solid #000 !important;
-  box-shadow: 0 0 15px var(--eclipse-red);
+    width: 48px !important;
+    height: 48px !important;
+    margin: 0 15px !important;
+    background: var(--eclipse-red) !important;
+    border: 3px solid #000 !important;
+    box-shadow: 0 0 15px var(--eclipse-red);
 }
 
 .playControl::before {
-  filter: brightness(0);
+    filter: brightness(0);
 }
 
 /* Черный треугольник */
 
 /* Прогресс бар - Жирный и грубый */
 .playbackTimeline__progressWrapper {
-  height: 10px !important;
-  background: #111 !important;
-  border: 1px solid #333;
-  border-radius: 0 !important;
-  margin-top: 5px;
+    height: 10px !important;
+    background: #111 !important;
+    border: 1px solid #333;
+    border-radius: 0 !important;
+    margin-top: 5px;
 }
 
 .playbackTimeline__progressBar {
-  background: var(--ink-white) !important;
-  border-right: 3px solid var(--blood-fresh);
-  /* Кровавый срез */
+    background: var(--ink-white) !important;
+    border-right: 3px solid var(--blood-fresh);
+    /* Кровавый срез */
 }
 
 /* Volume Control */
 .volume__sliderWrapper {
-  background: #000 !important;
-  border: 1px solid #333;
+    background: #000 !important;
+    border: 1px solid #333;
 }
 
 .volume__sliderProgress {
-  background: var(--eclipse-red) !important;
+    background: var(--eclipse-red) !important;
 }
 
 /* ==========================================================================
    9. WAVEFORM - РВАНАЯ РАНА
    ========================================================================== */
 .waveform {
-  height: 60px !important;
-  opacity: 1;
-  /* Экстремальный контраст для вида туши */
-  filter: grayscale(100%) contrast(300%) brightness(2) drop-shadow(0 0 2px #fff);
+    height: 60px !important;
+    opacity: 1;
+    /* Экстремальный контраст для вида туши */
+    filter: grayscale(100%) contrast(300%) brightness(2) drop-shadow(0 0 2px #fff);
 }
 
 /* Маска для придания рваности (экспериментально, но эффективно) */
 .sound__waveform {
-  border-bottom: 2px solid var(--armor-highlight);
-  background: rgba(255, 255, 255, 0.02);
+    border-bottom: 2px solid var(--armor-highlight);
+    background: rgba(255, 255, 255, 0.02);
 }
 
 /* Комментарии на волне - капли крови */
 .commentPopover.sc-visible {
-  background: var(--eclipse-red) !important;
-  border: 2px solid #000 !important;
+    background: var(--eclipse-red) !important;
+    border: 2px solid #000 !important;
 }
 
 /* ==========================================================================
    10. ВКЛАДКИ (COLLECTION NAV) - БРОНИРОВАННЫЕ ПЛИТЫ
    ========================================================================== */
 .g-tabs {
-  border-bottom: 2px solid #333 !important;
-  margin-bottom: 30px !important;
+    border-bottom: 2px solid #333 !important;
+    margin-bottom: 30px !important;
 }
 
 .g-tabs-link {
-  font-size: 18px !important;
-  font-weight: 900 !important;
-  color: #444 !important;
-  background: transparent !important;
-  border: 2px solid transparent !important;
-  margin-right: 5px !important;
-  padding: 10px 20px !important;
-  transition: all 0.2s;
+    font-size: 18px !important;
+    font-weight: 900 !important;
+    color: #444 !important;
+    background: transparent !important;
+    border: 2px solid transparent !important;
+    margin-right: 5px !important;
+    padding: 10px 20px !important;
+    transition: all 0.2s;
 }
 
 .g-tabs-link:hover {
-  color: var(--ink-white) !important;
-  background: #111 !important;
-  border: 2px solid #333 !important;
+    color: var(--ink-white) !important;
+    background: #111 !important;
+    border: 2px solid #333 !important;
 }
 
 .g-tabs-link.active {
-  color: var(--blood-fresh) !important;
-  background: #000 !important;
-  border: 2px solid var(--blood-fresh) !important;
-  box-shadow: 0 0 15px rgba(138, 11, 11, 0.2);
-  transform: skewX(-10deg);
-  /* Агрессивный наклон активной вкладки */
+    color: var(--blood-fresh) !important;
+    background: #000 !important;
+    border: 2px solid var(--blood-fresh) !important;
+    box-shadow: 0 0 15px rgba(138, 11, 11, 0.2);
+    transform: skewX(-10deg);
+    /* Агрессивный наклон активной вкладки */
 }
 
 /* ==========================================================================
@@ -424,27 +428,27 @@ h3 {
    ========================================================================== */
 /* Выпадающие меню (More...) */
 .dropdownMenu {
-  background: #000 !important;
-  border: 2px solid var(--ink-white) !important;
+    background: #000 !important;
+    border: 2px solid var(--ink-white) !important;
 }
 
 .dropdownMenu__list,
 .dropdownMenu__item {
-  background: #000 !important;
+    background: #000 !important;
 }
 
 .dropdownMenu__link {
-  color: #888 !important;
+    color: #888 !important;
 }
 
 .dropdownMenu__link:hover {
-  background: var(--eclipse-red) !important;
-  color: #fff !important;
+    background: var(--eclipse-red) !important;
+    color: #fff !important;
 }
 
 /* Модальные окна */
 .modal__modal {
-  background: #111 !important;
-  border: 5px solid var(--armor-highlight) !important;
-  box-shadow: 0 0 50px #000;
+    background: #111 !important;
+    border: 5px solid var(--armor-highlight) !important;
+    box-shadow: 0 0 50px #000;
 }

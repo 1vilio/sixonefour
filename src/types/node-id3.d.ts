@@ -3,24 +3,30 @@ declare module 'node-id3' {
         title?: string;
         artist?: string;
         album?: string;
-        APIC?: string | Buffer | {
-            mime: string;
-            type: {
-                id: number;
-                name: string;
-            };
-            description: string;
-            imageBuffer: Buffer;
-        };
-        image?: string | Buffer | {
-            mime: string;
-            type: {
-                id: number;
-                name: string;
-            };
-            description: string;
-            imageBuffer: Buffer;
-        };
+        APIC?:
+            | string
+            | Buffer
+            | {
+                  mime: string;
+                  type: {
+                      id: number;
+                      name: string;
+                  };
+                  description: string;
+                  imageBuffer: Buffer;
+              };
+        image?:
+            | string
+            | Buffer
+            | {
+                  mime: string;
+                  type: {
+                      id: number;
+                      name: string;
+                  };
+                  description: string;
+                  imageBuffer: Buffer;
+              };
         userDefinedText?: {
             description: string;
             value: string;

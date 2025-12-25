@@ -8,15 +8,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&family=Nunito:wght@400;700&display=swap');
 
 :root {
-    --xmas-red: #D42426;
-    --xmas-dark-red: #8B0000;
+    --xmas-red: #d42426;
+    --xmas-dark-red: #8b0000;
     --xmas-green: #0f4023;
     --xmas-bright-green: #1f7a45;
-    --xmas-gold: #FFD700;
+    --xmas-gold: #ffd700;
     --light-blue: #00ffff;
-    --snow: #FFFFFF;
+    --snow: #ffffff;
     --night-blue: #02060c;
-    
+
     --font-header: 'Mountains of Christmas', cursive;
     --font-body: 'Nunito', sans-serif;
 }
@@ -33,9 +33,15 @@ body {
 
 /* Слой 1: Крупный снег */
 body::before {
-    content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 9999;
-    background-image: 
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    background-image:
         radial-gradient(4px 4px at 100px 50px, #fff, transparent),
         radial-gradient(5px 5px at 200px 150px, #fff, transparent),
         radial-gradient(3px 3px at 300px 250px, #fff, transparent),
@@ -50,9 +56,15 @@ body::before {
 
 /* Слой 2: Мелкая вьюга (параллакс эффект) */
 body::after {
-    content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 9998;
-    background-image: 
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9998;
+    background-image:
         radial-gradient(2px 2px at 50px 200px, #fff, transparent),
         radial-gradient(2px 2px at 150px 300px, #fff, transparent),
         radial-gradient(2px 2px at 250px 50px, #fff, transparent),
@@ -64,17 +76,33 @@ body::after {
 }
 
 @keyframes snow-heavy {
-    0% { background-position: 0 0; }
-    100% { background-position: 800px 1600px; }
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 800px 1600px;
+    }
 }
 @keyframes snow-light {
-    0% { background-position: 0 0; }
-    100% { background-position: 500px 1000px; }
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 500px 1000px;
+    }
 }
 
-#app .l-container.l-content { background-color: transparent !important; }
-::-webkit-scrollbar { width: 10px !important; background: var(--night-blue); }
-::-webkit-scrollbar-thumb { background: var(--xmas-red) !important; border-radius: 5px; }
+#app .l-container.l-content {
+    background-color: transparent !important;
+}
+::-webkit-scrollbar {
+    width: 10px !important;
+    background: var(--night-blue);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--xmas-red) !important;
+    border-radius: 5px;
+}
 
 /* ==========================================================================
 3. ХЕДЕР - ВЕТКИ И ГИРЛЯНДЫ
@@ -83,7 +111,7 @@ body::after {
     height: 62px !important;
     background: linear-gradient(to bottom, #2b0a0a, #4a0f0f) !important;
     border-bottom: none !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
     overflow: visible !important; /* Важно, чтобы гирлянды свисали */
 }
 
@@ -94,12 +122,17 @@ body::after {
 .header::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 40px;
-    background: 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background:
         radial-gradient(ellipse at center top, var(--xmas-green) 10px, transparent 11px),
         radial-gradient(ellipse at center top, var(--xmas-bright-green) 10px, transparent 11px);
     background-size: 40px 40px;
-    background-position: 0 -20px, 20px -20px;
+    background-position:
+        0 -20px,
+        20px -20px;
     background-repeat: repeat-x;
     z-index: 0; /* Под текстом */
     pointer-events: none;
@@ -112,25 +145,36 @@ body::after {
 .header::after {
     content: '';
     position: absolute;
-    bottom: -8px; left: 0; width: 100%; height: 12px;
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 12px;
     /* Чередуем цвета: Красный, Зеленый, Синий, Желтый */
-    background-image: 
+    background-image:
         radial-gradient(circle, var(--xmas-red) 5px, transparent 6px),
         radial-gradient(circle, var(--xmas-bright-green) 5px, transparent 6px),
         radial-gradient(circle, var(--light-blue) 5px, transparent 6px),
         radial-gradient(circle, var(--xmas-gold) 5px, transparent 6px);
     background-size: 60px 20px; /* Расстояние между повторами паттерна */
-    background-position: 0 0, 15px 0, 30px 0, 45px 0;
+    background-position:
+        0 0,
+        15px 0,
+        30px 0,
+        45px 0;
     background-repeat: repeat-x;
     z-index: 101;
     pointer-events: none;
-    filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
     animation: twinkle-lights 1.5s infinite alternate;
 }
 
 @keyframes twinkle-lights {
-    0% { filter: drop-shadow(0 0 2px rgba(255,255,255,0.3)) hue-rotate(0deg); }
-    100% { filter: drop-shadow(0 0 8px rgba(255,255,255,0.9)) hue-rotate(10deg); }
+    0% {
+        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3)) hue-rotate(0deg);
+    }
+    100% {
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9)) hue-rotate(10deg);
+    }
 }
 
 /* ИГРУШКИ НА ПАНЕЛИ (висят на ветках) */
@@ -144,12 +188,17 @@ body::after {
     z-index: 102;
     pointer-events: none;
     animation: swing 3s ease-in-out infinite;
-    text-shadow: 0 5px 10px rgba(0,0,0,0.5);
+    text-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
     opacity: 1;
 }
 @keyframes swing {
-    0%, 100% { transform: rotate(-5deg); }
-    50% { transform: rotate(5deg); }
+    0%,
+    100% {
+        transform: rotate(-5deg);
+    }
+    50% {
+        transform: rotate(5deg);
+    }
 }
 
 /* Логотип */
@@ -157,20 +206,31 @@ body::after {
     background: radial-gradient(circle, #fff, #ddd) !important;
     border: 2px solid var(--xmas-gold);
     border-radius: 50%;
-    width: 36px !important; height: 36px !important;
+    width: 36px !important;
+    height: 36px !important;
     margin-top: 5px;
 }
 
 /* ==========================================================================
 4. ТИПОГРАФИКА
 ========================================================================== */
-h1, h2, h3, .soundTitle__title, .playableTile__title {
+h1,
+h2,
+h3,
+.soundTitle__title,
+.playableTile__title {
     font-family: var(--font-header) !important;
     color: var(--xmas-gold) !important;
     text-shadow: 2px 2px 0 #000;
 }
-.g-tabs-link { font-family: var(--font-header) !important; font-size: 1.5em !important; }
-.g-tabs-link.active { color: var(--xmas-red) !important; border-color: var(--xmas-red) !important; }
+.g-tabs-link {
+    font-family: var(--font-header) !important;
+    font-size: 1.5em !important;
+}
+.g-tabs-link.active {
+    color: var(--xmas-red) !important;
+    border-color: var(--xmas-red) !important;
+}
 
 /* ==========================================================================
 5. ОБЛОЖКИ - ПОДАРКИ
@@ -178,14 +238,23 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
 .playableTile__artwork {
     border: 4px solid var(--snow) !important;
     border-radius: 12px !important;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
 .playableTile__artwork::before {
-    content: '★'; position: absolute; top: -8px; right: -8px;
-    width: 30px; height: 30px; background: var(--xmas-gold);
-    border-radius: 50%; color: #8B0000;
-    display: flex; align-items: center; justify-content: center;
-    z-index: 10; border: 2px solid #fff;
+    content: '★';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 30px;
+    height: 30px;
+    background: var(--xmas-gold);
+    border-radius: 50%;
+    color: #8b0000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border: 2px solid #fff;
 }
 
 /* ==========================================================================
@@ -193,11 +262,11 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
 ========================================================================== */
 .playControls {
     /* Фиксим позиционирование и высоту */
-    height: 64px !important; 
+    height: 64px !important;
     background: rgba(43, 10, 10, 0.95) !important; /* Полупрозрачный темно-красный */
     backdrop-filter: blur(10px);
     border-top: 4px solid var(--xmas-green) !important;
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
 }
 
 .playControls__inner {
@@ -212,19 +281,23 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
 .playControl {
     position: relative !important; /* Убираем absolute, чтобы она не улетала */
     margin: 0 15px !important;
-    width: 44px !important; height: 44px !important;
+    width: 44px !important;
+    height: 44px !important;
     background: var(--snow) !important;
     border: 3px solid var(--xmas-gold) !important;
     border-radius: 50% !important;
     box-shadow: 0 0 10px var(--xmas-gold);
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0; /* Чтобы не сжималась */
 }
 
 /* Иконка внутри кнопки */
 .playControl::before {
     content: ''; /* Скрываем дефолт */
-    width: 0; height: 0;
+    width: 0;
+    height: 0;
     border-style: solid;
     border-width: 8px 0 8px 14px;
     border-color: transparent transparent transparent var(--xmas-dark-red);
@@ -232,7 +305,9 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
 }
 /* Если пауза */
 .playControl.playing::before {
-    border-width: 0; width: 12px; height: 16px;
+    border-width: 0;
+    width: 12px;
+    height: 16px;
     border-left: 4px solid var(--xmas-dark-red);
     border-right: 4px solid var(--xmas-dark-red);
     margin-left: 0;
@@ -241,8 +316,9 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
 
 /* Прогресс бар */
 .playbackTimeline__progressWrapper {
-    background: rgba(255,255,255,0.1) !important;
-    height: 8px !important; top: 0 !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    height: 8px !important;
+    top: 0 !important;
     border-radius: 4px;
 }
 
@@ -257,12 +333,20 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
     animation: candy-scroll 20s linear infinite;
     background-size: 50px 50px;
 }
-@keyframes candy-scroll { from { background-position: 0 0; } to { background-position: 1000px 0; } }
+@keyframes candy-scroll {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 1000px 0;
+    }
+}
 
 .playbackTimeline__progressHandle {
     background: var(--xmas-gold) !important;
     border: 2px solid #fff !important;
-    width: 16px !important; height: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
     top: -4px !important;
     box-shadow: 0 0 5px #000;
 }
@@ -276,9 +360,10 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
 /* ==========================================================================
 7. ПРОЧЕЕ
 ========================================================================== */
-.soundList__item, .trackItem {
+.soundList__item,
+.trackItem {
     background: rgba(22, 91, 51, 0.25) !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
     border-radius: 8px !important;
     margin-bottom: 10px !important;
 }
@@ -286,9 +371,9 @@ h1, h2, h3, .soundTitle__title, .playableTile__title {
 .sc-button {
     background: transparent !important;
     color: var(--snow) !important;
-    border: 1px solid rgba(255,255,255,0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
 }
-.sc-button-like[aria-pressed="true"] {
+.sc-button-like[aria-pressed='true'] {
     border-color: var(--xmas-red) !important;
     color: var(--xmas-red) !important;
 }

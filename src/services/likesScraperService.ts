@@ -1,4 +1,3 @@
-
 import { BrowserView } from 'electron';
 import fetch from 'cross-fetch';
 
@@ -33,13 +32,16 @@ export class LikesScraperService {
 
             const sess = this.view.webContents.session;
             const filter = {
-                urls: ['*://api-v2.soundcloud.com/*']
+                urls: ['*://api-v2.soundcloud.com/*'],
             };
 
             let found = false;
 
             // Define listener
-            const listener = (details: Electron.OnBeforeSendHeadersListenerDetails, callback: (response: Electron.BeforeSendResponse) => void) => {
+            const listener = (
+                details: Electron.OnBeforeSendHeadersListenerDetails,
+                callback: (response: Electron.BeforeSendResponse) => void,
+            ) => {
                 if (found) {
                     callback({ cancel: false, requestHeaders: details.requestHeaders });
                     return;
@@ -101,8 +103,8 @@ export class LikesScraperService {
         try {
             const response = await fetch(`https://api-v2.soundcloud.com/me?client_id=${this.clientId}`, {
                 headers: {
-                    'Authorization': this.oauthToken
-                }
+                    Authorization: this.oauthToken,
+                },
             });
 
             if (!response.ok) {
@@ -123,11 +125,11 @@ export class LikesScraperService {
     public async fetchTotalLikesCount(): Promise<number> {
         // With API, we can get the total count from the /me endpoint or just rely on the loop
         // But let's try to get it from /me
-        if (!await this.captureCredentials()) return 0;
+        if (!(await this.captureCredentials())) return 0;
 
         try {
             const response = await fetch(`https://api-v2.soundcloud.com/me?client_id=${this.clientId}`, {
-                headers: { 'Authorization': this.oauthToken! }
+                headers: { Authorization: this.oauthToken! },
             });
             const data = await response.json();
             return data.likes_count || 0;
@@ -138,7 +140,7 @@ export class LikesScraperService {
     }
 
     public async getLatestLikes(limit: number = 5): Promise<ScrapedTrack[]> {
-        if (!await this.captureCredentials()) return [];
+        if (!(await this.captureCredentials())) return [];
         const userId = await this.getUserId();
         if (!userId) return [];
 
@@ -146,7 +148,7 @@ export class LikesScraperService {
             const url = `https://api-v2.soundcloud.com/users/${userId}/track_likes?client_id=${this.clientId}&limit=${limit}&offset=0&linked_partitioning=1&app_version=1732696086`; // app_version is optional but good to have
 
             const response = await fetch(url, {
-                headers: { 'Authorization': this.oauthToken! }
+                headers: { Authorization: this.oauthToken! },
             });
 
             if (!response.ok) return [];
@@ -161,7 +163,7 @@ export class LikesScraperService {
                     artist: track.user.username,
                     url: track.permalink_url,
                     artwork: track.artwork_url ? track.artwork_url.replace('-large', '-t500x500') : '',
-                    dateLiked: item.created_at
+                    dateLiked: item.created_at,
                 };
             });
         } catch (e) {
@@ -173,7 +175,7 @@ export class LikesScraperService {
     public async scrapeAllLikes(
         onProgress: (count: number, total: number) => void,
         onTracksFound: (tracks: ScrapedTrack[]) => Promise<void>,
-        shouldStop: () => boolean
+        shouldStop: () => boolean,
     ): Promise<void> {
         if (this.isScraping) return;
         this.isScraping = true;
@@ -181,7 +183,7 @@ export class LikesScraperService {
         try {
             console.log('[LikesScraper] Starting API-based scrape...');
 
-            if (!await this.captureCredentials()) {
+            if (!(await this.captureCredentials())) {
                 console.error('[LikesScraper] Could not capture credentials.');
                 return;
             }
@@ -195,7 +197,8 @@ export class LikesScraperService {
             const total = await this.fetchTotalLikesCount();
             console.log(`[LikesScraper] Total likes to fetch: ${total}`);
 
-            let nextHref: string | null = `https://api-v2.soundcloud.com/users/${userId}/track_likes?client_id=${this.clientId}&limit=50&offset=0&linked_partitioning=1`;
+            let nextHref: string | null =
+                `https://api-v2.soundcloud.com/users/${userId}/track_likes?client_id=${this.clientId}&limit=50&offset=0&linked_partitioning=1`;
             let processedCount = 0;
 
             while (nextHref && !shouldStop()) {
@@ -207,7 +210,7 @@ export class LikesScraperService {
                 }
 
                 const response: any = await fetch(nextHref, {
-                    headers: { 'Authorization': this.oauthToken! }
+                    headers: { Authorization: this.oauthToken! },
                 });
 
                 if (!response.ok) {
@@ -220,19 +223,21 @@ export class LikesScraperService {
 
                 if (collection.length === 0) break;
 
-                const tracks: ScrapedTrack[] = collection.map((item: any) => {
-                    const track = item.track;
-                    // Handle cases where track might be deleted or null
-                    if (!track) return null;
+                const tracks: ScrapedTrack[] = collection
+                    .map((item: any) => {
+                        const track = item.track;
+                        // Handle cases where track might be deleted or null
+                        if (!track) return null;
 
-                    return {
-                        title: track.title,
-                        artist: track.user ? track.user.username : 'Unknown',
-                        url: track.permalink_url,
-                        artwork: track.artwork_url ? track.artwork_url.replace('-large', '-t500x500') : '',
-                        dateLiked: item.created_at
-                    };
-                }).filter((t: any) => t !== null);
+                        return {
+                            title: track.title,
+                            artist: track.user ? track.user.username : 'Unknown',
+                            url: track.permalink_url,
+                            artwork: track.artwork_url ? track.artwork_url.replace('-large', '-t500x500') : '',
+                            dateLiked: item.created_at,
+                        };
+                    })
+                    .filter((t: any) => t !== null);
 
                 // Await processing of this batch before continuing!
                 await onTracksFound(tracks);
@@ -243,9 +248,8 @@ export class LikesScraperService {
                 nextHref = data.next_href;
 
                 // Delay to avoid rate limiting (429)
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                await new Promise((resolve) => setTimeout(resolve, 2000));
             }
-
         } catch (error) {
             console.error(`[LikesScraper] Error scraping all likes: ${error}`);
         } finally {

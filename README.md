@@ -26,9 +26,13 @@
 ## 🌐 English Version
 
 ### Project Overview
-**sixonefour** is not just another wrapper. It is a feature-rich, optimized SoundCloud client designed for users who demand both visual excellence and technical depth. Built on a modular Electron architecture, it integrates real-time stats, automation tools, and a proprietary theme engine.
+
+**sixonefour** is not just another wrapper. It is a feature-rich, optimized SoundCloud client designed for users who
+demand both visual excellence and technical depth. Built on a modular Electron architecture, it integrates real-time
+stats, automation tools, and a proprietary theme engine.
 
 ### � Core Capabilities
+
 - **Modular Theme Engine:** Full CSS/Manifest control with video background support.
 - **Advanced Automation:** Telegram Feed integration and Fans-category boosting.
 - **Network Resilience:** Native support for Zapret, Proxy, and DNS mapping.
@@ -41,26 +45,28 @@
 <details>
 <summary><strong>� Custom Themes & Visual Engine</strong></summary>
 
-The client features a robust theming system that goes beyond simple color swaps. It supports live CSS injection and manifest-based theme packages.
+The client features a robust theming system that goes beyond simple color swaps. It supports live CSS injection and
+manifest-based theme packages.
 
 - **Dynamic Media:** Seamless integration of `.mp4` and `.webm` video backgrounds with adjustable blur.
 - **Branding Control:** Fully customizable UI elements, including logos and scrollbars.
 - **Developer Ready:** Real-time hot-reloading for theme creators.
 
-| | |
-|:---:|:---:|
+|                                              |                                              |
+| :------------------------------------------: | :------------------------------------------: |
 | ![Theme 1](assets/preview/ThemePreview1.gif) | ![Theme 2](assets/preview/ThemePreview2.gif) |
 | ![Theme 3](assets/preview/ThemePreview3.gif) | ![Theme 4](assets/preview/ThemePreview4.gif) |
 
-> [!TIP]
-> Refer to the [Theming Guide](docs/CUSTOM_THEMES.md) and [Selectors List](docs/SELECTORS_LIST.md) for advanced customization.
+> [!TIP] Refer to the [Theming Guide](docs/CUSTOM_THEMES.md) and [Selectors List](docs/SELECTORS_LIST.md) for advanced
+> customization.
 
 </details>
 
 <details>
 <summary><strong>🪟 Desktop Widget (Glass Architecture)</strong></summary>
 
-A floating, interactive player designed with glassmorphism principles. The widget is fully synchronized with the main client's state and visual style.
+A floating, interactive player designed with glassmorphism principles. The widget is fully synchronized with the main
+client's state and visual style.
 
 - **Visual Parity:** Automatically inherits video backgrounds, fonts, and colors from the active theme.
 - **Resource Efficient:** Uses optimized BrowserViews to maintain zero impact on system performance.
@@ -94,12 +100,12 @@ Bridge the gap between SoundCloud and Telegram with automated feed management an
 - **Weekly Analytics:** Generates aesthetic infographics of your weekly listening habits.
 - **Metadata Management:** Comprehensive export of track titles, artists, and high-quality artwork.
 
-| Live Feed | Weekly Stats |
-|:---:|:---:|
+|                  Live Feed                   |                         Weekly Stats                         |
+| :------------------------------------------: | :----------------------------------------------------------: |
 | ![Live Feed](assets/preview/Live%20Feed.png) | ![Weekly Statistics](assets/preview/Weekly%20Statistics.png) |
 
-> [!IMPORTANT]
-> **Requirements:**
+> [!IMPORTANT] **Requirements:**
+>
 > 1. The bot must be added to your channel with **Administrator permissions**.
 > 2. Ensure **`Enable Track Parser`** is switched **ON** in the F1 settings for proper metadata extraction.
 
@@ -117,7 +123,7 @@ Built-in solutions to maintain connection stability and bypass regional restrict
 - **Zapret Service:** Integrated DPI bypass for unrestricted track streaming.
 - **Custom DNS Mapping:** Hard-coded host-resolver rules for SoundCloud domains.
 - **Proxy Engine:** Full support for custom proxy configurations.
-</details>
+  </details>
 
 <details>
 <summary><strong>📈 Fans Boosting (Behavior Simulation)</strong></summary>
@@ -125,21 +131,25 @@ Built-in solutions to maintain connection stability and bypass regional restrict
 A sophisticated tool designed to improve track placement in the "Fans" category using human-like behavior simulation.
 
 - **Organic Patterns:** Randomizes listening duration (80-100% full listens vs. short samples) to mimic real users.
-- **Hardware Fingerprinting:** Spoofs viewport metrics, Device Scale factors, and User-Agents via Chrome DevTools Protocol (CDP).
+- **Hardware Fingerprinting:** Spoofs viewport metrics, Device Scale factors, and User-Agents via Chrome DevTools
+  Protocol (CDP).
 - **Intelligent Scheduling:** Distributes plays over hours to maintain a natural growth curve.
 
 <p align="center">
   <img src="assets/preview/FansBoostingPreview.png" width="80%">
 </p>
 
-> [!WARNING]
-> This feature requires **`Enable Track Parser`** to be active in the F1 settings to correctly identify track parameters.
+> [!WARNING] This feature requires **`Enable Track Parser`** to be active in the F1 settings to correctly identify track
+> parameters.
+
 </details>
 
 ---
 
 ### � Project Roadmap
+
 The following features are planned for future releases:
+
 1. **WebSocket Synchronization:** Listen to music in real-time with friends.
 2. **First-Launch Experience:** Interactive tutorial and setup wizard for new users.
 3. **In-Game Overlay:** Manage playback without leaving your active game.
@@ -156,6 +166,7 @@ The following features are planned for future releases:
 ---
 
 ### 🛠 Technical Build
+
 ```bash
 # Clone and install dependencies
 git clone https://github.com/1vilio/sixonefour.git
@@ -175,7 +186,10 @@ npm run build-win
 ## 🇷🇺 Русская версия
 
 ### О проекте
-**sixonefour** — это не просто оболочка, а многофункциональный оптимизированный клиент SoundCloud, созданный для тех, кому важен как эстетический вид, так и технические возможности. Клиент построен на модульной архитектуре Electron и включает в себя статистику в реальном времени, инструменты автоматизации и мощный движок кастомных тем.
+
+**sixonefour** — это не просто оболочка, а многофункциональный оптимизированный клиент SoundCloud, созданный для тех,
+кому важен как эстетический вид, так и технические возможности. Клиент построен на модульной архитектуре Electron и
+включает в себя статистику в реальном времени, инструменты автоматизации и мощный движок кастомных тем.
 
 ### 🔍 Подробный разбор функций
 
@@ -188,8 +202,8 @@ npm run build-win
 - **Полный контроль:** Возможность замены логотипов, настройки скроллбаров и шрифтов.
 - **Hot-Reload:** Обновление тем в реальном времени без перезагрузки приложения.
 
-| | |
-|:---:|:---:|
+|                                              |                                              |
+| :------------------------------------------: | :------------------------------------------: |
 | ![Theme 1](assets/preview/ThemePreview1.gif) | ![Theme 2](assets/preview/ThemePreview2.gif) |
 | ![Theme 3](assets/preview/ThemePreview3.gif) | ![Theme 4](assets/preview/ThemePreview4.gif) |
 
@@ -218,8 +232,8 @@ npm run build-win
 - **Еженедельная статистика:** Красивые инфографики прослушиваний за неделю.
 - **Массовый экспорт:** Перенос всей коллекции треков в один клик.
 
-> [!IMPORTANT]
-> **Требования:**
+> [!IMPORTANT] **Требования:**
+>
 > 1. Бот должен быть добавлен в ваш канал с **правами администратора**.
 > 2. В настройках (F1) должен быть включен пункт **`Enable Track Parser`**.
 
@@ -234,14 +248,14 @@ npm run build-win
 - **Hardware Fingerprinting:** Подмена метрик устройства и User-Agent через протокол CDP.
 - **Умное планирование:** Распределение прослушиваний по времени для естественного роста.
 
-> [!WARNING]
-> Для корректной работы требуется включенный **`Enable Track Parser`** в настройках F1.
+> [!WARNING] Для корректной работы требуется включенный **`Enable Track Parser`** в настройках F1.
 
 </details>
 
 ---
 
 ### � Планы развития (Roadmap)
+
 1. **WebSocket Sync:** Совместное прослушивание музыки с друзьями в реальном времени.
 2. **First-Launch Tutorial:** Интерактивное обучение для новых пользователей.
 3. **Game Overlay:** Управление музыкой поверх игровых окон.
@@ -250,9 +264,12 @@ npm run build-win
 ---
 
 ### 💖 Acknowledgments
-Special thanks to **[richardhbtz](https://github.com/richardhbtz)** for the inspiration and work on **[soundcloud-rpc](https://github.com/richardhbtz/soundcloud-rpc)**.
+
+Special thanks to **[richardhbtz](https://github.com/richardhbtz)** for the inspiration and work on
+**[soundcloud-rpc](https://github.com/richardhbtz/soundcloud-rpc)**.
 
 ---
+
 <p align="center">
   Licensed under <strong>MIT</strong>. Made for the community.
 </p>

@@ -32,13 +32,13 @@ class DatabaseService {
         this.tracks = Datastore.create({
             filename: path.join(userDataPath, 'tracks.db'),
             autoload: true,
-            timestampData: true
+            timestampData: true,
         });
 
         this.history = Datastore.create({
             filename: path.join(userDataPath, 'listening_history.db'),
             autoload: true,
-            timestampData: true
+            timestampData: true,
         });
 
         // Ensure indexes for performance
@@ -53,11 +53,7 @@ class DatabaseService {
      */
     public async saveTrack(track: TrackDocument): Promise<void> {
         // upsert: true means insert if not exists, update if exists
-        await this.tracks.update(
-            { _id: track._id },
-            { $set: track },
-            { upsert: true }
-        );
+        await this.tracks.update({ _id: track._id }, { $set: track }, { upsert: true });
     }
 
     /**

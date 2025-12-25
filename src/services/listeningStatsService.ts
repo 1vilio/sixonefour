@@ -27,8 +27,23 @@ export interface StatsResult {
         seconds: number;
         change?: string;
     };
-    topTracks: Array<{ title: string; artist: string; playCount: number; url: string; artwork?: string; artistUrl?: string; change?: number }>;
-    topArtists: Array<{ name: string; playCount: number; url: string; duration: number; artwork?: string; change?: number }>;
+    topTracks: Array<{
+        title: string;
+        artist: string;
+        playCount: number;
+        url: string;
+        artwork?: string;
+        artistUrl?: string;
+        change?: number;
+    }>;
+    topArtists: Array<{
+        name: string;
+        playCount: number;
+        url: string;
+        duration: number;
+        artwork?: string;
+        change?: number;
+    }>;
     playsPerHour: number[];
     maxTracksInDay: { count: number; date: string; duration: number };
     maxRepeats: { count: number; track: { title: string; artist: string; url: string; artistUrl?: string } | null };
@@ -50,7 +65,7 @@ class ListeningStatsService {
             track_id: track.url,
             timestamp: Date.now(),
             listened_seconds: 0,
-            is_play_count: 1
+            is_play_count: 1,
         };
         await databaseService.logHistory(historyDoc);
         this.events.emit('stats-updated');
@@ -63,7 +78,7 @@ class ListeningStatsService {
             track_id: track.url,
             timestamp: Date.now(),
             listened_seconds: seconds,
-            is_play_count: 0
+            is_play_count: 0,
         };
         await databaseService.logHistory(historyDoc);
         this.events.emit('stats-updated');
@@ -76,18 +91,21 @@ class ListeningStatsService {
             artist: track.artist,
             duration: track.duration,
             artwork: track.artwork,
-            created_at: Date.now()
+            created_at: Date.now(),
         };
         await databaseService.saveTrack(trackDoc);
     }
 
-    private getPreviousPeriod(period: 'weekly' | 'monthly' | 'thisYear' | 'allTime', currentStartDate: number): { start: number; end: number } | null {
+    private getPreviousPeriod(
+        period: 'weekly' | 'monthly' | 'thisYear' | 'allTime',
+        currentStartDate: number,
+    ): { start: number; end: number } | null {
         if (period === 'weekly') {
             // Previous week: from (start - 7 days) to start
-            return { start: currentStartDate - (7 * 24 * 60 * 60 * 1000), end: currentStartDate };
+            return { start: currentStartDate - 7 * 24 * 60 * 60 * 1000, end: currentStartDate };
         } else if (period === 'monthly') {
             // Previous month: from (start - 30 days) to start
-            return { start: currentStartDate - (30 * 24 * 60 * 60 * 1000), end: currentStartDate };
+            return { start: currentStartDate - 30 * 24 * 60 * 60 * 1000, end: currentStartDate };
         } else if (period === 'thisYear') {
             // Previous year: from start of prev year to start of current year
             const currentYear = new Date(currentStartDate).getFullYear();
@@ -104,17 +122,18 @@ class ListeningStatsService {
         let totalDaysInPeriod = 0;
 
         if (period === 'weekly') {
-            startDate = now - (7 * 24 * 60 * 60 * 1000);
+            startDate = now - 7 * 24 * 60 * 60 * 1000;
             totalDaysInPeriod = 7;
         } else if (period === 'monthly') {
-            startDate = now - (30 * 24 * 60 * 60 * 1000);
+            startDate = now - 30 * 24 * 60 * 60 * 1000;
             totalDaysInPeriod = 30;
         } else if (period === 'thisYear') {
             const startOfYear = new Date(new Date().getFullYear(), 0, 1);
             startDate = startOfYear.getTime();
             // Calculate days passed in current year
             totalDaysInPeriod = Math.ceil((now - startDate) / (24 * 60 * 60 * 1000));
-        } else { // allTime
+        } else {
+            // allTime
             startDate = 0;
             // Will be calculated from first play
         }
@@ -124,7 +143,7 @@ class ListeningStatsService {
 
         // Calculate total days for allTime if needed
         if (period === 'allTime' && history.length > 0) {
-            const firstPlay = history.reduce((min, p) => p.timestamp < min ? p.timestamp : min, history[0].timestamp);
+            const firstPlay = history.reduce((min, p) => (p.timestamp < min ? p.timestamp : min), history[0].timestamp);
             totalDaysInPeriod = Math.ceil((now - firstPlay) / (24 * 60 * 60 * 1000));
             if (totalDaysInPeriod < 1) totalDaysInPeriod = 1;
         } else if (period === 'allTime') {
@@ -136,7 +155,7 @@ class ListeningStatsService {
         const prevPeriod = this.getPreviousPeriod(period, startDate);
         if (prevPeriod) {
             const rawPrev = await databaseService.getHistory(prevPeriod.start);
-            prevHistory = rawPrev.filter(h => h.timestamp < prevPeriod.end);
+            prevHistory = rawPrev.filter((h) => h.timestamp < prevPeriod.end);
         }
 
         // Fetch all tracks for metadata
@@ -150,7 +169,7 @@ class ListeningStatsService {
         const calculateMetrics = (data: ListeningHistoryDocument[]) => {
             let totalTracksPlayed = 0;
             let totalListeningTimeSeconds = 0;
-            const trackStats = new Map<string, { playCount: number; }>();
+            const trackStats = new Map<string, { playCount: number }>();
             const artistStats = new Map<string, { playCount: number; url: string; duration: number }>();
             const playsPerHour: number[] = new Array(24).fill(0);
 
@@ -275,7 +294,7 @@ class ListeningStatsService {
                 durationPerDay,
                 maxRepeats,
                 maxRepeatsTrackId,
-                calendarData
+                calendarData,
             };
         };
 
@@ -303,7 +322,7 @@ class ListeningStatsService {
                     playCount: stats.playCount,
                     url: id,
                     artwork: track ? track.artwork?.replace('large', 't500x500') : '',
-                    change: parseFloat(change.toFixed(2))
+                    change: parseFloat(change.toFixed(2)),
                 };
             })
             .sort((a, b) => b.playCount - a.playCount)
@@ -311,12 +330,11 @@ class ListeningStatsService {
 
         const mostPlayedTrack = topTracks.length > 0 ? topTracks[0] : null;
         // Add artist URL to mostPlayedTrack
-        const topTracksWithArtistUrl = topTracks.map(t => {
+        const topTracksWithArtistUrl = topTracks.map((t) => {
             const urlParts = t.url.split('/');
             const artistUrl = urlParts.slice(0, 4).join('/');
             return { ...t, artistUrl };
         });
-
 
         // 2. Top Artists (Fetch Top 50)
         let topArtists = Array.from(currentStats.artistStats.entries())
@@ -345,7 +363,7 @@ class ListeningStatsService {
                     url: stats.url,
                     duration: stats.duration,
                     artwork,
-                    change: parseFloat(change.toFixed(2))
+                    change: parseFloat(change.toFixed(2)),
                 };
             })
             .sort((a, b) => b.playCount - a.playCount)
@@ -353,15 +371,17 @@ class ListeningStatsService {
 
         // 3. Variety Score
         const uniqueTracks = currentStats.trackStats.size;
-        const varietyScore = currentStats.totalTracksPlayed > 0
-            ? parseFloat((uniqueTracks / currentStats.totalTracksPlayed * 100).toFixed(1))
-            : 0;
+        const varietyScore =
+            currentStats.totalTracksPlayed > 0
+                ? parseFloat(((uniqueTracks / currentStats.totalTracksPlayed) * 100).toFixed(1))
+                : 0;
 
         // 4. Obsession Rate
         const topTrackPlays = mostPlayedTrack ? mostPlayedTrack.playCount : 0;
-        const obsessionRate = currentStats.totalTracksPlayed > 0
-            ? parseFloat((topTrackPlays / currentStats.totalTracksPlayed * 100).toFixed(1))
-            : 0;
+        const obsessionRate =
+            currentStats.totalTracksPlayed > 0
+                ? parseFloat(((topTrackPlays / currentStats.totalTracksPlayed) * 100).toFixed(1))
+                : 0;
 
         // 5. Max Tracks in a Day
         let maxTracksCount = 0;
@@ -398,27 +418,31 @@ class ListeningStatsService {
 
         // 8. New Metrics
         // Average Track Length
-        const averageTrackLength = currentStats.totalTracksPlayed > 0
-            ? Math.round(currentStats.totalListeningTimeSeconds / currentStats.totalTracksPlayed)
-            : 0;
+        const averageTrackLength =
+            currentStats.totalTracksPlayed > 0
+                ? Math.round(currentStats.totalListeningTimeSeconds / currentStats.totalTracksPlayed)
+                : 0;
 
         // Consistency Score (Active Days / Total Days)
         const activeDays = currentStats.durationPerDay.size;
-        const consistencyScore = totalDaysInPeriod > 0
-            ? parseFloat(((activeDays / totalDaysInPeriod) * 100).toFixed(2))
-            : 0;
+        const consistencyScore =
+            totalDaysInPeriod > 0 ? parseFloat(((activeDays / totalDaysInPeriod) * 100).toFixed(2)) : 0;
 
         // Average Daily Listening (Total Time / Total Days)
-        const averageDailyListening = totalDaysInPeriod > 0
-            ? Math.round(currentStats.totalListeningTimeSeconds / totalDaysInPeriod)
-            : 0;
-
+        const averageDailyListening =
+            totalDaysInPeriod > 0 ? Math.round(currentStats.totalListeningTimeSeconds / totalDaysInPeriod) : 0;
 
         // Tracks played > 5 times in "All Time" (excluding current period if possible, but let's just check global stats)
         // AND played 0 times in current period.
         // To do this accurately, we need "All Time" stats.
         // Let's assume "All Time" means "Everything before startDate".
-        const rediscoveries: Array<{ title: string; artist: string; playCount: number; url: string; lastPlayed: number }> = [];
+        const rediscoveries: Array<{
+            title: string;
+            artist: string;
+            playCount: number;
+            url: string;
+            lastPlayed: number;
+        }> = [];
 
         if (period !== 'allTime') {
             // Fetch history BEFORE current period
@@ -446,7 +470,7 @@ class ListeningStatsService {
                             artist: track.artist,
                             playCount: stats.playCount, // Historical play count
                             url: id,
-                            lastPlayed: stats.lastPlayed
+                            lastPlayed: stats.lastPlayed,
                         });
                     }
                 }
@@ -458,7 +482,8 @@ class ListeningStatsService {
         // Total Tracks Change
         let totalTracksChange = 0;
         if (prevStats.totalTracksPlayed > 0) {
-            totalTracksChange = ((currentStats.totalTracksPlayed - prevStats.totalTracksPlayed) / prevStats.totalTracksPlayed) * 100;
+            totalTracksChange =
+                ((currentStats.totalTracksPlayed - prevStats.totalTracksPlayed) / prevStats.totalTracksPlayed) * 100;
         }
 
         // Process Calendar Data for JSON serialization (convert Set to Array)
@@ -466,14 +491,16 @@ class ListeningStatsService {
         for (const [date, data] of Object.entries(currentStats.calendarData)) {
             finalCalendar[date] = {
                 count: data.count,
-                artworks: Array.from(data.artworks).slice(0, 100) // Limit to 100 artworks per day
+                artworks: Array.from(data.artworks).slice(0, 100), // Limit to 100 artworks per day
             };
         }
 
         return {
             totalTracksPlayed: currentStats.totalTracksPlayed,
             totalTracksPlayedChange: parseFloat(totalTracksChange.toFixed(2)),
-            mostPlayedTrack: mostPlayedTrack ? { ...mostPlayedTrack, artistUrl: topTracksWithArtistUrl[0].artistUrl } : null,
+            mostPlayedTrack: mostPlayedTrack
+                ? { ...mostPlayedTrack, artistUrl: topTracksWithArtistUrl[0].artistUrl }
+                : null,
             totalListeningTime: { hours, minutes, seconds, change: timeChangeStr },
             topTracks: topTracksWithArtistUrl,
             topArtists,
@@ -481,7 +508,14 @@ class ListeningStatsService {
             maxTracksInDay: { count: maxTracksCount, date: maxTracksDate, duration: maxTracksDuration },
             maxRepeats: {
                 count: currentStats.maxRepeats,
-                track: maxRepeatsTrack ? { title: maxRepeatsTrack.title, artist: maxRepeatsTrack.artist, url: maxRepeatsTrack._id, artistUrl: maxRepeatsArtistUrl } : null
+                track: maxRepeatsTrack
+                    ? {
+                          title: maxRepeatsTrack.title,
+                          artist: maxRepeatsTrack.artist,
+                          url: maxRepeatsTrack._id,
+                          artistUrl: maxRepeatsArtistUrl,
+                      }
+                    : null,
             },
             varietyScore,
             obsessionRate,
@@ -489,7 +523,7 @@ class ListeningStatsService {
             averageDailyListening,
             consistencyScore,
             rediscoveries: rediscoveries.slice(0, 5), // Top 5 rediscoveries
-            calendar: finalCalendar
+            calendar: finalCalendar,
         };
     }
 }

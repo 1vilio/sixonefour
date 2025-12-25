@@ -13,19 +13,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 :root {
-  /* Мир Годжо */
-  --gojo-blue: #87CEEB;
-  --gojo-purple: #9370DB;
-  --gojo-deep-space: #1D1F33;
-  --surface-gojo: rgba(29, 31, 51, 0.85);
+    /* Мир Годжо */
+    --gojo-blue: #87ceeb;
+    --gojo-purple: #9370db;
+    --gojo-deep-space: #1d1f33;
+    --surface-gojo: rgba(29, 31, 51, 0.85);
 
-  /* Мир Сукуны */
-  --sukuna-red: #9A0000;
-  --sukuna-black: #000000;
-  --sukuna-bone: #E0DCD1;
+    /* Мир Сукуны */
+    --sukuna-red: #9a0000;
+    --sukuna-black: #000000;
+    --sukuna-bone: #e0dcd1;
 
-  --font-display: 'Karantina', sans-serif;
-  --font-main: 'Roboto', sans-serif;
+    --font-display: 'Karantina', sans-serif;
+    --font-main: 'Roboto', sans-serif;
 }
 
 /* ========================================================================== 
@@ -33,47 +33,47 @@
    ========================================================================== */
 body,
 #app {
-  background: transparent !important;
-  font-family: var(--font-main) !important;
-  color: var(--gojo-blue) !important;
+    background: transparent !important;
+    font-family: var(--font-main) !important;
+    color: var(--gojo-blue) !important;
 }
 
 #app .l-container.l-content {
-  background-color: var(--surface-gojo) !important;
-  backdrop-filter: blur(10px) brightness(0.9);
+    background-color: var(--surface-gojo) !important;
+    backdrop-filter: blur(10px) brightness(0.9);
 }
 
 ::-webkit-scrollbar {
-  width: 6px !important;
-  background-color: var(--gojo-deep-space);
+    width: 6px !important;
+    background-color: var(--gojo-deep-space);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--sukuna-red) !important;
+    background-color: var(--sukuna-red) !important;
 }
 
 .header,
 .footer {
-  background: rgba(10, 10, 20, 0.9) !important;
-  border-color: rgba(147, 112, 219, 0.2) !important;
-  backdrop-filter: blur(15px);
+    background: rgba(10, 10, 20, 0.9) !important;
+    border-color: rgba(147, 112, 219, 0.2) !important;
+    backdrop-filter: blur(15px);
 }
 
 .header__logo a.header__logoLink:first-of-type {
-  display: block !important;
-  width: 150px !important;
-  height: 46px !important;
-  text-indent: -9999px;
-  margin-left: 20px;
-  /* background-image: url('theme://JujutsuLogo.png') !important; */
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-size: contain !important;
-  transition: filter 0.3s ease;
+    display: block !important;
+    width: 150px !important;
+    height: 46px !important;
+    text-indent: -9999px;
+    margin-left: 20px;
+    /* background-image: url('theme://JujutsuLogo.png') !important; */
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: contain !important;
+    transition: filter 0.3s ease;
 }
 
 .header__logo a.header__logoLink:first-of-type:hover {
-  filter: drop-shadow(0 0 10px var(--gojo-purple));
+    filter: drop-shadow(0 0 10px var(--gojo-purple));
 }
 
 /* .header__logo a.header__logoLink > *, .header__logo a.header__logoLink:not(:first-of-type) { display: none !important; } */
@@ -82,94 +82,94 @@ body,
    3. ОБЛОЖКИ - "Битва Территорий"
    ========================================================================== */
 @keyframes gojo-aura {
-  0% {
-    box-shadow: 0 0 15px var(--gojo-blue);
-  }
+    0% {
+        box-shadow: 0 0 15px var(--gojo-blue);
+    }
 
-  50% {
-    box-shadow: 0 0 25px var(--gojo-purple);
-  }
+    50% {
+        box-shadow: 0 0 25px var(--gojo-purple);
+    }
 
-  100% {
-    box-shadow: 0 0 15px var(--gojo-blue);
-  }
+    100% {
+        box-shadow: 0 0 15px var(--gojo-blue);
+    }
 }
 
 .playableTile__artwork {
-  position: relative;
-  overflow: hidden;
-  border-radius: 4px !important;
-  border: 1px solid var(--gojo-purple) !important;
-  animation: gojo-aura 6s infinite ease-in-out;
-  background: var(--gojo-deep-space);
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px !important;
+    border: 1px solid var(--gojo-purple) !important;
+    animation: gojo-aura 6s infinite ease-in-out;
+    background: var(--gojo-deep-space);
 }
 
 /* Метки Сукуны (скрыты по умолчанию) */
 .playableTile__artwork::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M20 5 L5 20 L20 35 M80 5 L95 20 L80 35 M5 80 L20 95 L35 80 M80 95 L95 80 L80 65 M50 20 L20 50 L50 80 L80 50 Z' stroke='black' stroke-width='4' fill='none'/%3E%3Cpath d='M30 30 L70 70 M70 30 L30 70' stroke='black' stroke-width='6' fill='none'/%3E%3C/svg%3E");
-  background-size: 50px 50px;
-  opacity: 0;
-  transition: opacity 0.2s ease-in;
-  pointer-events: none;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M20 5 L5 20 L20 35 M80 5 L95 20 L80 35 M5 80 L20 95 L35 80 M80 95 L95 80 L80 65 M50 20 L20 50 L50 80 L80 50 Z' stroke='black' stroke-width='4' fill='none'/%3E%3Cpath d='M30 30 L70 70 M70 30 L30 70' stroke='black' stroke-width='6' fill='none'/%3E%3C/svg%3E");
+    background-size: 50px 50px;
+    opacity: 0;
+    transition: opacity 0.2s ease-in;
+    pointer-events: none;
 }
 
 .playableTile:hover .playableTile__artwork::before {
-  opacity: 1;
+    opacity: 1;
 }
 
 .playableTile:hover .playableTile__artwork {
-  animation: none;
-  box-shadow: inset 0 0 20px #000;
-  border-color: var(--sukuna-red) !important;
+    animation: none;
+    box-shadow: inset 0 0 20px #000;
+    border-color: var(--sukuna-red) !important;
 }
 
 .playableTile .image {
-  display: block !important;
-  transition: transform 0.3s ease;
+    display: block !important;
+    transition: transform 0.3s ease;
 }
 
 .playableTile:hover .image {
-  transform: scale(1.1);
-  filter: saturate(1.5) contrast(1.1);
+    transform: scale(1.1);
+    filter: saturate(1.5) contrast(1.1);
 }
 
 /* Hollow Purple в центре */
 @keyframes black-hole-pulse {
-  0% {
-    transform: scale(0.9);
-  }
+    0% {
+        transform: scale(0.9);
+    }
 
-  100% {
-    transform: scale(1.1);
-  }
+    100% {
+        transform: scale(1.1);
+    }
 }
 
 .playableTile__artwork::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: radial-gradient(circle, transparent 40%, var(--gojo-purple) 70%, var(--gojo-blue) 90%);
-  transform: translate(-50%, -50%);
-  opacity: 0.5;
-  z-index: 3;
-  pointer-events: none;
-  animation: black-hole-pulse 4s infinite alternate;
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: radial-gradient(circle, transparent 40%, var(--gojo-purple) 70%, var(--gojo-blue) 90%);
+    transform: translate(-50%, -50%);
+    opacity: 0.5;
+    z-index: 3;
+    pointer-events: none;
+    animation: black-hole-pulse 4s infinite alternate;
 }
 
 .playableTile:hover .playableTile__artwork::after {
-  background: radial-gradient(circle, var(--sukuna-black) 30%, var(--gojo-purple) 60%, var(--gojo-blue) 100%);
-  animation-duration: 0.5s;
+    background: radial-gradient(circle, var(--sukuna-black) 30%, var(--gojo-purple) 60%, var(--gojo-blue) 100%);
+    animation-duration: 0.5s;
 }
 
 /* ========================================================================== 
@@ -180,14 +180,14 @@ body,
 h1,
 h2,
 h3 {
-  font-family: var(--font-display) !important;
-  font-size: 3em !important;
-  color: var(--gojo-blue) !important;
-  text-shadow: 0 0 10px var(--gojo-purple);
+    font-family: var(--font-display) !important;
+    font-size: 3em !important;
+    color: var(--gojo-blue) !important;
+    text-shadow: 0 0 10px var(--gojo-purple);
 }
 
 .soundTitle__username:hover {
-  color: var(--sukuna-red) !important;
+    color: var(--sukuna-red) !important;
 }
 
 /* ========================================================================== 
@@ -199,84 +199,84 @@ h3 {
 .collection,
 .userInfo,
 .userBadgeListItem {
-  background: var(--surface-gojo) !important;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(147, 112, 219, 0.2) !important;
+    background: var(--surface-gojo) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(147, 112, 219, 0.2) !important;
 }
 
 .trackItem:hover {
-  background: rgba(154, 0, 0, 0.2) !important;
+    background: rgba(154, 0, 0, 0.2) !important;
 }
 
 .g-tabs-link {
-  color: var(--gojo-blue) !important;
+    color: var(--gojo-blue) !important;
 }
 
 .g-tabs-link.active {
-  color: var(--gojo-purple) !important;
-  border-bottom: 2px solid var(--gojo-purple);
+    color: var(--gojo-purple) !important;
+    border-bottom: 2px solid var(--gojo-purple);
 }
 
 /* ========================================================================== 
    6. ПЛЕЕР И УПРАВЛЕНИЕ
    ========================================================================== */
 .playableTile__playButton {
-  background: transparent !important;
-  border-radius: 50% !important;
-  border: 2px solid var(--gojo-blue) !important;
-  color: var(--gojo-blue) !important;
-  transition: all 0.2s !important;
+    background: transparent !important;
+    border-radius: 50% !important;
+    border: 2px solid var(--gojo-blue) !important;
+    color: var(--gojo-blue) !important;
+    transition: all 0.2s !important;
 }
 
 .playableTile__playButton:hover {
-  background: var(--sukuna-red) !important;
-  color: var(--sukuna-bone) !important;
-  border-color: var(--sukuna-red) !important;
-  box-shadow: 0 0 20px var(--sukuna-red);
+    background: var(--sukuna-red) !important;
+    color: var(--sukuna-bone) !important;
+    border-color: var(--sukuna-red) !important;
+    box-shadow: 0 0 20px var(--sukuna-red);
 }
 
 /* "Рассекающий" прогресс-бар */
 .playbackTimeline__progressWrapper {
-  background: var(--sukuna-black) !important;
+    background: var(--sukuna-black) !important;
 }
 
 .playbackTimeline__progressBar {
-  background: var(--sukuna-red) !important;
-  -webkit-mask-image: repeating-linear-gradient(-45deg, black 0, black 5px, transparent 5px, transparent 10px);
-  mask-image: repeating-linear-gradient(-45deg, black 0, black 5px, transparent 5px, transparent 10px);
+    background: var(--sukuna-red) !important;
+    -webkit-mask-image: repeating-linear-gradient(-45deg, black 0, black 5px, transparent 5px, transparent 10px);
+    mask-image: repeating-linear-gradient(-45deg, black 0, black 5px, transparent 5px, transparent 10px);
 }
 
 .playbackTimeline__progressHandle::before {
-  content: '👁';
-  font-size: 18px;
-  color: var(--sukuna-red);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-shadow: 0 0 5px var(--sukuna-red);
+    content: '👁';
+    font-size: 18px;
+    color: var(--sukuna-red);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-shadow: 0 0 5px var(--sukuna-red);
 }
 
 .playbackTimeline__progressHandle {
-  background: transparent !important;
-  border: none !important;
+    background: transparent !important;
+    border: none !important;
 }
 
 /* Waveform: энергия Годжо */
 .waveform,
 .sound__waveform {
-  filter: grayscale(1) sepia(1) saturate(10) hue-rotate(190deg) contrast(1.5) brightness(1.2) !important;
+    filter: grayscale(1) sepia(1) saturate(10) hue-rotate(190deg) contrast(1.5) brightness(1.2) !important;
 }
 
 /* Кнопки */
 .soundActions .sc-button {
-  color: var(--gojo-blue) !important;
-  background: transparent !important;
-  border: 1px solid rgba(147, 112, 219, 0.3) !important;
+    color: var(--gojo-blue) !important;
+    background: transparent !important;
+    border: 1px solid rgba(147, 112, 219, 0.3) !important;
 }
 
 .soundActions .sc-button:hover,
 .sc-button-selected {
-  color: var(--sukuna-bone) !important;
-  background: var(--sukuna-red) !important;
+    color: var(--sukuna-bone) !important;
+    background: var(--sukuna-red) !important;
 }

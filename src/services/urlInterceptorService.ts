@@ -1,4 +1,3 @@
-
 import { app, BrowserWindow, BrowserView } from 'electron';
 import path = require('path');
 
