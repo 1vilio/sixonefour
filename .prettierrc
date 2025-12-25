@@ -3,5 +3,6 @@
     "printWidth": 120,
     "proseWrap": "always",
     "tabWidth": 4,
-    "useTabs": false
+    "useTabs": false,
+    "endOfLine": "lf"
 }
