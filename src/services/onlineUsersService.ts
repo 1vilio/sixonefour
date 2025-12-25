@@ -20,7 +20,7 @@ export class OnlineUsersService {
         this.mainWindow = mainWindow;
         this.headerView = headerView;
 
-        const apiKey = this.store.get('ablyApiKey') as string || '94BbSg.cBa_zw:jr2jfPThIy_Vz8kXZr7Vd4R3n0N9Rykb2YjMNGVyFXc';
+        const apiKey = process.env.ABLY_API_KEY || this.store.get('ablyApiKey') as string;
         const enabled = this.store.get('onlineStatusEnabled', true) as boolean;
 
         if (!enabled || !apiKey) {

@@ -36,8 +36,12 @@ import { performanceService } from './services/performanceService';
 import { log, logFilePath } from './utils/logger';
 import { OnlineUsersService } from './services/onlineUsersService';
 import path = require('path');
+import * as dotenv from 'dotenv';
 
 import { platform } from 'os';
+
+// Load environment variables
+dotenv.config();
 
 const Store = require('electron-store');
 const { autoUpdater } = require('electron-updater');
@@ -85,7 +89,6 @@ const store = new Store({
         telegramLastStatsColor: 'white',
         zapretPreset: 'general',
         onlineStatusEnabled: true,
-        ablyApiKey: '94BbSg.cBa_zw:jr2jfPThIy_Vz8kXZr7Vd4R3n0N9Rykb2YjMNGVyFXc',
         performanceMonitorEnabled: true,
         debugMode: false,
     },
