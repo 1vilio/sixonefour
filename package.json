@@ -81,13 +81,13 @@
     "devDependencies": {
         "@eslint/eslintrc": "^3.3.1",
         "@eslint/js": "^9.37.0",
-        "@types/discord-rpc": "^4.0.6",
         "@types/form-data": "^2.5.0",
         "@types/node": "^24.2.1",
         "@types/semver": "^7.5.8",
         "electron": "^37.0.0",
         "electron-builder": "^26.0.12",
         "eslint": "^9.33.0",
+        "node-addon-api": "^1.7.2",
         "prettier": "3.6.2",
         "typescript": "^5.9.2",
         "typescript-eslint": "^8.46.0"
@@ -99,7 +99,6 @@
         "cpx": "^1.5.0",
         "cross-fetch": "^4.0.0",
         "discord-api-types": "^0.38.18",
-        "discord-rpc": "^4.0.1",
         "dotenv": "^17.2.3",
         "electron-log": "^5.4.3",
         "electron-prompt": "^1.7.0",

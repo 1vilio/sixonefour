@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, app } from 'electron';
 import { StatsResult } from './listeningStatsService';
 import fetch from 'cross-fetch';
 import fs from 'fs';
@@ -57,8 +57,9 @@ export class TelegramStatsImageService {
         const mostPlayedImage = stats.mostPlayedTrack ? await this.getBase64Image(stats.mostPlayedTrack.artwork) : '';
 
         // App Logo
-        const logoPath =
-            'C:/Users/Vilio/.gemini/antigravity/brain/0229e1fe-47ea-45fd-9a50-c6446227fd3b/uploaded_image_1_1766329846128.png';
+        const logoPath = app.isPackaged
+            ? path.join(process.resourcesPath, 'assets', 'icons', 'soundcloud.png')
+            : path.join(app.getAppPath(), 'assets', 'icons', 'soundcloud.png');
         const logoBase64 = this.getLocalBase64(logoPath);
 
         const html = `
