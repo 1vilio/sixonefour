@@ -29,10 +29,12 @@ jobs:
               run: pnpm install
 
             - name: Inject Ably API Key
-              if: ${{ secrets.ABLY_API_KEY != '' }}
+              env:
+                  ABLY_KEY: ${{ secrets.ABLY_API_KEY }}
+              if: env.ABLY_KEY != ''
               shell: bash
               run: |
-                  sed -i "s|REPLACE_WITH_ABLY_API_KEY|${{ secrets.ABLY_API_KEY }}|g" src/services/onlineUsersService.ts
+                  sed -i "s|REPLACE_WITH_ABLY_API_KEY|${ABLY_KEY}|g" src/services/onlineUsersService.ts
 
             - name: Check code formatting with Prettier
               run: pnpm prettier --check .
