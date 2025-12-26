@@ -47,14 +47,16 @@
         "asar": true,
         "extraResources": [
             {
-                "from": "assets/icons",
-                "to": "assets/icons"
-            }
-        ],
-        "extraFiles": [
+                "from": "assets",
+                "to": "assets"
+            },
             {
                 "from": "themes",
                 "to": "themes"
+            },
+            {
+                "from": "src/vendor/zapret",
+                "to": "vendor/zapret"
             }
         ],
         "files": [

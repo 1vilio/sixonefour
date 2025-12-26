@@ -618,13 +618,21 @@ async function init() {
         widgetManager.show();
     }
 
-    // Register custom theme protocol
+    // Register custom protocols
     const themesPath = themeService.getThemesPath();
     protocol.registerFileProtocol(
         'theme',
         (request: Electron.ProtocolRequest, callback: (response: string | Electron.ProtocolResponse) => void) => {
             const url = request.url.substr('theme://'.length);
             callback({ path: path.join(themesPath, url) });
+        },
+    );
+
+    protocol.registerFileProtocol(
+        'app-assets',
+        (request: Electron.ProtocolRequest, callback: (response: string | Electron.ProtocolResponse) => void) => {
+            const url = request.url.substr('app-assets://'.length);
+            callback({ path: path.join(RESOURCES_PATH, url) });
         },
     );
 
@@ -1105,30 +1113,35 @@ async function init() {
         updateNavigationState();
     });
 
+    // Initialize adblocker if enabled
+    if (store.get('adBlocker')) {
+        try {
+            ElectronBlocker.fromLists(
+                fetch,
+                fullLists,
+                { enableCompression: true },
+                {
+                    path: path.join(app.getPath('userData'), 'engine.bin'),
+                    read: async (...args) => readFileSync(...args),
+                    write: async (...args) => writeFileSync(...args),
+                },
+            ).then((blocker) => {
+                blocker.enableBlockingInSession(contentView.webContents.session);
+                log('[Adblock] Blocker enabled successfully.');
+            });
+        } catch (error) {
+            log('[ERROR] Failed to initialize adblocker:', error);
+        }
+    }
+
+    // Defer non-essential startup tasks
+    setupUpdater();
+
     // Track if this is initial load
     let isInitialLoad = true;
 
     // Setup event handlers
     contentView.webContents.on('did-finish-load', async () => {
-        // Initialize adblocker once the page is loaded
-        if (store.get('adBlocker')) {
-            try {
-                const blocker = await ElectronBlocker.fromLists(
-                    fetch,
-                    fullLists,
-                    { enableCompression: true },
-                    {
-                        path: path.join(app.getPath('userData'), 'engine.bin'),
-                        read: async (...args) => readFileSync(...args),
-                        write: async (...args) => writeFileSync(...args),
-                    },
-                );
-                blocker.enableBlockingInSession(contentView.webContents.session);
-            } catch (error) {
-                log('[ERROR] Failed to initialize adblocker:', error);
-            }
-        }
-
         // Get the current language from the page FIRST
         await getLanguage();
 

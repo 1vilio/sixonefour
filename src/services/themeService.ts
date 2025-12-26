@@ -1,6 +1,6 @@
 import { app, ipcMain } from 'electron';
 import { readFileSync, existsSync, readdirSync, statSync, watch } from 'fs';
-import { join, basename, extname, dirname } from 'path';
+import { join, basename, extname } from 'path';
 import type ElectronStore from 'electron-store';
 import { EventEmitter } from 'events';
 import { extractThemeColors, type ThemeColors } from '../utils/colorExtractor';
@@ -42,7 +42,7 @@ export class ThemeService {
 
     constructor(store: ElectronStore) {
         this.store = store;
-        const baseDir = app.isPackaged ? dirname(app.getPath('exe')) : process.cwd();
+        const baseDir = app.isPackaged ? process.resourcesPath : process.cwd();
         this.themesPath = join(baseDir, 'themes');
         this.ensureThemesDirectory();
         this.loadCustomThemes();
