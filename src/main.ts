@@ -1354,7 +1354,6 @@ function registerGlobalShortcuts() {
             true,
         );
     }
-    shortcutService.setup();
 }
 
 function setupThemeHandlers() {

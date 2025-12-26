@@ -32,13 +32,34 @@ export class ShortcutService {
         enabled: boolean = true,
         global: boolean = false,
     ) {
+        // If already registered and accelerator changed, unregister the old one first
+        const existing = this.shortcuts.get(id);
+        if (existing && this.registered && existing.accelerator !== accelerator) {
+            try {
+                globalShortcut.unregister(existing.accelerator);
+                log(`[Shortcuts] Unregistered old accelerator for '${id}': ${existing.accelerator}`);
+            } catch (e) {
+                log(`[ERROR] [Shortcuts] Failed to unregister old accelerator for '${id}':`, e);
+            }
+        }
+
         this.shortcuts.set(id, { accelerator, action, description, enabled, global });
+
+        // If we are already in 'live' mode, register the new one immediately
+        if (this.registered && enabled && accelerator) {
+            this.registerWithElectron(id, this.shortcuts.get(id)!);
+        }
     }
 
     unregister(id: string) {
         const shortcut = this.shortcuts.get(id);
-        if (shortcut && this.registered) {
-            globalShortcut.unregister(shortcut.accelerator);
+        if (shortcut && this.registered && shortcut.accelerator) {
+            try {
+                globalShortcut.unregister(shortcut.accelerator);
+                log(`[Shortcuts] Unregistered shortcut '${id}': ${shortcut.accelerator}`);
+            } catch (e) {
+                log(`[ERROR] [Shortcuts] Failed to unregister shortcut '${id}':`, e);
+            }
         }
         this.shortcuts.delete(id);
     }
@@ -46,51 +67,60 @@ export class ShortcutService {
     setEnabled(id: string, enabled: boolean) {
         const shortcut = this.shortcuts.get(id);
         if (shortcut) {
+            const wasEnabled = shortcut.enabled !== false;
             shortcut.enabled = enabled;
+
             if (this.registered) {
-                this.refreshRegistrations();
+                if (enabled && !wasEnabled) {
+                    this.registerWithElectron(id, shortcut);
+                } else if (!enabled && wasEnabled) {
+                    globalShortcut.unregister(shortcut.accelerator);
+                }
             }
+        }
+    }
+
+    private registerWithElectron(id: string, shortcut: Shortcut) {
+        if (!shortcut.accelerator) return;
+
+        try {
+            // Unregister first to be safe (no-op if not registered)
+            globalShortcut.unregister(shortcut.accelerator);
+
+            const success = globalShortcut.register(shortcut.accelerator, () => {
+                if (!shortcut.global && (!this.window || !this.window.isFocused())) return;
+
+                try {
+                    shortcut.action();
+                } catch (error) {
+                    log(`[ERROR] [Shortcuts] Error executing shortcut '${id}':`, error);
+                }
+            });
+
+            if (success) {
+                log(`[Shortcuts] Registered shortcut '${id}' (${shortcut.accelerator}) [Global: ${!!shortcut.global}]`);
+            } else {
+                log(
+                    `[WARN] [Shortcuts] Failed to register shortcut '${id}' (${shortcut.accelerator}). It might be in use by another application.`,
+                );
+            }
+        } catch (error) {
+            log(`[ERROR] [Shortcuts] Exception during registration of '${id}' (${shortcut.accelerator}):`, error);
         }
     }
 
     setup() {
-        if (this.registered) {
-            this.unregisterAll();
-        }
+        log(`[Shortcuts] Setting up ${this.shortcuts.size} shortcuts...`);
+
+        // Use a clean slate
+        globalShortcut.unregisterAll();
 
         for (const [id, shortcut] of this.shortcuts) {
             if (shortcut.enabled === false) continue;
-
-            try {
-                const success = globalShortcut.register(shortcut.accelerator, () => {
-                    if (!shortcut.global && (!this.window || !this.window.isFocused())) return;
-
-                    try {
-                        shortcut.action();
-                    } catch (error) {
-                        log(`[ERROR] [Shortcuts] Error executing shortcut '${id}':`, error);
-                    }
-                });
-
-                if (!success) {
-                    log(`[WARN] [Shortcuts] Failed to register shortcut '${id}' (${shortcut.accelerator})`);
-                }
-            } catch (error) {
-                log(`[ERROR] [Shortcuts] Failed to register shortcut '${id}' (${shortcut.accelerator}):`, error);
-            }
+            this.registerWithElectron(id, shortcut);
         }
 
         this.registered = true;
-    }
-
-    private refreshRegistrations() {
-        this.unregisterAll();
-        this.setup();
-    }
-
-    private unregisterAll() {
-        globalShortcut.unregisterAll();
-        this.registered = false;
     }
 
     getShortcuts() {
@@ -103,8 +133,10 @@ export class ShortcutService {
     }
 
     clear() {
-        this.unregisterAll();
+        globalShortcut.unregisterAll();
+        this.registered = false;
         this.shortcuts.clear();
+        log('[Shortcuts] Cleared and unregistered all shortcuts.');
     }
 
     get count(): number {
@@ -112,8 +144,10 @@ export class ShortcutService {
     }
 
     destroy() {
-        this.unregisterAll();
+        globalShortcut.unregisterAll();
+        this.registered = false;
         this.shortcuts.clear();
         this.window = null;
+        log('[Shortcuts] Service destroyed.');
     }
 }
