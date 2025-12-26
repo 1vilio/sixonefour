@@ -74,6 +74,16 @@
             "artifactName": "sixonefour-${version}-installer-win.${ext}",
             "requestedExecutionLevel": "requireAdministrator"
         },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true,
+            "shortcutName": "sixonefour",
+            "runAfterFinish": true,
+            "installerIcon": "assets/icons/soundcloud-win.ico",
+            "uninstallerIcon": "assets/icons/soundcloud-win.ico"
+        },
         "linux": {
             "target": "AppImage",
             "artifactName": "sixonefour-${version}-installer-linux.${ext}"
