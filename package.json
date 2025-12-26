@@ -1,6 +1,6 @@
 {
     "name": "sixonefour",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "description": "A feature-rich SoundCloud desktop client with Discord Rich Presence, customizable themes, a floating media widget, global hotkeys, a download manager, Telegram integration, network tools, and high-precision listening statistics.",
     "keywords": [
         "soundcloud",
@@ -38,11 +38,13 @@
     },
     "main": "./tsc/main.js",
     "repository": "https://github.com/1vilio/sixonefour",
-    "publish": {
-        "provider": "github",
-        "releaseType": "release"
-    },
     "build": {
+        "publish": [
+            {
+                "provider": "github",
+                "releaseType": "release"
+            }
+        ],
         "appId": "com.1vilio.sixonefour",
         "productName": "sixonefour",
         "asar": true,
