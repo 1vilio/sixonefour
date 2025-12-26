@@ -1,6 +1,10 @@
 name: Build/release
 
-on: push
+on:
+    push:
+        tags:
+            - 'v*'
+    workflow_dispatch:
 
 jobs:
     release:
@@ -34,10 +38,17 @@ jobs:
             - name: Inject Ably API Key
               env:
                   ABLY_KEY: ${{ secrets.ABLY_API_KEY }}
-              if: env.ABLY_KEY != ''
               shell: bash
               run: |
-                  node -e "const fs = require('fs'); const path = 'src/services/onlineUsersService.ts'; const content = fs.readFileSync(path, 'utf8'); fs.writeFileSync(path, content.replace(/REPLACE_WITH_ABLY_API_KEY/g, process.env.ABLY_KEY));"
+                  if [ -n "$ABLY_KEY" ] && [ "$ABLY_KEY" != "null" ]; then
+                    echo "Injecting Ably API Key..."
+                    node -e "const fs = require('fs'); const path = 'src/services/onlineUsersService.ts'; const content = fs.readFileSync(path, 'utf8'); fs.writeFileSync(path, content.replace(/REPLACE_WITH_ABLY_API_KEY/g, process.env.ABLY_KEY));"
+                  else
+                    echo "Skipping key injection: ABLY_API_KEY secret is not set."
+                  fi
+
+            - name: Compile Application
+              run: pnpm run compile
 
             - name: Build/release Electron app
               uses: actions-marketplace-validations/njzydark_action-electron-builder-pnpm@pnpm

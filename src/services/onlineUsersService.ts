@@ -29,11 +29,19 @@ export class OnlineUsersService {
             (PROD_ABLY_KEY_PLACEHOLDER !== 'REPLACE_WITH_ABLY_API_KEY' ? PROD_ABLY_KEY_PLACEHOLDER : null) ||
             (this.store.get('ablyApiKey') as string);
         const enabled = this.store.get('onlineStatusEnabled', true) as boolean;
-
-        if (!enabled || !apiKey) {
-            log('[OnlineUsers] Service disabled or API Key missing.');
+        if (!enabled) {
+            log('[OnlineUsers] Service disabled by user setting.');
             return;
         }
+
+        if (!apiKey || apiKey === 'REPLACE_WITH_ABLY_API_KEY') {
+            log('[OnlineUsers] API Key missing or remains as placeholder.');
+            return;
+        }
+
+        log(
+            `[OnlineUsers] Initializing with key source: ${process.env.ABLY_API_KEY ? 'Env Var' : PROD_ABLY_KEY_PLACEHOLDER !== 'REPLACE_WITH_ABLY_API_KEY' ? 'Hardcoded' : 'Store'}`,
+        );
 
         try {
             this.client = new Ably.Realtime({

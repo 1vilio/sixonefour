@@ -23,6 +23,7 @@
     "license": "MIT",
     "scripts": {
         "lint": "eslint -c .eslintrc --ext .ts ./src",
+        "compile": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash",
         "copy-header": "cpx \"src/header/**/*\" tsc/header",
         "copy-widget": "cpx \"src/widget/**/*\" tsc/widget",
         "copy-statistics": "cpx \"src/statistics/**/*\" tsc/statistics",
