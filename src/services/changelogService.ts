@@ -27,13 +27,20 @@ export class ChangelogService {
             }
 
             const data = await response.json();
+            log(`[DEBUG] [ChangelogService] Fetched ${data.length} releases.`);
 
-            this.cachedReleases = data.map((item: any) => ({
-                version: item.tag_name,
-                body: this.cleanBody(item.body),
-                date: new Date(item.published_at).toLocaleDateString(),
-                url: item.html_url,
-            }));
+            this.cachedReleases = data.map((item: any) => {
+                const cleanedBody = this.cleanBody(item.body);
+                // Fallback sequence: Body -> Name -> Fallback string
+                const finalBody = cleanedBody || item.name || 'No release notes available for this version.';
+
+                return {
+                    version: item.tag_name,
+                    body: finalBody,
+                    date: new Date(item.published_at).toLocaleDateString(),
+                    url: item.html_url,
+                };
+            });
 
             return this.cachedReleases.slice(0, limit);
         } catch (error) {
@@ -43,7 +50,7 @@ export class ChangelogService {
     }
 
     private cleanBody(body: string): string {
-        if (!body) return 'No release notes available.';
+        if (!body) return '';
 
         // Remove common CI artifacts or redundant headers if any
         return body
