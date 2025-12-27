@@ -366,4 +366,33 @@ document.addEventListener('DOMContentLoaded', () => {
             ramVal.textContent = `${stats.memory} MB`;
         });
     }
+
+    // Version Display Logic
+    const versionDisplay = document.getElementById('version-display');
+    const versionVal = document.getElementById('version-val');
+    const updateIndicator = document.getElementById('update-indicator');
+
+    if (versionDisplay && versionVal) {
+        ipcRenderer.on('version-info', (_, data) => {
+            versionVal.textContent = `v${data.version}`;
+            versionDisplay.style.display = data.enabled ? 'flex' : 'none';
+        });
+
+        ipcRenderer.on('version-display-toggle', (_, enabled) => {
+            versionDisplay.style.display = enabled ? 'flex' : 'none';
+        });
+
+        ipcRenderer.on('update-available', () => {
+            if (updateIndicator) {
+                updateIndicator.style.display = 'block';
+                versionDisplay.title = 'Update Available! Click to see changelog.';
+                versionDisplay.style.border = '1px solid #ffcc00';
+            }
+        });
+
+        versionDisplay.title = 'Click to see release notes';
+        versionDisplay.addEventListener('click', () => {
+            ipcRenderer.send('open-changelog');
+        });
+    }
 });

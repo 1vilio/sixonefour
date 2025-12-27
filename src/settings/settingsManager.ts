@@ -825,6 +825,13 @@ export class SettingsManager {
                     </label>
                 </div>
                 <div class="setting-item">
+                    <span>Show Application Version</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="displayVersionEnabled" ${this.store.get('displayVersionEnabled', true) ? 'checked' : ''}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
                     <span data-i18n="openAtLogin">${this.translationService.translate('openAtLogin')}</span>
                     <label class="toggle">
                         <input type="checkbox" id="openAtLogin" ${this.store.get('openAtLogin', false) ? 'checked' : ''}>
@@ -1643,6 +1650,10 @@ export class SettingsManager {
 
             document.getElementById('navigationControlsEnabled').addEventListener('change', (e) => {
                 ipcRenderer.send('setting-changed', { key: 'navigationControlsEnabled', value: e.target.checked });
+            });
+
+            document.getElementById('displayVersionEnabled').addEventListener('change', (e) => {
+                ipcRenderer.send('setting-changed', { key: 'displayVersionEnabled', value: e.target.checked });
             });
 
             document.getElementById('trackParserEnabled').addEventListener('change', (e) => {

@@ -1,0 +1,239 @@
+:root {
+    --bg-glass: rgba(18, 18, 18, 0.9);
+    --border-glass: rgba(255, 255, 255, 0.1);
+    --accent: #ff5500;
+    --accent-glow: rgba(255, 85, 0, 0.3);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.6);
+}
+
+@font-face {
+    font-family: 'SC-Font';
+    src: url('https://assets.web.soundcloud.cloud/_next/static/media/a34f9d1faa5f3315-s.p.woff2') format('woff2');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family:
+        'SC-Font',
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Roboto,
+        sans-serif;
+}
+
+body {
+    background: transparent;
+    color: var(--text-primary);
+    width: 600px;
+    height: 500px;
+    overflow: hidden;
+}
+
+.draggable {
+    -webkit-app-region: drag;
+}
+
+.no-drag {
+    -webkit-app-region: no-drag;
+}
+
+.glass-panel {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-glass);
+}
+
+.title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    width: 24px;
+    height: 24px;
+    color: var(--accent);
+    filter: drop-shadow(0 0 5px var(--accent-glow));
+}
+
+h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+#close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+}
+
+#close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+#close-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-glass) transparent;
+}
+
+main::-webkit-scrollbar {
+    width: 6px;
+}
+
+main::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+main::-webkit-scrollbar-thumb {
+    background: var(--border-glass);
+    border-radius: 3px;
+}
+
+.release-item {
+    position: relative;
+    padding-left: 24px;
+    margin-bottom: 30px;
+}
+
+.release-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.release-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 15px;
+    bottom: -25px;
+    width: 1px;
+    background: var(--border-glass);
+}
+
+.release-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.version-tag {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.release-date {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.release-body {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+footer {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid var(--border-glass);
+}
+
+#show-more-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-glass);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+#show-more-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent);
+}
+
+#show-more-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 15px;
+    color: var(--text-secondary);
+}
+
+.spinner {
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--border-glass);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

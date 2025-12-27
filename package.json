@@ -1,6 +1,6 @@
 {
     "name": "sixonefour",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "description": "A feature-rich SoundCloud desktop client with Discord Rich Presence, customizable themes, a floating media widget, global hotkeys, a download manager, Telegram integration, network tools, and high-precision listening statistics.",
     "keywords": [
         "soundcloud",
@@ -23,18 +23,19 @@
     "license": "MIT",
     "scripts": {
         "lint": "eslint -c .eslintrc --ext .ts ./src",
-        "compile": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash",
+        "compile": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && npm run copy-changelog",
         "copy-header": "cpx \"src/header/**/*\" tsc/header",
         "copy-widget": "cpx \"src/widget/**/*\" tsc/widget",
         "copy-statistics": "cpx \"src/statistics/**/*\" tsc/statistics",
         "copy-splash": "cpx \"src/splash/**/*\" tsc/splash",
-        "dev": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && electron ./tsc/main.js --dev",
-        "build": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && electron-builder --dir",
-        "build-win": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && electron-builder -w nsis",
-        "build-win-ptb": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && electron-builder -w portable",
-        "build-mac": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && electron-builder -m dmg",
-        "build-linux-deb": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && electron-builder -l deb",
-        "build-linux-appimage": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && electron-builder -l appimage"
+        "copy-changelog": "cpx \"src/changelog/**/*\" tsc/changelog",
+        "dev": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && npm run copy-changelog && electron ./tsc/main.js --dev",
+        "build": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && npm run copy-changelog && electron-builder --dir",
+        "build-win": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && npm run copy-changelog && electron-builder -w nsis",
+        "build-win-ptb": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && npm run copy-changelog && electron-builder -w portable",
+        "build-mac": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && npm run copy-changelog && electron-builder -m dmg",
+        "build-linux-deb": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && npm run copy-changelog && electron-builder -l deb",
+        "build-linux-appimage": "tsc && npm run copy-header && npm run copy-widget && npm run copy-statistics && npm run copy-splash && npm run copy-changelog && electron-builder -l appimage"
     },
     "main": "./tsc/main.js",
     "repository": "https://github.com/1vilio/sixonefour",

@@ -24,9 +24,10 @@ export class OnlineUsersService {
         this.headerView = headerView;
 
         // Order of priority: 1. Environment Variable, 2. Compiled Placeholder, 3. User Store
+        const placeholder = 'REPLACE_WITH_ABLY' + '_API_KEY';
         const apiKey =
             process.env.ABLY_API_KEY ||
-            (PROD_ABLY_KEY_PLACEHOLDER !== 'REPLACE_WITH_ABLY_API_KEY' ? PROD_ABLY_KEY_PLACEHOLDER : null) ||
+            (PROD_ABLY_KEY_PLACEHOLDER !== placeholder ? PROD_ABLY_KEY_PLACEHOLDER : null) ||
             (this.store.get('ablyApiKey') as string);
         const enabled = this.store.get('onlineStatusEnabled', true) as boolean;
         if (!enabled) {
@@ -34,13 +35,13 @@ export class OnlineUsersService {
             return;
         }
 
-        if (!apiKey || apiKey === 'REPLACE_WITH_ABLY_API_KEY') {
+        if (!apiKey || apiKey === placeholder) {
             log('[OnlineUsers] API Key missing or remains as placeholder.');
             return;
         }
 
         log(
-            `[OnlineUsers] Initializing with key source: ${process.env.ABLY_API_KEY ? 'Env Var' : PROD_ABLY_KEY_PLACEHOLDER !== 'REPLACE_WITH_ABLY_API_KEY' ? 'Hardcoded' : 'Store'}`,
+            `[OnlineUsers] Initializing with key source: ${process.env.ABLY_API_KEY ? 'Env Var' : PROD_ABLY_KEY_PLACEHOLDER !== placeholder ? 'Hardcoded' : 'Store'}`,
         );
 
         try {

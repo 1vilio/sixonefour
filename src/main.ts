@@ -35,6 +35,7 @@ import { databaseService } from './services/databaseService';
 import { performanceService } from './services/performanceService';
 import { log, logFilePath } from './utils/logger';
 import { OnlineUsersService } from './services/onlineUsersService';
+import { changelogService } from './services/changelogService';
 import path = require('path');
 import * as dotenv from 'dotenv';
 
@@ -90,6 +91,7 @@ const store = new Store({
         zapretPreset: 'general',
         onlineStatusEnabled: true,
         performanceMonitorEnabled: true,
+        displayVersionEnabled: true,
         splashEnabled: true,
         debugMode: false,
     },
@@ -122,6 +124,7 @@ let scraperView: BrowserView;
 let liveFeedInterval: NodeJS.Timeout | null = null;
 let tray: Tray | null = null;
 let splashWindow: BrowserWindow | null = null;
+let changelogWindow: BrowserWindow | null = null;
 let isQuitting = false;
 let onlineUsersService: OnlineUsersService;
 const devMode = process.argv.includes('--dev');
@@ -172,6 +175,9 @@ function setupUpdater() {
     autoUpdater.on('update-available', () => {
         log('[Updater] Update available.');
         queueToastNotification('Update Available');
+        if (headerView && headerView.webContents) {
+            headerView.webContents.send('update-available');
+        }
     });
 
     autoUpdater.on('update-downloaded', () => {
@@ -578,6 +584,16 @@ async function init() {
     headerView.setAutoResize({ width: true, height: false });
     headerView.webContents.loadFile(path.join(__dirname, 'header', 'header.html'));
     performanceService.setHeaderView(headerView);
+
+    // Send initial version info to header when it's ready
+    headerView.webContents.on('did-finish-load', () => {
+        if (headerView) {
+            headerView.webContents.send('version-info', {
+                version: app.getVersion(),
+                enabled: store.get('displayVersionEnabled', true),
+            });
+        }
+    });
 
     contentView = new BrowserView({
         webPreferences: {
@@ -1233,6 +1249,10 @@ async function init() {
             }
             if (headerView && headerView.webContents) {
                 headerView.webContents.send('online-status-toggle', data.value);
+            }
+        } else if (key === 'displayVersionEnabled') {
+            if (headerView && headerView.webContents) {
+                headerView.webContents.send('version-display-toggle', data.value);
             }
         } else if (key === 'autoUpdaterEnabled') {
             if (data.value) {
@@ -2205,6 +2225,55 @@ async function sendWeeklyStats() {
         console.error(`[Telegram] Error sending Weekly Stats:`, err);
     }
 }
+
+// Changelog Window
+function createChangelogWindow() {
+    if (changelogWindow) {
+        changelogWindow.focus();
+        return;
+    }
+
+    changelogWindow = new BrowserWindow({
+        width: 600,
+        height: 500,
+        frame: false,
+        transparent: true,
+        resizable: false,
+        parent: mainWindow || undefined,
+        modal: true,
+        show: false,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+    });
+
+    changelogWindow.loadFile(path.join(__dirname, 'changelog', 'changelog.html'));
+
+    changelogWindow.once('ready-to-show', () => {
+        if (changelogWindow) {
+            changelogWindow.show();
+        }
+    });
+
+    changelogWindow.on('closed', () => {
+        changelogWindow = null;
+    });
+}
+
+ipcMain.on('open-changelog', () => {
+    createChangelogWindow();
+});
+
+ipcMain.on('close-changelog', () => {
+    if (changelogWindow) {
+        changelogWindow.close();
+    }
+});
+
+ipcMain.handle('get-changelog', async () => {
+    return await changelogService.getReleases();
+});
 
 function sanitizeFilename(name: string): string {
     return name.replace(/[^a-z0-9 \.-]/gi, '_');
