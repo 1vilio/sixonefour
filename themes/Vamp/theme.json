@@ -1,0 +1,10 @@
+{
+    "name": "Vamp",
+    "description": "Theme that i use everyday ngl",
+    "version": "1.0.0",
+    "author": "1vilio",
+    "style": "Vamp.css",
+    "assets": {
+        "videoBackground": "Vamp.mp4"
+    }
+}

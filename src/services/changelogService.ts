@@ -17,7 +17,7 @@ export class ChangelogService {
         try {
             const response = await fetch(this.apiUrl, {
                 headers: {
-                    Accept: 'application/vnd.github.v3+json',
+                    Accept: 'application/vnd.github.v3.html+json', // Request pre-rendered HTML
                     'User-Agent': 'sixonefour-desktop',
                 },
             });
@@ -30,9 +30,8 @@ export class ChangelogService {
             log(`[DEBUG] [ChangelogService] Fetched ${data.length} releases.`);
 
             this.cachedReleases = data.map((item: any) => {
-                const cleanedBody = this.cleanBody(item.body);
-                // Fallback sequence: Body -> Name -> Fallback string
-                const finalBody = cleanedBody || item.name || 'No release notes available for this version.';
+                // Use body_html provided by GitHub
+                const finalBody = item.body_html || item.name || 'No release notes available for this version.';
 
                 return {
                     version: item.tag_name,
@@ -47,16 +46,6 @@ export class ChangelogService {
             log(`[ERROR] [ChangelogService] Failed to fetch releases: ${error}`);
             return this.cachedReleases.length > 0 ? this.cachedReleases.slice(0, limit) : [];
         }
-    }
-
-    private cleanBody(body: string): string {
-        if (!body) return '';
-
-        // Remove common CI artifacts or redundant headers if any
-        return body
-            .replace(/## What's Changed/g, '')
-            .replace(/\* .*? by @.*? in .*?\n/g, '') // remove "by @user in PR" lines if too noisy
-            .trim();
     }
 }
 

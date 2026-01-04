@@ -1,0 +1,13 @@
+[Main] Input event: type=keyUp, key=F11
+[Shortcuts] handleKey: key=F11, accelerator=f11
+[Shortcuts] MATCH FOUND: id=devTools, targetAccel=f11
+[Shortcuts] Executing local shortcut 'devTools' (F11)
+[5968:0104/202049.808:ERROR:CONSOLE:1] "Request Autofill.enable failed. {"code":-32601,"message":"'Autofill.enable' wasn't found"}", source: devtools://devtools/bundled/core/protocol_client/protocol_client.js (1)
+[5968:0104/202049.808:ERROR:CONSOLE:1] "Request Autofill.setAddresses failed. {"code":-32601,"message":"'Autofill.setAddresses' wasn't found"}", source: devtools://devtools/bundled/core/protocol_client/protocol_client.js (1)
+[OnlineUsers] Updated count: 1
+[Main] Input event: type=keyUp, key=F11
+[Shortcuts] handleKey: key=F11, accelerator=f11
+[Shortcuts] MATCH FOUND: id=devTools, targetAccel=f11
+[Shortcuts] Executing local shortcut 'devTools' (F11)
+[5968:0104/202120.740:ERROR:CONSOLE:1] "Request Autofill.enable failed. {"code":-32601,"message":"'Autofill.enable' wasn't found"}", source: devtools://devtools/bundled/core/protocol_client/protocol_client.js (1)
+[5968:0104/202120.740:ERROR:CONSOLE:1] "Request Autofill.setAddresses failed. {"code":-32601,"message":"'Autofill.setAddresses' wasn't found"}", source: devtools://devtools/bundled/core/protocol_client/protocol_client.js (1)

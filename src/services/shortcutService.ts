@@ -83,30 +83,94 @@ export class ShortcutService {
     private registerWithElectron(id: string, shortcut: Shortcut) {
         if (!shortcut.accelerator) return;
 
-        try {
-            // Unregister first to be safe (no-op if not registered)
-            globalShortcut.unregister(shortcut.accelerator);
+        if (shortcut.global) {
+            try {
+                // Unregister first to be safe (no-op if not registered)
+                globalShortcut.unregister(shortcut.accelerator);
 
-            const success = globalShortcut.register(shortcut.accelerator, () => {
-                if (!shortcut.global && (!this.window || !this.window.isFocused())) return;
+                const success = globalShortcut.register(shortcut.accelerator, () => {
+                    try {
+                        shortcut.action();
+                    } catch (error) {
+                        log(`[ERROR] [Shortcuts] Error executing global shortcut '${id}':`, error);
+                    }
+                });
 
-                try {
-                    shortcut.action();
-                } catch (error) {
-                    log(`[ERROR] [Shortcuts] Error executing shortcut '${id}':`, error);
+                if (success) {
+                    log(`[Shortcuts] Registered GLOBAL shortcut '${id}' (${shortcut.accelerator})`);
+                } else {
+                    log(
+                        `[WARN] [Shortcuts] Failed to register global shortcut '${id}' (${shortcut.accelerator}). It might be in use by another application.`,
+                    );
                 }
-            });
-
-            if (success) {
-                log(`[Shortcuts] Registered shortcut '${id}' (${shortcut.accelerator}) [Global: ${!!shortcut.global}]`);
-            } else {
+            } catch (error) {
                 log(
-                    `[WARN] [Shortcuts] Failed to register shortcut '${id}' (${shortcut.accelerator}). It might be in use by another application.`,
+                    `[ERROR] [Shortcuts] Exception during global registration of '${id}' (${shortcut.accelerator}):`,
+                    error,
                 );
             }
-        } catch (error) {
-            log(`[ERROR] [Shortcuts] Exception during registration of '${id}' (${shortcut.accelerator}):`, error);
+        } else {
+            log(`[Shortcuts] Registered LOCAL shortcut '${id}' (${shortcut.accelerator})`);
         }
+    }
+
+    /**
+     * Handles local shortcuts. Should be called from a window's input event.
+     * Returns true if a shortcut was handled.
+     */
+    public handleKey(input: {
+        type: string;
+        key: string;
+        control: boolean;
+        alt: boolean;
+        shift: boolean;
+        meta: boolean;
+    }): boolean {
+        if (input.type !== 'keyDown' && input.type !== 'keyUp') return false;
+        if (this.window && !this.window.isFocused()) return false;
+
+        // Convert input to accelerator string for comparison
+        const parts: string[] = [];
+        if (input.control) parts.push('CommandOrControl'); // We'll keep it simple for now
+        if (input.alt) parts.push('Alt');
+        if (input.shift) parts.push('Shift');
+        if (input.meta) parts.push('Command'); // meta is Command on macOS
+
+        // Note: Electron accelerator format can be tricky.
+        // For simple keys like F1, F2, it's just the key name.
+        let key = input.key.toUpperCase();
+        if (key === 'ESCAPE') key = 'Esc';
+
+        // If it's a modifier key alone, don't trigger
+        if (['CONTROL', 'ALT', 'SHIFT', 'META'].includes(key)) return false;
+
+        parts.push(key);
+        const inputAccelerator = parts.join('+').toLowerCase();
+
+        for (const [id, shortcut] of this.shortcuts) {
+            if (shortcut.global || shortcut.enabled === false) continue;
+
+            const targetAccel = shortcut.accelerator
+                .toLowerCase()
+                .replace('commandorcontrol+', 'control+') // simple normalization for comparison
+                .replace('ctrl+', 'control+');
+
+            const normalizedInput = inputAccelerator
+                .replace('commandorcontrol+', 'control+')
+                .replace('ctrl+', 'control+');
+
+            if (normalizedInput === targetAccel) {
+                log(`[Shortcuts] Executing local shortcut '${id}' (${shortcut.accelerator})`);
+                try {
+                    shortcut.action();
+                    return true;
+                } catch (error) {
+                    log(`[ERROR] [Shortcuts] Error executing local shortcut '${id}':`, error);
+                }
+            }
+        }
+
+        return false;
     }
 
     setup() {

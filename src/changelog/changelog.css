@@ -174,11 +174,63 @@ main::-webkit-scrollbar-thumb {
     font-size: 13px;
     line-height: 1.6;
     color: var(--text-primary);
-    white-space: pre-wrap;
     background: rgba(255, 255, 255, 0.03);
     padding: 12px;
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Rich Content Styling (HTML from GitHub) */
+.release-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 10px 0;
+    border: 1px solid var(--border-glass);
+    display: block;
+}
+
+.release-body a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.release-body a:hover {
+    text-decoration: underline;
+}
+
+.release-body ul,
+.release-body ol {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+.release-body li {
+    margin-bottom: 5px;
+}
+
+.release-body code {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.release-body h1,
+.release-body h2,
+.release-body h3 {
+    font-size: 15px;
+    margin: 15px 0 10px 0;
+    color: var(--accent);
+}
+
+.release-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding-left: 10px;
+    margin: 10px 0;
+    color: var(--text-secondary);
+    font-style: italic;
 }
 
 footer {

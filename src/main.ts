@@ -64,15 +64,15 @@ const store = new Store({
         webhookEnabled: false,
         webhookUrl: '',
         webhookTriggerPercentage: 50,
-        displayWhenIdling: false,
-        displaySCSmallIcon: false,
+        displayWhenIdling: true,
+        displaySCSmallIcon: true,
         discordRichPresence: true,
-        displayButtons: false,
+        displayButtons: true,
         statusDisplayType: 1,
         theme: 'dark',
         backgroundBlur: 0,
         minimizeToTray: false,
-        navigationControlsEnabled: false,
+        navigationControlsEnabled: true,
         trackParserEnabled: true,
         richPresencePreviewEnabled: false,
         autoUpdaterEnabled: true,
@@ -127,8 +127,6 @@ let splashWindow: BrowserWindow | null = null;
 let changelogWindow: BrowserWindow | null = null;
 let isQuitting = false;
 let onlineUsersService: OnlineUsersService;
-const devMode = process.argv.includes('--dev');
-// Header height for header BrowserView
 const HEADER_HEIGHT = 32;
 // macOS check
 const isMas = process.mas === true;
@@ -303,7 +301,7 @@ function createBrowserWindow(windowState: any): BrowserWindow {
             images: true,
             plugins: true,
             experimentalFeatures: false,
-            devTools: devMode,
+            devTools: true,
         },
         backgroundColor: isDarkTheme ? '#121212' : '#ffffff',
     });
@@ -351,7 +349,7 @@ function createSplashWindow(): BrowserWindow {
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
-            devTools: false,
+            devTools: true,
         },
         backgroundColor: '#00000000', // Completely transparent
     });
@@ -576,6 +574,7 @@ async function init() {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
+            devTools: true,
         },
     });
 
@@ -599,7 +598,7 @@ async function init() {
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
-            devTools: devMode,
+            devTools: true,
             preload: path.join(__dirname, 'preload.js'),
             backgroundThrottling: !store.get('themeAlwaysActive', false),
         },
@@ -1315,9 +1314,7 @@ async function init() {
 
     // Handle applying all changes
     ipcMain.on('apply-changes', async () => {
-        if (store.get('proxyEnabled')) {
-            await proxyService.apply();
-        }
+        await proxyService.apply();
 
         if (store.get('adBlocker')) {
             mainWindow.webContents.reload();
@@ -1489,201 +1486,84 @@ function applyThemeToContent(isDark: boolean) {
         return res;
     })(customThemeCSS);
 
-    const themeScript = `
-        (function() {
-            try {
-                document.documentElement.classList.toggle('theme-light', !${isDark});
-                document.documentElement.classList.toggle('theme-dark', ${isDark});
-                document.body.classList.toggle('theme-light', !${isDark});
-                document.body.classList.toggle('theme-dark', ${isDark});
-                
-                if (${isDark}) {
-                    document.documentElement.style.setProperty('--background-base', '#121212');
-                    document.documentElement.style.setProperty('--background-surface', '#212121');
-                    document.documentElement.style.setProperty('--text-base', '#ffffff');
-                } else {
-                    document.documentElement.style.setProperty('--background-base', '#ffffff');
-                    document.documentElement.style.setProperty('--background-surface', '#f2f2f2');
-                    document.documentElement.style.setProperty('--text-base', '#333333');
-                }
-                
-                const style = document.createElement('style');
-                style.id = 'custom-scrollbar-style';
-                style.textContent = \`
-                    ::-webkit-scrollbar-button {
-                        display: none;
-                    }
-                    
-                    ::-webkit-scrollbar {
-                        width: 8px;
-                        height: 8px;
-                        background-color: ${isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'};
-                    }
-                    
-                    ::-webkit-scrollbar-track {
-                        background-color: transparent;
-                    }
-                    
-                    ::-webkit-scrollbar-thumb {
-                        background-color: ${isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'};
-                        border-radius: 4px;
-                        transition: background-color 0.3s;
-                    }
-                    
-                    ::-webkit-scrollbar-thumb:hover {
-                        background-color: ${isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)'};
-                    }
-                    
-                    ::-webkit-scrollbar-corner {
-                        background-color: transparent;
-                    }
-                \`;
-                
-                const existingStyle = document.getElementById('custom-scrollbar-style');
-                if (existingStyle) {
-                    existingStyle.remove();
-                }
-                document.head.appendChild(style);
-
-                // Apply custom theme CSS (content section + all) if available
-                const contentCSS = \`${sections.all + (sections.all && sections.content ? '\n' : '') + sections.content || ''}\`;
-                if (contentCSS.trim()) {
-                    const customStyle = document.createElement('style');
-                    customStyle.id = 'custom-theme-style';
-                    customStyle.textContent = contentCSS;
-                    
-                    const existingCustomStyle = document.getElementById('custom-theme-style');
-                    if (existingCustomStyle) {
-                        existingCustomStyle.remove();
-                    }
-                    document.head.appendChild(customStyle);
-                    log('[Themes] Applied custom theme CSS to content view');
-                } else {
-                    // Remove custom theme if none is selected
-                    const existingCustomStyle = document.getElementById('custom-theme-style');
-                    if (existingCustomStyle) {
-                        existingCustomStyle.remove();
-                        log('[Themes] Removed custom theme CSS from content view');
-                    }
-                }
-            } catch(e) {
-                log('[ERROR] [Themes] Error applying theme to content view:', e);
-            }
-        })();
-    `;
-
-    contentView.webContents
-        .executeJavaScript(themeScript)
-        .catch((err) => log('[ERROR] [Themes] Failed to execute content view theme script:', err));
+    // Apply theme to content view
+    contentView.webContents.send('theme-apply-to-content', {
+        isDark,
+        contentCSS: sections.all + (sections.all && sections.content ? '\n' : '') + sections.content,
+    });
 
     // Also inject into header and settings views using their specific sections
     const headerCSS = sections.all + (sections.all && sections.header ? '\n' : '') + sections.header || '';
     if (headerView && headerView.webContents) {
-        const headerScript = `
-            (function(){
-                try {
-                    const css = \`${headerCSS}\`;
-                    const id = 'custom-theme-style';
-                    const existing = document.getElementById(id);
-                    if (existing) existing.remove();
-                    if (css.trim()){
-                        const style = document.createElement('style');
-                        style.id = id;
-                        style.textContent = css;
-                        document.head.appendChild(style);
-                    }
-                } catch(e){ log('[ERROR] [Themes] Header theme inject error:', e); }
-            })();
-        `;
-        headerView.webContents
-            .executeJavaScript(headerScript)
-            .catch((err) => log('[ERROR] [Themes] Failed to execute header theme script:', err));
+        headerView.webContents.send('theme-apply-to-header', { css: headerCSS });
     }
 
     if (settingsManager) {
         const settingsCSS = sections.all + (sections.all && sections.settings ? '\n' : '') + sections.settings || '';
-        const settingsScript = `
-            (function(){
-                try {
-                    const css = \`${settingsCSS}\`;
-                    const id = 'custom-theme-style';
-                    const existing = document.getElementById(id);
-                    if (existing) existing.remove();
-                    if (css.trim()){
-                        const style = document.createElement('style');
-                        style.id = id;
-                        style.textContent = css;
-                        document.head.appendChild(style);
-                    }
-                } catch(e){ log('[ERROR] [Themes] Settings theme inject error:', e); }
-            })();
-        `;
-        settingsManager
-            .getView()
-            .webContents.executeJavaScript(settingsScript)
-            .catch((err) => log('[ERROR] [Themes] Failed to execute settings theme script:', err));
+        settingsManager.getView().webContents.send('theme-apply-to-settings', { css: settingsCSS });
     }
+}
+
+function toggleSettings() {
+    if (!settingsManager) return;
+
+    // If opening settings, close statistics
+    if (!settingsManager.getIsVisible()) {
+        if (statisticsManager && statisticsManager.getIsVisible()) {
+            statisticsManager.hide();
+        }
+    }
+    settingsManager.toggle();
+}
+
+function toggleStatistics() {
+    if (!statisticsManager) return;
+
+    // If opening statistics, close settings
+    if (!statisticsManager.getIsVisible()) {
+        if (settingsManager && settingsManager.getIsVisible()) {
+            settingsManager.hide();
+        }
+    }
+    statisticsManager.toggle();
 }
 
 function initializeShortcuts() {
     if (!mainWindow || !contentView || !settingsManager) return;
 
-    shortcutService.register('openSettings', 'F1', 'Open Settings', () => settingsManager.toggle());
+    // F1 - Settings (Local)
+    shortcutService.register('openSettings', 'F1', 'Open Settings', () => toggleSettings(), true, false);
 
-    if (devMode) {
-        shortcutService.register('devTools', 'F11', 'Open Developer Tools', () => {
-            if (contentView) contentView.webContents.openDevTools();
-        });
+    // F2 - Listening Statistics (Local)
+    shortcutService.register('openStatistics', 'F2', 'Open Statistics', () => toggleStatistics(), true, false);
+
+    shortcutService.register(
+        'devTools',
+        'F12',
+        'Open Developer Tools',
+        () => {
+            if (contentView) contentView.webContents.toggleDevTools();
+            if (mainWindow) mainWindow.webContents.toggleDevTools();
+        },
+        true,
+        false,
+    );
+
+    // Attach input event listener to main window and all relevant views to handle local shortcuts
+    const handleInput = (_event: Electron.Event, input: Electron.Input) => {
+        if (shortcutService.handleKey(input)) {
+            // Shortcut handled, you can prevent default if needed,
+            // though for F1/F2 it's usually not necessary unless there are conflict with browser-level keys
+        }
+    };
+
+    mainWindow.webContents.on('before-input-event', handleInput);
+    contentView.webContents.on('before-input-event', handleInput);
+    if (headerView) headerView.webContents.on('before-input-event', handleInput);
+    if (settingsManager.getView()) settingsManager.getView().webContents.on('before-input-event', handleInput);
+    if (statisticsManager && statisticsManager.getView()) {
+        statisticsManager.getView().webContents.on('before-input-event', handleInput);
     }
-
-    shortcutService.register('zoomIn', 'CommandOrControl+=', 'Zoom In', () => {
-        if (!contentView) return;
-        const zoomLevel = contentView.webContents.getZoomLevel();
-        contentView.webContents.setZoomLevel(Math.min(zoomLevel + 1, 9));
-    });
-
-    shortcutService.register('zoomOut', 'CommandOrControl+-', 'Zoom Out', () => {
-        if (!contentView) return;
-        const zoomLevel = contentView.webContents.getZoomLevel();
-        contentView.webContents.setZoomLevel(Math.max(zoomLevel - 1, -9));
-    });
-
-    shortcutService.register('zoomReset', 'CommandOrControl+0', 'Reset Zoom', () => {
-        if (contentView) contentView.webContents.setZoomLevel(0);
-    });
-
-    shortcutService.register('goBack', 'CommandOrControl+B', 'Go Back', () => {
-        if (contentView && contentView.webContents.navigationHistory.canGoBack()) {
-            contentView.webContents.navigationHistory.goBack();
-        }
-    });
-
-    shortcutService.register('goBackAlt', 'CommandOrControl+P', 'Go Back (Alternative)', () => {
-        if (contentView && contentView.webContents.navigationHistory.canGoBack()) {
-            contentView.webContents.navigationHistory.goBack();
-        }
-    });
-
-    shortcutService.register('goForward', 'CommandOrControl+F', 'Go Forward', () => {
-        if (contentView && contentView.webContents.navigationHistory.canGoForward()) {
-            contentView.webContents.navigationHistory.goForward();
-        }
-    });
-
-    shortcutService.register('goForwardAlt', 'CommandOrControl+N', 'Go Forward (Alternative)', () => {
-        if (contentView && contentView.webContents.navigationHistory.canGoForward()) {
-            contentView.webContents.navigationHistory.goForward();
-        }
-    });
-
-    shortcutService.register('refresh', 'CommandOrControl+R', 'Refresh Page', () => {
-        if (contentView) {
-            if (headerView && headerView.webContents) {
-                headerView.webContents.send('refresh-state-changed', true);
-            }
-            contentView.webContents.reload();
-        }
-    });
 
     console.log(`Initialized ${shortcutService.count} keyboard shortcuts`);
 }

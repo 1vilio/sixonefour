@@ -34,8 +34,8 @@ export class ProxyService {
                 this.onNotification('Failed to set proxy. Check your settings.');
             }
         } else {
-            await this.window.webContents.session.setProxy({ mode: 'direct' });
-            log('[ProxyService] Proxy disabled.');
+            await this.window.webContents.session.setProxy({ mode: 'system' });
+            log('[ProxyService] Proxy disabled (using system settings).');
         }
     }
 

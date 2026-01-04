@@ -214,6 +214,26 @@ ipcRenderer.on('theme-colors-changed', (_, colors) => {
     applyThemeColors(colors);
 });
 
+// Listen for custom theme CSS via IPC
+ipcRenderer.on('theme-apply-to-header', (_, { css }) => {
+    try {
+        const id = 'custom-theme-style';
+        let style = document.getElementById(id);
+        if (css && css.trim()) {
+            if (!style) {
+                style = document.createElement('style');
+                style.id = id;
+                document.head.appendChild(style);
+            }
+            style.textContent = css;
+        } else if (style) {
+            style.remove();
+        }
+    } catch (e) {
+        console.error('[Themes] Header theme inject error:', e);
+    }
+});
+
 // Listen for navigation state changes
 ipcRenderer.on('navigation-state-changed', (_, state) => {
     updateNavigationState(state);
@@ -314,9 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Request initial online status state
         ipcRenderer.invoke('get-store-value', 'onlineStatusEnabled').then((enabled) => {
-            if (enabled === false) {
-                onlineUsersContainer.style.display = 'none';
-            }
+            onlineUsersContainer.style.display = enabled !== false ? 'flex' : 'none';
         });
 
         ipcRenderer.on('online-status-toggle', (_, enabled) => {

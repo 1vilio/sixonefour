@@ -12,7 +12,7 @@ export class StatisticsManager {
             webPreferences: {
                 nodeIntegration: true,
                 contextIsolation: false,
-                devTools: process.argv.includes('--dev'),
+                devTools: true,
             },
         });
 
@@ -79,5 +79,9 @@ export class StatisticsManager {
 
     public getView(): BrowserView {
         return this.view;
+    }
+
+    public getIsVisible(): boolean {
+        return this.isVisible;
     }
 }

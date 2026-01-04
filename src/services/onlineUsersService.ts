@@ -25,10 +25,15 @@ export class OnlineUsersService {
 
         // Order of priority: 1. Environment Variable, 2. Compiled Placeholder, 3. User Store
         const placeholder = 'REPLACE_WITH_ABLY' + '_API_KEY';
-        const apiKey =
-            process.env.ABLY_API_KEY ||
-            (PROD_ABLY_KEY_PLACEHOLDER !== placeholder ? PROD_ABLY_KEY_PLACEHOLDER : null) ||
-            (this.store.get('ablyApiKey') as string);
+        const envKey = process.env.ABLY_API_KEY;
+        const hardcodedKey = PROD_ABLY_KEY_PLACEHOLDER !== placeholder ? PROD_ABLY_KEY_PLACEHOLDER : null;
+        const storeKey = this.store.get('ablyApiKey') as string;
+
+        const apiKey = envKey || hardcodedKey || storeKey;
+
+        if (headerView) {
+            this.headerView = headerView;
+        }
         const enabled = this.store.get('onlineStatusEnabled', true) as boolean;
         if (!enabled) {
             log('[OnlineUsers] Service disabled by user setting.');
@@ -40,9 +45,14 @@ export class OnlineUsersService {
             return;
         }
 
-        log(
-            `[OnlineUsers] Initializing with key source: ${process.env.ABLY_API_KEY ? 'Env Var' : PROD_ABLY_KEY_PLACEHOLDER !== placeholder ? 'Hardcoded' : 'Store'}`,
-        );
+        let keySource = 'Store';
+        if (envKey) {
+            keySource = 'Env Var';
+        } else if (hardcodedKey) {
+            keySource = 'Hardcoded (Env Var was empty)';
+        }
+
+        log(`[OnlineUsers] Initializing with key source: ${keySource}`);
 
         try {
             this.client = new Ably.Realtime({
@@ -57,8 +67,10 @@ export class OnlineUsersService {
 
             this.channel.presence.enter();
 
-            // Initial count
-            this.updatePresenceCount();
+            // Initial count with a small delay to ensure renderer is ready
+            setTimeout(() => {
+                this.updatePresenceCount();
+            }, 2000);
 
             this.isInitialized = true;
             log('[OnlineUsers] Service initialized and connected to Ably.');
@@ -88,8 +100,13 @@ export class OnlineUsersService {
     }
 
     public setEnabled(enabled: boolean): void {
-        if (enabled && !this.isInitialized) {
-            if (this.mainWindow) this.initialize(this.mainWindow);
+        if (enabled) {
+            if (!this.isInitialized) {
+                if (this.mainWindow) this.initialize(this.mainWindow, this.headerView);
+            } else {
+                // If already initialized, just trigger an update to refresh UI
+                this.updatePresenceCount();
+            }
         } else if (!enabled && this.isInitialized) {
             this.disconnect();
         }

@@ -17,6 +17,7 @@ export class SettingsManager {
             webPreferences: {
                 nodeIntegration: true,
                 contextIsolation: false,
+                devTools: true,
             },
         });
         this.translationService = translationService;
@@ -1416,6 +1417,26 @@ export class SettingsManager {
                     console.log('hidePanel');
                 }
             });
+
+            // Listen for custom theme CSS via IPC
+            ipcRenderer.on('theme-apply-to-settings', (_, { css }) => {
+                try {
+                    const id = 'custom-theme-style';
+                    let style = document.getElementById(id);
+                    if (css && css.trim()) {
+                        if (!style) {
+                            style = document.createElement('style');
+                            style.id = id;
+                            document.head.appendChild(style);
+                        }
+                        style.textContent = css;
+                    } else if (style) {
+                        style.remove();
+                    }
+                } catch(e) { 
+                    console.error('[Themes] Settings theme inject error:', e); 
+                }
+            });
         </script>`;
     }
 
@@ -2528,7 +2549,7 @@ export class SettingsManager {
         this.getView().webContents.send('update-translations');
     }
 
-    private hide(): void {
+    public hide(): void {
         this.view.webContents.executeJavaScript(`
             document.body.classList.remove('visible');
             setTimeout(() => {
@@ -2567,6 +2588,10 @@ export class SettingsManager {
             throw new Error('Settings view is not initialized');
         }
         return this.view;
+    }
+
+    public getIsVisible(): boolean {
+        return this.isVisible;
     }
 
     public updateTranslations(translationService: TranslationService): void {
