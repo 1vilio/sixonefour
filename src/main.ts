@@ -1547,6 +1547,7 @@ function initializeShortcuts() {
         },
         true,
         false,
+        'keyUp',
     );
 
     // Attach input event listener to main window and all relevant views to handle local shortcuts

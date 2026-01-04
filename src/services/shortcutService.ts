@@ -7,6 +7,7 @@ interface Shortcut {
     description: string;
     enabled?: boolean;
     global?: boolean;
+    eventType?: 'keyDown' | 'keyUp' | 'both';
 }
 
 export class ShortcutService {
@@ -31,6 +32,7 @@ export class ShortcutService {
         action: () => void,
         enabled: boolean = true,
         global: boolean = false,
+        eventType: 'keyDown' | 'keyUp' | 'both' = 'keyDown',
     ) {
         // If already registered and accelerator changed, unregister the old one first
         const existing = this.shortcuts.get(id);
@@ -43,7 +45,7 @@ export class ShortcutService {
             }
         }
 
-        this.shortcuts.set(id, { accelerator, action, description, enabled, global });
+        this.shortcuts.set(id, { accelerator, action, description, enabled, global, eventType });
 
         // If we are already in 'live' mode, register the new one immediately
         if (this.registered && enabled && accelerator) {
@@ -158,6 +160,9 @@ export class ShortcutService {
             const normalizedInput = inputAccelerator
                 .replace('commandorcontrol+', 'control+')
                 .replace('ctrl+', 'control+');
+
+            const shortcutEventType = shortcut.eventType || 'keyDown';
+            if (shortcutEventType !== 'both' && input.type !== shortcutEventType) continue;
 
             if (normalizedInput === targetAccel) {
                 log(`[Shortcuts] Executing local shortcut '${id}' (${shortcut.accelerator})`);
