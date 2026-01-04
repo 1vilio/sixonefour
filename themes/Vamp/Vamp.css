@@ -14,9 +14,9 @@
 
 :root {
     --void-black: #000000;
-    --blood-red: #8B0000;
+    --blood-red: #8b0000;
     --vamp-burgundy: #450000;
-    --silver-chrome: #C0C0C0;
+    --silver-chrome: #c0c0c0;
     --concrete: #1a1a1a;
     --surface: rgba(10, 10, 10, 0.92);
     --chaos-glow: #ff0033;
@@ -84,7 +84,7 @@ body,
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    text-shadow: 
+    text-shadow:
         0 0 15px var(--blood-red),
         2px 2px 0 var(--void-black);
     transition: all 0.3s ease;
@@ -94,7 +94,7 @@ body,
 .header__logo a.header__logoLink:hover::before,
 .header__logo:hover::before {
     color: #fff !important;
-    text-shadow: 
+    text-shadow:
         0 0 25px var(--chaos-glow),
         0 0 35px var(--blood-red),
         2px 2px 0 var(--void-black);
@@ -102,11 +102,12 @@ body,
 }
 
 @keyframes asterisk-pulse {
-    0%, 100% { 
+    0%,
+    100% {
         filter: brightness(1);
         transform: translate(-50%, -50%) rotate(0deg);
     }
-    50% { 
+    50% {
         filter: brightness(1.3);
         transform: translate(-50%, -50%) rotate(90deg);
     }
@@ -173,7 +174,7 @@ h3,
     color: #fff !important;
     text-transform: uppercase !important;
     letter-spacing: 3px !important;
-    text-shadow: 
+    text-shadow:
         3px 3px 0 var(--void-black),
         0 0 10px var(--blood-red);
     font-weight: 900 !important;
@@ -202,7 +203,7 @@ h3,
     border-radius: 0 !important;
     border: 2px solid var(--concrete) !important;
     background: #050505;
-    box-shadow: 
+    box-shadow:
         0 4px 0 0 var(--void-black),
         0 0 0 1px var(--blood-red),
         inset 0 0 20px rgba(0, 0, 0, 0.8);
@@ -221,7 +222,7 @@ h3,
 
 .playableTile:hover .playableTile__artwork {
     border-color: var(--blood-red) !important;
-    box-shadow: 
+    box-shadow:
         0 8px 0 0 var(--blood-red),
         0 0 25px rgba(255, 0, 51, 0.5),
         inset 0 0 30px rgba(139, 0, 0, 0.3);
@@ -249,7 +250,8 @@ h3,
 }
 
 @keyframes chromatic-shift {
-    0%, 100% {
+    0%,
+    100% {
         transform: translate(0, 0);
         filter: hue-rotate(0deg) drop-shadow(2px 0 0 rgba(255, 0, 0, 0.8)) drop-shadow(-2px 0 0 rgba(0, 255, 255, 0.8));
     }
@@ -288,7 +290,8 @@ h3,
 }
 
 @keyframes red-pulse {
-    0%, 100% {
+    0%,
+    100% {
         opacity: 0.2;
         transform: scale(1);
     }
@@ -311,7 +314,7 @@ h3,
     z-index: 5;
     font-size: 28px;
     color: var(--blood-red);
-    text-shadow: 
+    text-shadow:
         0 0 10px var(--blood-red),
         2px 2px 0 var(--void-black);
     transform: rotate(180deg);
@@ -322,7 +325,7 @@ h3,
 
 .playableTile:hover::before {
     opacity: 1;
-    text-shadow: 
+    text-shadow:
         0 0 20px var(--chaos-glow),
         0 0 30px var(--blood-red),
         2px 2px 0 var(--void-black);
@@ -331,7 +334,8 @@ h3,
 
 /* Digital Glitch для креста */
 @keyframes cross-glitch {
-    0%, 100% {
+    0%,
+    100% {
         transform: rotate(180deg) translate(0, 0);
     }
     20% {
@@ -406,7 +410,7 @@ h3,
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    
+
     background: rgba(0, 0, 0, 0.85) !important;
     border: 3px solid var(--silver-chrome) !important;
     border-radius: 0 !important;
@@ -427,7 +431,7 @@ h3,
     background: var(--blood-red) !important;
     border-color: #fff !important;
     color: #fff !important;
-    box-shadow: 
+    box-shadow:
         0 0 20px var(--chaos-glow),
         inset 0 0 15px rgba(0, 0, 0, 0.5);
     border-width: 4px !important;
@@ -480,7 +484,7 @@ h3,
     background: rgba(0, 0, 0, 0.97) !important;
     border-top: 3px solid var(--blood-red) !important;
     backdrop-filter: blur(25px) saturate(0.8);
-    box-shadow: 
+    box-shadow:
         0 -5px 30px rgba(139, 0, 0, 0.4),
         inset 0 1px 0 rgba(192, 192, 192, 0.1);
 }
@@ -529,7 +533,7 @@ h3,
 .playbackTimeline__progressBar {
     background: linear-gradient(90deg, var(--blood-red) 0%, var(--chaos-glow) 100%) !important;
     height: 6px !important;
-    box-shadow: 
+    box-shadow:
         0 0 15px var(--blood-red),
         0 0 30px rgba(139, 0, 0, 0.5);
     position: relative;
@@ -549,8 +553,13 @@ h3,
 }
 
 @keyframes bass-pulse {
-    0%, 100% { transform: translateX(-100%); }
-    50% { transform: translateX(100%); }
+    0%,
+    100% {
+        transform: translateX(-100%);
+    }
+    50% {
+        transform: translateX(100%);
+    }
 }
 
 .playbackTimeline__progressHandle {
@@ -559,14 +568,14 @@ h3,
     height: 16px !important;
     border-radius: 0 !important;
     border: 2px solid var(--void-black) !important;
-    box-shadow: 
+    box-shadow:
         0 0 15px var(--silver-chrome),
         0 0 25px var(--chaos-glow);
     transform: rotate(45deg);
 }
 
 .playbackTimeline__progressHandle:hover {
-    box-shadow: 
+    box-shadow:
         0 0 20px #fff,
         0 0 35px var(--chaos-glow);
 }
